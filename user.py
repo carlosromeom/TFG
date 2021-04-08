@@ -33,6 +33,4 @@ class User(UserMixin):
         )
         db.commit()
         
-        
-        
-       # hola
+
