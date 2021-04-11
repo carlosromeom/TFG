@@ -61,12 +61,35 @@ def index():
     if current_user.is_authenticated:
         return (
             "<p>Hello, {}! You're logged in! Email: {}</p>"
-            "<div><p>Google Profile Picture:</p>"
-            '<img src="{}" alt="Google profile pic"></img></div>'
+            #"<div><p>Google Profile Picture:</p>"
+            '<div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>'
+            '<h1> <center> Menú principal </center></h1>'
+
+           '<div align="left"><form action="https://google.com"> <input type="submit" value="Presentar petición de tema" /> </form>'
+           '<div align="right"><form action="https://google.com"> <input type="submit" value="Consultar petición de tema" /> </form>'
+           '<div align="left"><form action="https://google.com"> <input type="submit" value="Consultar estado trámites" /> </form>'
+           '<div align="right"><form action="https://google.com"> <input type="submit" value="Entregar TFG/M" /> </form>'
+
+
+            #'<img src="{}" alt="Google profile pic"></img></div>'
+            
             '<a class="button" href="/logout">Logout</a>'.format(
                 current_user.name, current_user.email, current_user.profile_pic
             )
+
+
+            #'<a href="https://google.es">Presentar petición de tema</a>'
+            #'<a class="button" href="https://google.es">TEST</a>'
+
+
         )
+
+
+
+
+
+
+
     else:
         return '<a class="button" href="/login">Google Login</a>'
 
@@ -165,3 +188,12 @@ def logout():
 
 if __name__ == "__main__":
     app.run(ssl_context="adhoc")
+
+
+
+
+
+
+
+
+
