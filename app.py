@@ -65,7 +65,7 @@ def index():
             '<div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>'
             '<h1> <center> Menú principal </center></h1>'
 
-           '<div align="left"><form action="https://google.com"> <input type="submit" value="Presentar petición de tema" /> </form>'
+           '<div align="left"><form action="/peticion"> <input type="submit" value="Presentar petición de tema" /> </form>'
            '<div align="right"><form action="https://google.com"> <input type="submit" value="Consultar petición de tema" /> </form>'
            '<div align="left"><form action="https://google.com"> <input type="submit" value="Consultar estado trámites" /> </form>'
            '<div align="right"><form action="https://google.com"> <input type="submit" value="Entregar TFG/M" /> </form>'
@@ -186,14 +186,14 @@ def logout():
     return redirect(url_for("index"))
 
 
+
+
+@app.route("/peticion")
+def prueba():
+    return ("hola")
+      
+
+
+
 if __name__ == "__main__":
     app.run(ssl_context="adhoc")
-
-
-
-
-
-
-
-
-
