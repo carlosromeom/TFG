@@ -2,9 +2,11 @@
 import json
 import os
 import sqlite3
+from fpdf import FPDF
+from flask import make_response
 
 # Third-party libraries
-from flask import Flask, redirect, request, url_for
+from flask import Flask, redirect, request, render_template, url_for
 from flask_login import (
     LoginManager,
     current_user,
@@ -59,37 +61,7 @@ def load_user(user_id):
 @app.route("/")
 def index():
     if current_user.is_authenticated:
-        return (
-            "<p>Hello, {}! You're logged in! Email: {}</p>"
-            #"<div><p>Google Profile Picture:</p>"
-            '<div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>'
-            '<h1> <center> Menú principal </center></h1>'
-
-           '<div align="left"><form action="/peticion"> <input type="submit" value="Presentar petición de tema" /> </form>'
-           '<div align="right"><form action="https://google.com"> <input type="submit" value="Consultar petición de tema" /> </form>'
-           '<div align="left"><form action="https://google.com"> <input type="submit" value="Consultar estado trámites" /> </form>'
-           '<div align="right"><form action="https://google.com"> <input type="submit" value="Entregar TFG/M" /> </form>'
-
-
-            #'<img src="{}" alt="Google profile pic"></img></div>'
-            
-            '<a class="button" href="/logout">Logout</a>'.format(
-                current_user.name, current_user.email, current_user.profile_pic
-            )
-
-
-            #'<a href="https://google.es">Presentar petición de tema</a>'
-            #'<a class="button" href="https://google.es">TEST</a>'
-
-
-        )
-
-
-
-
-
-
-
+        return render_template('menuprincipal.html')
     else:
         return '<a class="button" href="/login">Google Login</a>'
 
@@ -188,10 +160,80 @@ def logout():
 
 
 
+#presentar peticion de tema
 @app.route("/peticion")
-def prueba():
-    return ("hola")
+def presentarPeticion():
+    #return ("hola")
+    return render_template('presentarpeticion.html')
       
+
+
+
+
+
+@app.route("/prepararPDF", methods=['POST'])
+def prepararPDF():
+    pdf=FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
+    pdf.cell(200, 10, txt="Peticion de tema de TFG", ln=1, align="C")
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+    pdf.cell(200, 10, txt="Nombre y apellidos:", ln=2, align="L")
+    pdf.cell(200, 10, txt="Direccion:", ln=2, align="L")
+    pdf.cell(200, 10, txt="Poblacion:", ln=2, align="L")
+    pdf.cell(200, 10, txt="CP:", ln=2, align="L")
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+
+    pdf.cell(200, 10, txt="DNI:", ln=2, align="L")
+    pdf.cell(200, 10, txt="Titulacion:", ln=2, align="L")
+    pdf.cell(200, 10, txt="Telefono fijo:", ln=2, align="L")
+    pdf.cell(200, 10, txt="Telefono movil:", ln=2, align="L")
+    pdf.cell(200, 10, txt="Email:", ln=2, align="L")
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+
+    pdf.cell(200, 10, txt="Creditos pendientes:", ln=2, align="L")
+    pdf.cell(200, 10, txt="El alumno cuyos datos personales han quedado reflejados,", ln=2, align="L")
+    pdf.cell(200, 10, txt="Solicita,en virtud de lo dispuesto en la normativa de referencia, la aprobación del Tema para ", ln=2, align="L")
+    pdf.cell(200, 10, txt="la realización del Proyecto Fin de Carrera que a continuación se describe, y para la cual se adjunta", ln=2, align="L") 
+    pdf.cell(200, 10, txt="documento memoria descriptiva del mismo.", ln=2, align="L")
+
+
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+
+    pdf.cell(200, 10, txt="Titulo del proyecto:", ln=2, align="L")
+    pdf.cell(200, 10, txt="Modificacion o ampliacion:", ln=2, align="L")
+    pdf.cell(200, 10, txt="solicita adelanto:", ln=2, align="L")
+
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+
+    pdf.cell(200, 10, txt="Propuesta de tribunal: ", ln=2, align="L")
+
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+
+    pdf.cell(200, 10, txt="Director 1:", ln=2, align="L")
+    pdf.cell(200, 10, txt="Director 2:", ln=2, align="L")
+
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+
+    pdf.cell(200, 10, txt="Presidente de la comision de proyectos de: ", ln=2, align="L")
+
+
+    response = make_response(pdf.output(dest='S').encode('latin-1'))
+    response.headers.set('Content-Disposition', 'attachment', filename="name" + '.pdf')
+    response.headers.set('Content-Type', 'application/pdf')
+    return response
+
+
+
+
+
+
+
+
 
 
 

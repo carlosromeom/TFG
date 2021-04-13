@@ -1,0 +1,30 @@
+<!doctype html>
+<p>Hello, {email}! You're logged in! Email: {email}</p>
+            
+            <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
+            <h1> <center> Presentar peticion de tema </center></h1>
+
+			<form action="{{ url_for('prepararPDF') }}" method="post">
+  				<p>Nombre y apellidos: <input type="text" name="nombre" size="40"></p>
+  				<p>Direccion: <input type="text" name="direccion" size="40"></p>
+  				<p>Poblacion: <input type="text" name="poblacion" size="40"></p>
+  				<p>Codigo postal: <input type="number" name="codigoPostal"></p>
+  				<p>DNI: <input type="text" name="DNI" size="25"></p>
+  				<p>Titulacion: <input type="text" name="titulacion" size="40"></p>
+  				<p>Telefono fijo: <input type="number" name="tFijo"></p>
+  				<p>Telefono movil: <input type="number" name="tMovil"></p>
+  				<p>Email: <input type="text" name="email" size="40"></p>
+  				<p>Creditos pendientes (sin contar TFG): <input type="number" name="creditosPendientes"></p>
+  				<p>Titulo del proyecto: <input type="text" name="titulo" size="100"></p>
+  				<input type="checkbox" name="modificacionAmpliacion">Modificacion o ampliacion de otra peticion
+  				<input type="checkbox" name="solicitaAdelanto">Solicita adelanto de fecha de lectura
+				<textarea name="motivosAdelanto" rows="3" cols="30">Motivos para adelanto de fecha de lectura</textarea>
+				<p>Propuesta de tribunal (opcional): <input type="text" name="propuestaTribunal" size="40"></p>
+				<p>Director 1: <input type="text" name="director1" size="40"></p>
+				<p>Director 2: <input type="text" name="director2" size="40"></p>
+				<p>Presidente de la comision de proyectos de: <input type="text" name="presidente" size="40"></p>
+  				<p>
+    				<input type="submit" value="Enviar">
+    				<input type="reset" value="Borrar">
+  				</p>
+			</form>
