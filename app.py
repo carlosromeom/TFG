@@ -2,8 +2,13 @@
 import json
 import os
 import sqlite3
+from datetime import date
+from datetime import datetime
 from fpdf import FPDF
 from flask import make_response
+from flask_login import UserMixin
+
+from db import get_db
 
 # Third-party libraries
 from flask import Flask, redirect, request, render_template, url_for
@@ -173,10 +178,22 @@ def presentarPeticion():
 
 @app.route("/prepararPDF", methods=['POST'])
 def prepararPDF():
+
     pdf=FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
-  
+
+    if request.form.get('modificacionAmpliacion'):
+        check1="Si"
+    else:
+        check1="No"
+
+    if request.form.get('solicitaAdelanto'):
+        check2="Si"
+    else:
+        check2="No"
+
+
 
     pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
     pdf.cell(200, 10, txt="Peticion de tema de TFG", ln=1, align="C")
@@ -206,8 +223,8 @@ def prepararPDF():
     pdf.cell(200, 10, txt="", ln=2, align="L")
 
     pdf.cell(200, 10, txt="Titulo del proyecto: "+str(request.form['titulo']), ln=2, align="L")
-    pdf.cell(200, 10, txt="Modificacion o ampliacion: ", ln=2, align="L")
-    pdf.cell(200, 10, txt="solicita adelanto: ", ln=2, align="L")
+    pdf.cell(200, 10, txt="Modificacion o ampliacion: "+check1, ln=2, align="L")
+    pdf.cell(200, 10, txt="Solicita adelanto: "+check2, ln=2, align="L")
 
     pdf.cell(200, 10, txt="", ln=2, align="L")
 
@@ -221,16 +238,27 @@ def prepararPDF():
     pdf.cell(200, 10, txt="", ln=2, align="L")
 
     pdf.cell(200, 10, txt="Presidente de la comision de proyectos de: "+str(request.form['presidente']), ln=2, align="L")
+    pdf.cell(200, 10, txt="", ln=2, align="L")
+    pdf.cell(200, 10, txt="Peticion creada en: "+str(date.today()), ln=2, align="L")
 
 
     response = make_response(pdf.output(dest='S').encode('latin-1'))
     response.headers.set('Content-Disposition', 'attachment', filename="PeticionTema" + '.pdf')
     response.headers.set('Content-Type', 'application/pdf')
-    return response
+    #return response #response es el pdf generado
 
+    #return redirect(url_for("registrarPeticion"))
 
+    #una vez que tenemos la peticion y su correspondiente pdf, la registramos en la base de datos
 
+    db = get_db()
+    db.execute(
+            "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, motivosAdelanto, propuestaTribunal, director1, director2, presidente, pdf) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['director1'], request.form['director2'], request.form['presidente'], response)
+        )
 
+    db.commit()
 
 
 
