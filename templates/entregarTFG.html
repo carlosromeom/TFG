@@ -2,10 +2,11 @@
 <p>Hello, {email}! You're logged in! Email: {email}</p>
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
-            <h1> <center> Presione el boton para descargar su documento </center></h1>
-
+            <h1> <center> Entregar TFG </center></h1>
+            <h1>Esta es la peticion de tema registrada en el sistema</h1>
             <a href="/home/carlos/Escritorio/TFG/peticiondetema.pdf" download="proposed_file_name">Descargar peticion de tema</a>
 
-
-
-           <a class="button" href="/">Atras</a>
+		<form action="{{ url_for('registrarTFG') }}" method="post" >
+      <input type="file" name="filename">
+      <input type="submit">
+    </form>

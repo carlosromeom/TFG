@@ -28,5 +28,10 @@ CREATE TABLE peticiones (
 );
 
 
+CREATE TABLE TFGs (
+  trabajo BLOB NOT NULL
+);
+
+
 
 

@@ -270,6 +270,37 @@ def prepararPDF():
 
 
 
+# Entregar TFG
+@app.route("/entregarTFG", methods=['GET', 'POST'])
+def entregarTFG():
+    return render_template('entregarTFG.html')
+
+@app.route("/registrarTFG", methods=['GET', 'POST'])
+def registrarTFG():
+    #introducimos el pdf del TFG en la base de datos
+
+    db = get_db()
+    db.execute(
+            "INSERT INTO TFGs (trabajo) "
+            "VALUES (?)",
+            (request.form.get('filename'))
+        )
+
+    db.commit()
+
+    return render_template('pantallaOK.html')
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
