@@ -178,7 +178,20 @@ def presentarPeticion():
 
 @app.route("/prepararPDF", methods=['POST'])
 def prepararPDF():
+    
+    #introducimos los datos de la plantilla en la base de datos
+    #db = get_db()
+    #db.execute(
+     #       "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, director1, director2, presidente) "
+      #      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+       #     (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['director1'], request.form['director2'], request.form['presidente'])
+        #)
 
+    #db.commit()
+
+
+
+    #creamos el documento pdf
     pdf=FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
@@ -241,24 +254,18 @@ def prepararPDF():
     pdf.cell(200, 10, txt="", ln=2, align="L")
     pdf.cell(200, 10, txt="Peticion creada en: "+str(date.today()), ln=2, align="L")
 
+    pdf.output('peticiondetema', 'F')
 
-    response = make_response(pdf.output(dest='S').encode('latin-1'))
-    response.headers.set('Content-Disposition', 'attachment', filename="PeticionTema" + '.pdf')
-    response.headers.set('Content-Type', 'application/pdf')
-    #return response #response es el pdf generado
 
-    #return redirect(url_for("registrarPeticion"))
+    #response = make_response(pdf.output(dest='F').encode('latin-1'))
+    #response.headers.set('Content-Disposition', 'attachment', filename="PeticionTema" + '.pdf')
+    #response.headers.set('Content-Type', 'application/pdf')
 
-    #una vez que tenemos la peticion y su correspondiente pdf, la registramos en la base de datos
 
-    db = get_db()
-    db.execute(
-            "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, motivosAdelanto, propuestaTribunal, director1, director2, presidente, pdf) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['director1'], request.form['director2'], request.form['presidente'], response)
-        )
 
-    db.commit()
+
+    return render_template('descargadocumento.html')
+
 
 
 

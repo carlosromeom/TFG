@@ -8,7 +8,7 @@ CREATE TABLE user (
 
 
 CREATE TABLE peticiones (
-  nombre TEXT NOT NULL KEY,
+  nombre TEXT NOT NULL,
   direccion TEXT NOT NULL,
   poblacion TEXT NOT NULL,
   codigoPostal TEXT  NOT NULL,
@@ -21,12 +21,10 @@ CREATE TABLE peticiones (
   titulo TEXT NOT NULL,
   modificacionAmpliacion BOOLEAN NOT NULL,
   solicitaAdelanto BOOLEAN NOT NULL,
-  motivosAdelanto TEXT,
   propuestaTribunal TEXT,
   director1 TEXT NOT NULL,
   director2 TEXT,
-  presidente TEXT NOT NULL,
-  pdf TEXT NOT NULL
+  presidente TEXT NOT NULL
 );
 
 
