@@ -292,6 +292,11 @@ def registrarTFG():
 
 
 
+#Consultar peticion de tema
+@app.route("/consultarTramites")
+def consultarTramites():
+    return render_template('consultarTramites.html')
+
 
 
 
