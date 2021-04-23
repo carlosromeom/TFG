@@ -7,6 +7,13 @@ from datetime import datetime
 from fpdf import FPDF
 from flask import make_response
 from flask_login import UserMixin
+from werkzeug.utils import secure_filename
+
+
+UPLOAD_FOLDER = '/home/carlos/Escritorio/TFG'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
+
 
 from flask import send_file
 
@@ -23,6 +30,8 @@ from flask_login import (
 )
 from oauthlib.oauth2 import WebApplicationClient
 import requests
+
+
 
 # Internal imports
 from db import init_db_command
@@ -41,6 +50,7 @@ GOOGLE_DISCOVERY_URL = (
 
 # Flask app setup
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
 
 # User session management setup
@@ -282,7 +292,7 @@ def return_files_tut():
         return send_file('/home/carlos/Escritorio/TFG/peticiondetema', attachment_filename='ohhey.pdf')
     except Exception as e:
         return str(e)
-        #df
+
 
 
 
@@ -293,24 +303,39 @@ def return_files_tut():
 
 
 # Entregar TFG
-@app.route("/entregarTFG", methods=['GET', 'POST'])
-def entregarTFG():
-    return render_template('entregarTFG.html')
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route("/registrarTFG", methods=['GET', 'POST'])
-def registrarTFG():
-    #introducimos el pdf del TFG en la base de datos
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return render_template('pantallaOK.html')
 
-    db = get_db()
-    db.execute(
-            "INSERT INTO TFGs (trabajo) "
-            "VALUES (?)",
-            (request.form.get('filename'))
-        )
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
 
-    db.commit()
 
-    return render_template('pantallaOK.html')
 
 
 
