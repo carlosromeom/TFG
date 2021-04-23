@@ -336,13 +336,12 @@ def upload_file():
     '''
 
 
-
-
-
-#Consultar peticion de tema
+#Consultar estado de los tramites
 @app.route("/consultarTramites")
 def consultarTramites():
-    return render_template('consultarTramites.html')
+    return render_template('consultarTramites.php')
+
+
 
 
 
