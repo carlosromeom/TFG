@@ -8,6 +8,8 @@ from fpdf import FPDF
 from flask import make_response
 from flask_login import UserMixin
 
+from flask import send_file
+
 from db import get_db
 
 # Third-party libraries
@@ -179,16 +181,9 @@ def presentarPeticion():
 @app.route("/prepararPDF", methods=['POST'])
 def prepararPDF():
     
-    #introducimos los datos de la plantilla en la base de datos
-    #db = get_db()
-    #db.execute(
-     #       "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, director1, director2, presidente) "
-      #      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-       #     (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['director1'], request.form['director2'], request.form['presidente'])
-        #)
+    
 
-    #db.commit()
-
+    #return render_template('descargadocumento.html')
 
 
     #creamos el documento pdf
@@ -205,6 +200,17 @@ def prepararPDF():
         check2="Si"
     else:
         check2="No"
+
+
+    #introducimos los datos de la plantilla en la base de datos
+    db = get_db()
+    db.execute(
+            "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, director1, director2, presidente) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['director1'], request.form['director2'], request.form['presidente'])
+        )
+
+    db.commit()
 
 
 
@@ -265,6 +271,21 @@ def prepararPDF():
 
 
     return render_template('descargadocumento.html')
+
+
+
+
+
+@app.route('/return-files/')
+def return_files_tut():
+    try:
+        return send_file('/home/carlos/Escritorio/TFG/peticiondetema', attachment_filename='ohhey.pdf')
+    except Exception as e:
+        return str(e)
+
+
+
+
 
 
 
