@@ -24,7 +24,8 @@ CREATE TABLE peticiones (
   propuestaTribunal TEXT,
   director1 TEXT NOT NULL,
   director2 TEXT,
-  presidente TEXT NOT NULL
+  presidente TEXT NOT NULL,
+  estado TEXT NOT NULL
 );
 
 

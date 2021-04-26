@@ -1,3 +1,5 @@
+#MENU DE MIEMBRO DE COMISION
+
 # Python standard libraries
 import json
 import os
@@ -78,7 +80,7 @@ def load_user(user_id):
 @app.route("/")
 def index():
     if current_user.is_authenticated:
-        return render_template('menuprincipal.html')
+        return render_template('menuprincipalMiembroComision.html')
     else:
         return '<a class="button" href="/login">Google Login</a>'
 
@@ -177,10 +179,22 @@ def logout():
 
 
 
-#presentar peticion de tema
-@app.route("/peticion")
-def presentarPeticion():
-    #return ("hola")
+#consultar peticiones de tema
+@app.route("/consultarPeticionesdeTema")
+def consultarPeticionesdeTema():
+    #primero consultamos en la base de datos si existe alguna peticion asignada a la comision
+    db = get_db()
+    db.execute(
+            "select DNI from peticiones where peticiones.estado = 'Creada'"
+        )
+
+    db.commit() 
+    return (db)   
+
+
+
+
+
     return render_template('presentarpeticion.html')
       
 
@@ -215,9 +229,9 @@ def prepararPDF():
     #introducimos los datos de la plantilla en la base de datos
     db = get_db()
     db.execute(
-            "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, director1, director2, presidente, estado) "
+            "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, director1, director2, presidente) "
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['director1'], request.form['director2'], request.form['presidente'], "Creada")
+            (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['director1'], request.form['director2'], request.form['presidente'])
         )
 
     db.commit()
