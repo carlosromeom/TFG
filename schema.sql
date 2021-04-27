@@ -26,7 +26,10 @@ CREATE TABLE peticiones (
   director1 TEXT NOT NULL,
   director2 TEXT,
   presidente TEXT NOT NULL,
-  estado TEXT NOT NULL
+  estado TEXT NOT NULL,
+  resolucion TEXT,
+  sugerencias TEXT
+
 );
 
 

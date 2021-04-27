@@ -390,19 +390,39 @@ def consultarPeticionesdeTema():
     #return ("hola")
     return render_template('consultarPeticionesdeTema.html', peticiones=peticiones)
 
-"""
+
 @app.route("/evaluarPeticion")
 def evaluarPeticion():
+    return render_template('evaluar.html')
+
+@app.route("/registrarEvaluacion", methods=['GET', 'POST'])
+def registrarEvaluacion():
+    #return("hola")
+    if request.form.get('Aceptada'):
+        resolucion="Aceptada"
+    if request.form.get('AceptadaSugerencias'):
+        resolucion="Aceptada con sugerencias"
+    if request.form.get('AmpliarMemoria'):
+        resolucion="Ampliar memoria"
+    else :
+        resolucion="Denegada"
+
+
+  
+
+
+    #ahora se registra la peticion de tema como evaluada en la BD
     db = get_db()
-    peticiones=db.execute(
-        "SELECT * FROM peticiones where estado = 'Creada'"
-        ).fetchall()
-   
-    #return ("hola")
-    return render_template('evaluar.html', peticiones=peticiones)
+    db.execute(
+            "INSERT INTO peticiones (estado, resolucion, sugerencias)"
+            "VALUES (?, ?, ?)",
+            ("revisada", resolucion, request.form['sugerencias'])
+        )
+
+    db.commit()
+    return render_template('pantallaOK.html')
 
 
-"""
 
 
 

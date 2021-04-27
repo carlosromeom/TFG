@@ -112,12 +112,14 @@ function highlight_row() {
 
             msg = 'The ID of the company is: ' + rowSelected.cells[0].innerHTML;
             msg += '\nThe cell value is: ' + this.innerHTML;
-            alert(msg);
+            localStorage["DNI"] = this.innerHTML;
         }
     }
 
 }
 </script>
+
+<a href="/evaluarPeticion"> Evaluar</a>
       
 
 

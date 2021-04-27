@@ -4,24 +4,57 @@
 </head>  
 
 <body bgcolor=#e73057> 
-      let DNI =  sessionStorage.getItem('DNIPeticion')
+
 	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
             <h1> <center> Evaluar peticion de tema</center></h1>
 
-            <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
-            <h1> <center> Presione el boton para descargar su documento </center></h1>
 
            
             <a href="/return-files/" target="blank"><button class='btn btn-default'>Descargar</button></a>
 
 
+<p>Click the following button to see the function in action</p>  
+<input type = "button" onclick = "highlight_row()" value = "Display">  
 
 
 
 
+<script>
+highlight_row();
+function highlight_row() {
+
+    alert(localStorage["DNI"])
+
+}
+</script>
 
 
 
+<h2> <left>Introduzca los campos para evaluar la peticion de tema  </left></h2>
+
+                  <form action="{{ url_for('registrarEvaluacion') }}" method="post">
+                        <p>Una vez valorada la memoria adjunta a la presente solicitud, la Comision de Proyectos correspondiente, en el dia de la fecha, ha resuelto lo que a continuacion se indica:</p> <input type="radio" id="Aceptada" name="Aceptada" value="Aceptada">
+                        <label for="Aceptada">Aceptada</label><br>
+
+                        <input type="radio" id="AceptadaSugerencias" name="AceptadaSugerencias" value="AceptadaSugerencias">
+                        <label for="AceptadaSugerencias">Aceptada con sugerencias</label><br>
+
+
+                        <input type="radio" id="AmpliarMemora" name="AmpliarMemora" value="AmpliarMemora">
+                        <label for="AmpliarMemora">Ampliar memoria</label><br>
+
+                        <input type="radio" id="Denegada" name="Denegada" value="Denegada">
+                        <label for="Denegada">Denegada</label><br>
+
+                        <p>Sugerencias: <input type="text" name="direccion" size="230"></p>
+
+                        <p>
+                        <input type="submit" value="Enviar">
+                        <input type="reset" value="Borrar">
+                        </p>
+
+
+                  </form>
 
 
 
