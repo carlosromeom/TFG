@@ -20,7 +20,7 @@ from flask import send_file
 from db import get_db
 
 # Third-party libraries
-from flask import Flask, redirect, request, render_template, url_for
+from flask import Flask, redirect, request, render_template, url_for, session
 from flask_login import (
     LoginManager,
     current_user,
@@ -74,10 +74,15 @@ def load_user(user_id):
     return User.get(user_id)
 
 
+
+
+
+
 # homepage
 @app.route("/")
 def index():
-    if current_user.is_authenticated:
+   
+    if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "Estudiante"):
         return render_template('menuprincipal.html')
     else:
         return '<a class="button" href="/login">Google Login</a>'
@@ -153,12 +158,12 @@ def callback():
     # Create a user in your db with the information provided
     # by Google
     user = User(
-        id_=unique_id, name=users_name, email=users_email, profile_pic=picture
+        id_=unique_id, name=users_name, email=users_email, profile_pic=picture, rol_="Estudiante"
     )
 
     # Doesn't exist? Add it to the database.
     if not User.get(unique_id):
-        User.create(unique_id, users_name, users_email, picture)
+        User.create(unique_id, users_name, users_email, picture, "Estudiante" )
 
     # Begin user session by logging the user in
     login_user(user)
