@@ -83,7 +83,9 @@ def load_user(user_id):
 def index():
    
     if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "Estudiante"):
-        return render_template('menuprincipal.html')
+        return render_template('menuprincipal.html') #En caso de que sea estudiante
+    if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "MiembroComision"):
+        return render_template('menuprincipalMiembroComision.html')
     else:
         return '<a class="button" href="/login">Google Login</a>'
 
@@ -220,8 +222,8 @@ def prepararPDF():
     #introducimos los datos de la plantilla en la base de datos
     db = get_db()
     db.execute(
-            "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, director1, director2, presidente, estado) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, director1, director2, presidente, estado)"
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['director1'], request.form['director2'], request.form['presidente'], "Creada")
         )
 
@@ -374,7 +376,33 @@ def consultarTramites():
 
 
 
+####FUNCIONES PARA EL ACTOR MIEMBRO DE COMISION####
 
+#Consultar peticiones de tema
+@app.route("/consultarPeticionesdeTema")
+def consultarPeticionesdeTema():
+    #lo primero es sacar todas las peticiones de tema de la BD
+    db = get_db()
+    peticiones=db.execute(
+        "SELECT * FROM peticiones where estado = 'Creada'"
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('consultarPeticionesdeTema.html', peticiones=peticiones)
+
+"""
+@app.route("/evaluarPeticion")
+def evaluarPeticion():
+    db = get_db()
+    peticiones=db.execute(
+        "SELECT * FROM peticiones where estado = 'Creada'"
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('evaluar.html', peticiones=peticiones)
+
+
+"""
 
 
 
