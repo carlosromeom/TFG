@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Consulta de Trabajos asigandos al tribunal</title>
+<style>
+.table-layout {
+    text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-family:"Trebuchet MS";
+    margin: 0 auto 0;
+}
+.table-layout td, .table-layout th {
+    border: 1px solid grey;
+    padding: 5px 5px 0;
+}
+.table-layout td {
+    text-align: left;
+}
+.selected {
+    color: red;
+}
+</style>
+</head>  
+
+
+
+<body bgcolor=#e73057> 
+
+      <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
+            <h1> <center> Consultar trabajos</center></h1>
+
+
+
+<table id="display-table" class="table-layout">
+    <thead>
+            <th>Trabajo</th>
+            <th>Estado</th>
+
+            
+    </thead>
+
+                  {% for row in trabajos %}
+               
+
+                  <tr>
+                        
+                        <td class="row-data"><a href="/intermedio/{{row[0]}}">{{row[0]}}</a></td>
+                        <td class="row-data">{{row[1]}}</td>
+                        
+                    
+
+
+                        
+                  </tr>
+          
+                  {% endfor %}
+            </table>
+      </div>
+
+</body>
+</html>
+
+
+<a class="button" href="/">Atras</a>
+
+
+

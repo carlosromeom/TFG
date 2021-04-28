@@ -9,6 +9,9 @@ from flask import make_response
 from flask_login import UserMixin
 from werkzeug.utils import secure_filename
 
+from os import listdir
+from os.path import isfile, join
+
 
 UPLOAD_FOLDER = '/home/carlos/Escritorio/TFG'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -302,12 +305,6 @@ def return_files_tut():
     except Exception as e:
         return str(e)
 
-@app.route('/return-files2/')
-def return_files_tut2():
-    try:
-        return send_file('/home/carlos/Escritorio/TFG/TFGCarlos', attachment_filename='ohhey.pdf')
-    except Exception as e:
-        return str(e)
 
 
 
@@ -338,6 +335,13 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            db = get_db()
+            db.execute(
+            "INSERT INTO TFGs (trabajo, estado)"
+            "VALUES (?, ?)",
+            (filename, 'Creado')
+            )
+            db.commit()
             return render_template('pantallaOK.html')
 
     return '''
@@ -349,6 +353,8 @@ def upload_file():
       <input type=submit value=Upload>
     </form>
     '''
+
+
 
 
 #Consultar estado de los tramites
@@ -433,6 +439,7 @@ def registrarEvaluacion():
 @app.route("/consultarTrabajosPresentados")
 def consultarTrabajosPresentados():
     #lo primero es sacar todos los trabajos sin corregir de la BD
+
     db = get_db()
     trabajos=db.execute(
         "SELECT * FROM TFGs where estado = 'Creado'"
@@ -440,6 +447,21 @@ def consultarTrabajosPresentados():
    
     #return ("hola")
     return render_template('consultarTrabajosPresentados.html', trabajos=trabajos)
+
+
+@app.route("/intermedio/<int:nombreTFG>")
+def intermedio(nombreTFG):
+    return render_template('intermedio.html', nombreTFG=nombreTFG)
+
+
+
+@app.route("/returnfiles2/", methods=['GET', 'POST'])
+def returnfiles2(nombreTFG):
+    return(str(nombreTFG))
+    try:
+        return send_file('/home/carlos/Escritorio/TFG/'+str(nombreTFG), attachment_filename='ohhey.pdf')
+    except Exception as e:
+        return str(e)
 
 
 
