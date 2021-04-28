@@ -11,24 +11,24 @@
 
            
             <a href="/return-files/" target="blank"><button class='btn btn-default'>Descargar</button></a>
-
-
-<p>Click the following button to see the function in action</p>  
-<input type = "button" onclick = "highlight_row()" value = "Display">  
+            <h4>{{dni}}</h4>
 
 
 
 
+<!--
 <script>
 highlight_row();
 function highlight_row() {
 
-    alert(localStorage["DNI"])
-
+    //alert(localStorage["DNI"]);
+    //String dni = localStorage["DNI"]
+    //document.cookie="DNIEscogido="+ encodeURIComponent(dni);
+    //alert(document.cookie);
 }
 </script>
 
-
+-->
 
 <h2> <left>Introduzca los campos para evaluar la peticion de tema  </left></h2>
 
@@ -46,7 +46,9 @@ function highlight_row() {
                         <input type="radio" id="Denegada" name="Denegada" value="Denegada">
                         <label for="Denegada">Denegada</label><br>
 
-                        <p>Sugerencias: <input type="text" name="direccion" size="230"></p>
+                        <p>Sugerencias: <input type="text" name="sugerencias" size="230"></p>
+
+                        <input type="hidden" name="dni" value={{dni}}>
 
                         <p>
                         <input type="submit" value="Enviar">

@@ -85,7 +85,9 @@ def index():
     if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "Estudiante"):
         return render_template('menuprincipal.html') #En caso de que sea estudiante
     if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "MiembroComision"):
-        return render_template('menuprincipalMiembroComision.html')
+        return render_template('menuprincipalMiembroComision.html') #En caso de que sea miembro de comision
+    if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "MiembroTribunal"):
+        return render_template('menuprincipalMiembroTribunal.html') #En caso de que sea miembro de tribunal
     else:
         return '<a class="button" href="/login">Google Login</a>'
 
@@ -391,9 +393,9 @@ def consultarPeticionesdeTema():
     return render_template('consultarPeticionesdeTema.html', peticiones=peticiones)
 
 
-@app.route("/evaluarPeticion")
-def evaluarPeticion():
-    return render_template('evaluar.html')
+@app.route("/evaluarPeticion/<int:dni>")
+def evaluarPeticion(dni):
+    return render_template('evaluar.html', dni=dni)
 
 @app.route("/registrarEvaluacion", methods=['GET', 'POST'])
 def registrarEvaluacion():
@@ -407,24 +409,37 @@ def registrarEvaluacion():
     else :
         resolucion="Denegada"
 
+    id=(str(request.form.get('dni')))
+    sugerencias= (str(request.form.get('sugerencias')))
+
 
   
 
 
     #ahora se registra la peticion de tema como evaluada en la BD
     db = get_db()
-    db.execute(
-            "INSERT INTO peticiones (estado, resolucion, sugerencias)"
-            "VALUES (?, ?, ?)",
-            ("revisada", resolucion, request.form['sugerencias'])
+    db.execute("UPDATE peticiones SET estado='Revisada', resolucion=?, sugerencias=? WHERE DNI= ?", (resolucion, sugerencias, id,),
+
+
         )
 
     db.commit()
+
     return render_template('pantallaOK.html')
 
 
 
-
+####FUNCIONES PARA EL ACTOR MIEMBRO DE TRIBUNAL####
+@app.route("/consultarTrabajosPresentados")
+def consultarTrabajosPresentados():
+    #lo primero es sacar todos los trabajos sin corregir de la BD
+    db = get_db()
+    trabajos=db.execute(
+        "SELECT * FROM TFGs where estado = 'Creado'"
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('consultarTrabajosPresentados.html', trabajos=trabajos)
 
 
 

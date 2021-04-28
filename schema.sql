@@ -34,7 +34,8 @@ CREATE TABLE peticiones (
 
 
 CREATE TABLE TFGs (
-  trabajo BLOB NOT NULL
+  trabajo BLOB NOT NULL,
+  estado TEXT NOT NULL
 );
 
 
