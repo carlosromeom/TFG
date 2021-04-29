@@ -91,6 +91,8 @@ def index():
         return render_template('menuprincipalMiembroComision.html') #En caso de que sea miembro de comision
     if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "MiembroTribunal"):
         return render_template('menuprincipalMiembroTribunal.html') #En caso de que sea miembro de tribunal
+    if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "MiembroSecretaria"):
+        return render_template('menuprincipalMiembroSecretaria.html') #En caso de que sea miembro de secretaria
     else:
         return '<a class="button" href="/login">Google Login</a>'
 
@@ -392,7 +394,7 @@ def consultarPeticionesdeTema():
     #lo primero es sacar todas las peticiones de tema de la BD
     db = get_db()
     peticiones=db.execute(
-        "SELECT * FROM peticiones where estado = 'Creada'"
+        "SELECT * FROM peticiones where estado = 'Validada'"
         ).fetchall()
    
     #return ("hola")
@@ -442,30 +444,274 @@ def consultarTrabajosPresentados():
 
     db = get_db()
     trabajos=db.execute(
-        "SELECT * FROM TFGs where estado = 'Creado'"
+        "SELECT * FROM TFGs where estado = 'Validado'"
         ).fetchall()
    
     #return ("hola")
     return render_template('consultarTrabajosPresentados.html', trabajos=trabajos)
 
 
-@app.route("/intermedio/<int:nombreTFG>")
+@app.route("/intermedio/<nombreTFG>")
 def intermedio(nombreTFG):
     return render_template('intermedio.html', nombreTFG=nombreTFG)
 
 
 
-@app.route("/returnfiles2/", methods=['GET', 'POST'])
+@app.route("/returnfiles2/<nombreTFG>")
 def returnfiles2(nombreTFG):
-    return(str(nombreTFG))
+    #return(nombreTFG)
+    #return(str(nombreTFG))
     try:
-        return send_file('/home/carlos/Escritorio/TFG/'+str(nombreTFG), attachment_filename='ohhey.pdf')
+        return send_file('/home/carlos/Escritorio/TFG/'+nombreTFG, attachment_filename='ohhey.pdf')
     except Exception as e:
         return str(e)
 
 
 
+@app.route('/upload2', methods=['GET', 'POST'])
+def upload_file2():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
+            return render_template('pantallaOK.html')
+
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####FUNCIONES PARA EL ACTOR MIEMBRO DE SECRETARIA####
+@app.route("/validarPeticiones")
+def validarPeticiones():
+    #lo primero es sacar todas las trabajos sin validar de la BD
+
+    db = get_db()
+    peticiones=db.execute(
+        "SELECT * FROM peticiones where estado = 'Creada'"
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('validarPeticionesdeTema.html', peticiones=peticiones)
+
+
+@app.route("/validarPeticion/<int:dni>")
+def validarPeticion(dni):
+    return render_template('validar.html', dni=dni)
+
+
+
+
+@app.route("/registrarValidacion", methods=['GET', 'POST'])
+def registrarValidacion():
+    #return("hola")
+    if request.form.get('Validada'):
+        validacion="Validada"
+    else :
+        validacion="NoValidada"
+
+    id=(str(request.form.get('dni')))
+    sugerencias= (str(request.form.get('sugerencias')))
+
+
+  
+
+
+    #ahora se registra la peticion de tema como validada o no en la BD
+    db = get_db()
+    db.execute("UPDATE peticiones SET estado=? WHERE DNI= ?", (validacion, id,),
+
+
+        )
+
+    db.commit()
+
+    return render_template('pantallaOK.html')
+
+
+
+
+
+
+
+@app.route("/validarTFG")
+def validarTFG():
+    #lo primero es sacar todos los trabajos sin validar de la BD
+
+    db = get_db()
+    trabajos=db.execute(
+        "SELECT * FROM TFGs where estado = 'Creado'"
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('validarTrabajos.html', trabajos=trabajos)
+
+@app.route("/registrarValidacionTrabajo/<nombreTFG>")
+def registrarValidacionTrabajo(nombreTFG):
+    #return("hola")
+    return render_template('registrarValidacionTrabajo.html', nombreTFG=nombreTFG)
+
+
+@app.route("/marcarValidado/<nombreTFG>")
+def marcarValidado(nombreTFG):
+    #return("hola marcarValidado")
+
+    #ahora lo metemos en la BD como Validado
+    db = get_db()
+    db.execute("UPDATE TFGs SET estado='Validado' WHERE trabajo= ?", (nombreTFG,),
+
+
+        )
+
+    db.commit()
+
+    return render_template('pantallaOK.html')
+
+
+
+
+
+
+
+@app.route("/gestionarComisiones")
+def gestionarComisiones():
+    #lo primero es sacar todas las comisiones ya registradas en la BD
+
+    db = get_db()
+    comisiones=db.execute(
+        "SELECT * FROM comisiones"
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('gestionarComisiones.html', comisiones=comisiones)
+
+
+
+@app.route("/crearComision")
+def crearComision():
+    #return ("hola crearComision")
+    return render_template('crearComision.html')
+
+
+
+@app.route("/registrarNuevaComision", methods=['POST'])
+def registrarNuevaComision():
+    
+    #return("hola registrarNuevaComision")
+
+    #return render_template('descargadocumento.html')
+
+
+
+    #introducimos los datos de la plantilla en la base de datos
+    db = get_db()
+    db.execute(
+            "INSERT INTO comisiones (nombre, id, estado, miembros, presidente)"
+            "VALUES (?, ?, 'Activa', ?, ?)",
+            (request.form['nombre'], request.form['ID'], request.form['miembros'], request.form['presidente'])
+        )
+
+    db.commit()
+    return render_template('pantallaOK.html')
+
+
+
+
+
+@app.route("/modificarComision/<int:ID>")
+def modificarComision(ID):
+    return render_template('modificarComision.html', ID=ID)
+
+
+@app.route("/cambiarEstadoComision/<int:ID>")
+def cambiarEstadoComision(ID):
+    return render_template('cambiarEstadoComision.html', ID=ID)
+
+
+@app.route("/registrarNuevoEstadoComision", methods=['POST'])
+def registrarNuevoEstadoComision():
+    
+    #return("hola registrarNuevaComision")
+
+    #return render_template('descargadocumento.html')
+
+
+    if request.form.get('Activa'):
+        nuevoEstado="Activa"
+    else :
+        nuevoEstado="Inactiva"
+
+
+    #return (request.form.get('ID'))
+
+    #introducimos los datos de la plantilla en la base de datos
+    db = get_db()
+    db.execute("UPDATE comisiones SET estado=? WHERE ID= ?", (nuevoEstado, request.form.get('ID')),
+
+
+        )
+
+    db.commit()
+
+    return render_template('pantallaOK.html')
+
+
+
+
+
+
+
+@app.route("/modificarProfesoresComision/<int:ID>")
+def modificarProfesoresComision(ID):
+    #return(request.form.get('ID'))
+     #sacamos los miembros de la comision
+    db = get_db()
+    miembros=db.execute("SELECT miembros FROM comisiones WHERE ID= ?", (ID,),
+
+
+        ).fetchall()
+
+    return render_template('modificarProfesoresComision.html', ID=ID, miembros=miembros)
+
+
+
+
+    
+
+@app.route("/registrarCambioProfesoresComision", methods=['POST'])
+def registrarCambioProfesoresComision():
+    return("hola")
 
 
 

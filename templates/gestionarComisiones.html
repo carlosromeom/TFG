@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <title>Gestionar comisiones</title>
+<style>
+.table-layout {
+    text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-family:"Trebuchet MS";
+    margin: 0 auto 0;
+}
+.table-layout td, .table-layout th {
+    border: 1px solid grey;
+    padding: 5px 5px 0;
+}
+.table-layout td {
+    text-align: left;
+}
+.selected {
+    color: red;
+}
+</style>
+</head>  
+
+
+
+<body bgcolor=#e73057> 
+
+	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
+            <h1> <center> Gestionar comisiones</center></h1>
+
+            <h1> <center> Lista de comisiones ya creadas </center></h1>
+
+
+<table id="display-table" class="table-layout">
+    <thead>
+            <th>Nombre</th>
+            <th>ID</th>
+            <th>Estado</th>
+            <th>Miembros</th>
+            <th>Presidente</th>
+
+    </thead>
+
+                  {% for row in comisiones %}
+               
+
+                  <tr>
+                        <td class="row-data">{{row[0]}}</td>
+                        <td class="row-data"><a href="/modificarComision/{{row[1]}}">{{row[1]}}</a></td>
+                        <td class="row-data">{{row[2]}}</td>
+                        <td class="row-data">{{row[3]}}</td>
+                        <td class="row-data">{{row[4]}}</td>
+                        
+                        
+                  </tr>
+          
+                  {% endfor %}
+            </table>
+      </div>
+
+<a href="/crearComision"> Crear nueva comision</a>
+
+           
+<!--
+      <script>
+highlight_row();
+function highlight_row() {
+    var table = document.getElementById('display-table');
+    var cells = table.getElementsByTagName('td');
+
+    for (var i = 0; i < cells.length; i++) {
+        // Take each cell
+        var cell = cells[i];
+        // do something on onclick event for cell
+        cell.onclick = function () {
+            // Get the row id where the cell exists
+            var rowId = this.parentNode.rowIndex;
+
+            var rowsNotSelected = table.getElementsByTagName('tr');
+            for (var row = 0; row < rowsNotSelected.length; row++) {
+                rowsNotSelected[row].style.backgroundColor = "";
+                rowsNotSelected[row].classList.remove('selected');
+            }
+            var rowSelected = table.getElementsByTagName('tr')[rowId];
+            rowSelected.style.backgroundColor = "yellow";
+            rowSelected.className += " selected";
+
+            msg = 'The ID of the company is: ' + rowSelected.cells[0].innerHTML;
+            msg += '\nThe cell value is: ' + this.innerHTML;
+            localStorage["DNI"] = this.innerHTML;
+        }
+    }
+
+    document.cookie = "DNIescogido=" + encodeURIComponent(localStorage["DNI"]);
+
+}
+</script>
+
+
+<a href="/evaluarPeticion"> Evaluar</a>
+      
+
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+<a class="button" href="/">Atras</a>
+
+
+

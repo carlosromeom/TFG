@@ -1,0 +1,72 @@
+<head>
+	<meta charset="utf-8">
+    <title>Modificar profesores de la comision</title>
+</head>  
+
+<body bgcolor=#e73057> 
+
+	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
+            <h1> <center> Modificar profesores de la comision</center></h1>
+            <h4>{{miembros}}</h4>
+
+
+
+<!--
+<script>
+highlight_row();
+function highlight_row() {
+
+    //alert(localStorage["DNI"]);
+    //String dni = localStorage["DNI"]
+    //document.cookie="DNIEscogido="+ encodeURIComponent(dni);
+    //alert(document.cookie);
+}
+</script>
+
+-->
+
+<h2> <left>Introduzca los cambios en los componentes de la comision</left></h2>
+
+                  <form action="{{ url_for('registrarCambioProfesoresComision') }}" method="post">
+                        
+
+
+                        <input type="text" id="miembros" name="miebros" value="{{miebros}}">
+                        <label for="miebros">Miembros</label><br>
+
+                       
+
+                        <input type="hidden" name="ID" value={{ID}}>
+
+                        <p>
+                        <input type="submit" value="Enviar">
+                        <input type="reset" value="Borrar">
+                        </p>
+
+
+                  </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="button" href="/">Atras</a>
+
+
+

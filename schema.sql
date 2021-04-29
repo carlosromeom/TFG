@@ -41,3 +41,10 @@ CREATE TABLE TFGs (
 
 
 
+CREATE TABLE comisiones (
+  nombre TEXT NOT NULL,
+  id NUMBER PRIMARY KEY,
+  estado TEXT NOT NULL,
+  miembros TEXT NOT NULL,
+  presidente TEXT NULL NULL
+);
