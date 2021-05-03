@@ -715,8 +715,8 @@ def registrarNuevoEstadoComision():
 
 @app.route("/modificarProfesoresComision", methods=['POST'])
 def modificarProfesoresComision():
-    return("hola")
-    return(request.form.get('ID'))
+    
+    ID=request.form.get('ID')
      #sacamos los miembros de la comision
     db = get_db()
     miembros=db.execute("SELECT miembros FROM comisiones WHERE ID= ?", (ID,),
