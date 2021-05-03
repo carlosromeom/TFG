@@ -32,14 +32,16 @@
             <h1> <center> Listado de trabajos filtrados</center></h1>
 
 
-
-<table id="display-table" class="table-layout">
+<div id="display-table">
+<table class="table-layout">
     <thead>
+        <tr>
             <th>Nombre</th>
             <th>Estado</th>
             <th>Director 1</th>
             <th>Director 2</th>
             <th>Titulacion</th>
+        </tr>
 
     </thead>
 
@@ -48,7 +50,7 @@
 
                   <tr>
                         <td class="row-data">{{row[0]}}</td>
-                        <td class="row-data">{{row[1]}}</a></td>
+                        <td class="row-data">{{row[1]}}</td>
                         <td class="row-data">{{row[2]}}</td>
                         <td class="row-data">{{row[3]}}</td>
                         <td class="row-data">{{row[4]}}</td>
@@ -103,20 +105,51 @@ function highlight_row() {
 
 -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <p>
+        <input type="button" value="Crear PDF" 
+            id="btPrint" onclick="createPDF()" />
+    </p>
 </body>
+
+
+<script>
+    function createPDF() {
+        var sTable = document.getElementById('display-table').innerHTML;
+
+        var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 3px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: center;}";
+        style = style + "</style>";
+
+        // CREATE A WINDOW OBJECT.
+        var win = window.open('', '', 'height=700,width=700');
+
+        win.document.write('<html><head>');
+        win.document.write('<title>Profile</title>');   // <title> FOR PDF HEADER.
+        win.document.write(style);          // ADD STYLE INSIDE THE HEAD TAG.
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(sTable);         // THE TABLE CONTENTS INSIDE THE BODY TAG.
+        win.document.write('</body></html>');
+
+        win.document.close();   // CLOSE THE CURRENT WINDOW.
+
+        win.print();    // PRINT THE CONTENTS.
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
 </html>
 
 

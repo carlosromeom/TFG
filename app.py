@@ -821,6 +821,10 @@ def filtrarProfesor():
 def usuarioNoRegistrado():
     return render_template('menuprincipalUsuarioNoRegistrado.html')
 
+@app.route("/filtrado")
+def filtrado():
+    return render_template('quiereFiltrar.html')
+
 
 @app.route("/consultarTFG")
 def consultarTFG():
