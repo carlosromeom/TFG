@@ -35,7 +35,10 @@ CREATE TABLE peticiones (
 
 CREATE TABLE TFGs (
   trabajo BLOB NOT NULL,
-  estado TEXT NOT NULL
+  estado TEXT NOT NULL,
+  director1 TEXT NOT NULL,
+  director2 TEXT, 
+  titulacion TEXT NOT NULL
 );
 
 

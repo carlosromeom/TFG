@@ -16,7 +16,20 @@
 
            <div align="left"><form action="/cambiarEstadoComision/{{ID}}"> <input type="submit" value="Cambiar el estado de la comision" /> </form>
 
+<!--
            	<div align="left"><form action="/modificarProfesoresComision/{{ID}}"> <input type="submit" value="Dar de alta/baja un profesor en la comision" /> </form>
+
+
+
+-->
+
+
+
+
+           		<div align="right"><form action="{{ url_for ('modificarProfesoresComision') }}" method="post"> <input type="submit" value="Gestionar comisiones" /> 
+           	<input type="hidden" name="ID" value="{{ID}}>
+           </form>
+
 
   
         

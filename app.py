@@ -7,6 +7,7 @@ from datetime import datetime
 from fpdf import FPDF
 from flask import make_response
 from flask_login import UserMixin
+from flask import flash 
 from werkzeug.utils import secure_filename
 
 from os import listdir
@@ -94,7 +95,7 @@ def index():
     if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "MiembroSecretaria"):
         return render_template('menuprincipalMiembroSecretaria.html') #En caso de que sea miembro de secretaria
     else:
-        return '<a class="button" href="/login">Google Login</a>'
+        return render_template('inicio.html')
 
 
 # login
@@ -317,12 +318,32 @@ def return_files_tut():
 
 
 # Entregar TFG
+@app.route("/subirTFG")
+def subirTFG():
+    return render_template('subirTFG.html')
+
+@app.route('/registrarTFG', methods=['GET', 'POST'])
+def registrarTFG():
+    db = get_db()
+    db.execute(
+    "INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
+    "VALUES (?, ?, ?, ?, ?)",
+    (request.form['nombre'], 'Creado', request.form['director1'], request.form['director2'], request.form['titulacion'] )
+    )
+    db.commit()
+    return render_template('aux.html')
+
+
+
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
+
+    
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -337,13 +358,13 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db = get_db()
-            db.execute(
-            "INSERT INTO TFGs (trabajo, estado)"
-            "VALUES (?, ?)",
-            (filename, 'Creado')
-            )
-            db.commit()
+            #db = get_db()
+            #db.execute(
+            #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
+            #"VALUES (?, ?, ?, ?, ?)",
+            #(filename, 'Creado', request.form['director1'], request.form['director2'], request.form['titulacion'] )
+            #)
+            #db.commit()
             return render_template('pantallaOK.html')
 
     return '''
@@ -692,9 +713,10 @@ def registrarNuevoEstadoComision():
 
 
 
-@app.route("/modificarProfesoresComision/<int:ID>")
-def modificarProfesoresComision(ID):
-    #return(request.form.get('ID'))
+@app.route("/modificarProfesoresComision", methods=['POST'])
+def modificarProfesoresComision():
+    return("hola")
+    return(request.form.get('ID'))
      #sacamos los miembros de la comision
     db = get_db()
     miembros=db.execute("SELECT miembros FROM comisiones WHERE ID= ?", (ID,),
@@ -714,6 +736,103 @@ def registrarCambioProfesoresComision():
     return("hola")
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route("/listarTFGTitulacion")
+def listarTFGTitulacion():
+    return render_template('seleccionarTitulacion.html')
+
+
+
+
+
+
+@app.route('/filtrarTitulacion', methods=['GET', 'POST'])
+def filtrarTitulacion():
+    #return(request.form['titulacion'])
+
+
+    #ahora guardamos todos los trabajos que sean de la titulacion elegida
+    db = get_db()
+    trabajos=db.execute(
+        "SELECT * FROM TFGs WHERE titulacion= ?", (request.form['titulacion'],),
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('listarTFG.html', trabajos=trabajos)
+
+
+
+
+
+@app.route("/listarTFGProfesor")
+def listarTFGProfesor():
+    return render_template('seleccionarProfesor.html')
+
+
+
+@app.route('/filtrarProfesor', methods=['GET', 'POST'])
+def filtrarProfesor():
+    #return(request.form['titulacion'])
+
+
+    #ahora guardamos todos los trabajos que sean del director elegido
+    db = get_db()
+    trabajos=db.execute(
+        "SELECT * FROM TFGs WHERE director1= ?", (request.form['nombre'],),
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('listarTFG.html', trabajos=trabajos)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#####FUNCIONES PARA EL USUARIO NO REGISTRADO####################
+@app.route("/usuarioNoRegistrado")
+def usuarioNoRegistrado():
+    return render_template('menuprincipalUsuarioNoRegistrado.html')
+
+
+@app.route("/consultarTFG")
+def consultarTFG():
+
+    #ahora guardamos todos los trabajos que sean del director elegido
+    db = get_db()
+    trabajos=db.execute(
+        "SELECT * FROM TFGs"
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('listarTFG.html', trabajos=trabajos)
 
 
 if __name__ == "__main__":
