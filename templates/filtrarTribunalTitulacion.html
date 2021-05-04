@@ -1,0 +1,37 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+    <title>Seleccionar titulacion para filtrar</title>
+</head> 
+<body bgcolor=#e73057> 
+<p>Hello, {email}! You're logged in! Email: {email}</p>
+            
+            <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
+            <h1> <center> Seleccionar titulacion para filtrar </center></h1>
+
+			<form action="{{ url_for('filtrarTitulacion2') }}" method="post">
+  				<select name="titulacion">
+            <option selected value="0"> Titulaciones </option>
+            <optgroup label="EPSC"> 
+              <option value="informatica">I. Informatica</option> 
+              <option value="industrial">I. Industrial</option> 
+              <option value="electronica">I. Electronica</option> 
+            </optgroup> 
+            <optgroup label="ETSIAM"> 
+              <option value="veterinaria">Veterinaria</option> 
+              <option value="medicina">Medicina</option> 
+              <option value="enfermeria">Enfermeria</option> 
+            </optgroup> 
+          </select>
+
+
+
+
+
+
+
+  				<p>
+    				<input type="submit" value="Enviar">
+    				<input type="reset" value="Borrar">
+  				</p>
+			</form>

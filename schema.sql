@@ -38,7 +38,8 @@ CREATE TABLE TFGs (
   estado TEXT NOT NULL,
   director1 TEXT NOT NULL,
   director2 TEXT, 
-  titulacion TEXT NOT NULL
+  titulacion TEXT NOT NULL,
+  tribunal NUMBER NULL DEFAULT 0
 );
 
 
@@ -50,4 +51,15 @@ CREATE TABLE comisiones (
   estado TEXT NOT NULL,
   miembros TEXT NOT NULL,
   presidente TEXT NULL NULL
+);
+
+
+
+CREATE TABLE tribunal (
+  nombre TEXT NOT NULL,
+  id NUMBER PRIMARY KEY,
+  estado TEXT NOT NULL,
+  miembros TEXT NOT NULL,
+  presidente TEXT NOT NULL,
+  titulacion TEXT NOT NULL
 );

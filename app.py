@@ -483,7 +483,7 @@ def returnfiles2(nombreTFG):
     #return(nombreTFG)
     #return(str(nombreTFG))
     try:
-        return send_file('/home/carlos/Escritorio/TFG/'+nombreTFG, attachment_filename='ohhey.pdf')
+        return send_file('/home/carlos/Escritorio/TFG/'+nombreTFG+".pdf", attachment_filename='ohhey.pdf')
     except Exception as e:
         return str(e)
 
@@ -617,7 +617,34 @@ def marcarValidado(nombreTFG):
 
     db.commit()
 
+
+    return render_template('asignarTribunal.html', nombreTFG=nombreTFG)
+
+
+@app.route("/asignarTribunal", methods=['POST'])
+def asignarTribunal():
+    
+    #return("hola")
+
+    #return render_template('descargadocumento.html')
+
+
+
+
+
+    #return (request.form.get('trabajo'))
+
+    #introducimos los datos de la plantilla en la base de datos
+    db = get_db()
+    db.execute("UPDATE TFGs SET tribunal=? WHERE trabajo= ?", (request.form.get('ID'), request.form.get('trabajo')),
+
+
+        )
+
+    db.commit()
+
     return render_template('pantallaOK.html')
+
 
 
 
@@ -717,13 +744,15 @@ def registrarNuevoEstadoComision():
 def modificarProfesoresComision():
     
     ID=request.form.get('ID')
+    #return(ID)
      #sacamos los miembros de la comision
     db = get_db()
-    miembros=db.execute("SELECT miembros FROM comisiones WHERE ID= ?", (ID,),
+    miembros=db.execute("SELECT miembros FROM comisiones WHERE id= ?", (ID,),
 
 
-        ).fetchall()
+        ).fetchone()[0]
 
+    #return(miembros)
     return render_template('modificarProfesoresComision.html', ID=ID, miembros=miembros)
 
 
@@ -733,7 +762,20 @@ def modificarProfesoresComision():
 
 @app.route("/registrarCambioProfesoresComision", methods=['POST'])
 def registrarCambioProfesoresComision():
-    return("hola")
+    #return(request.form.get('miembros'))
+
+
+    #introducimos los datos de la plantilla en la base de datos
+    db = get_db()
+    db.execute("UPDATE comisiones SET miembros=? WHERE ID= ?", (request.form.get('miembros'), request.form.get('ID')),
+
+
+        )
+
+    db.commit()
+
+    return render_template('pantallaOK.html')
+
 
 
 
@@ -806,7 +848,77 @@ def filtrarProfesor():
 
 
 
+@app.route("/crearTribunal")
+def crearTribunal():
+    #return ("hola crearComision")
+    return render_template('crearTribunal.html')
 
+
+@app.route("/registrarNuevoTribunal", methods=['POST'])
+def registrarNuevoTribunal():
+    
+    #return("hola registrarNuevaComision")
+
+    #return render_template('descargadocumento.html')
+
+
+
+    #introducimos los datos de la plantilla en la base de datos
+    db = get_db()
+    db.execute(
+            "INSERT INTO tribunal (nombre, id, estado, miembros, presidente, titulacion)"
+            "VALUES (?, ?, 'Activo', ?, ?, ?)",
+            (request.form['nombre'], request.form['ID'], request.form['miembros'], request.form['presidente'], request.form['titulacion'])
+        )
+
+    db.commit()
+    return render_template('pantallaOK.html')
+
+
+
+
+@app.route("/modificarTribunal")
+def modificarTribunal():
+    #ahora guardamos todos los tribunales
+    db = get_db()
+    tribunales=db.execute(
+        "SELECT * FROM tribunal"
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('mostrarTribunales.html', tribunales=tribunales)
+
+
+
+@app.route("/modificarTribunal2/<int:ID>")
+def modificarTribunal2(ID):
+    return render_template('modificarTribunal.html', ID=ID)
+
+
+
+@app.route("/registrarModificacionTribunal", methods=['POST'])
+def registrarModificacionTribunal():
+    #return(request.form.get('miembros'))
+
+
+    #introducimos los datos de la plantilla en la base de datos
+    db = get_db()
+    db.execute("DELETE from tribunal WHERE ID= ?", (request.form.get('ID')),
+
+
+        )
+
+
+    db.commit()
+
+    db.execute(
+            "INSERT INTO tribunal (nombre, id, estado, miembros, presidente, titulacion)"
+            "VALUES (?, ?, 'Activo', ?, ?, ?)",
+            (request.form['nombre'], request.form['ID'], request.form['miembros'], request.form['presidente'], request.form['titulacion'])
+        )
+    db.commit()
+
+    return render_template('pantallaOK.html')
 
 
 
@@ -837,6 +949,57 @@ def consultarTFG():
    
     #return ("hola")
     return render_template('listarTFG.html', trabajos=trabajos)
+
+
+
+
+
+@app.route("/consultarTribunalesTitulacion")
+def consultarTribunalesTitulacion():
+    return render_template('filtrarTribunalTitulacion.html')
+
+
+@app.route('/filtrarTitulacion2', methods=['GET', 'POST'])
+def filtrarTitulacion2():
+    #return(request.form['titulacion'])
+
+
+    #ahora guardamos todos los tribunales que sean de la titulacion elegida
+    db = get_db()
+    tribunales=db.execute(
+        "SELECT * FROM tribunal WHERE titulacion= ?", (request.form['titulacion'],),
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('listarTribunales.html', tribunales=tribunales)
+
+
+
+@app.route("/consultarTribunalesProfesor")
+def consultarTribunalesProfesor():
+    return render_template('filtrarTribunalProfesor.html')
+
+
+
+@app.route('/filtrarProfesor2', methods=['GET', 'POST'])
+def filtrarProfesor2():
+    #return(request.form['titulacion'])
+
+
+    #ahora guardamos todos los tribunales en los que se encuentre el profesor
+    cadena="%"+request.form['nombre']+"%"
+    db = get_db()
+    tribunales=db.execute(
+        "SELECT * FROM tribunal WHERE miembros LIKE ? ", (cadena,),
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('listarTribunales.html', tribunales=tribunales)
+
+
+
+
+
 
 
 if __name__ == "__main__":

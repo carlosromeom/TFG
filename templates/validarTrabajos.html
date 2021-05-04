@@ -36,8 +36,10 @@
     <thead>
             <th>Trabajo</th>
             <th>Estado</th>
-
-            
+            <th>Director 1</th>
+            <th>Director 2</th>
+            <th>Titulacion</th>
+            <th>Tribunal</th>
     </thead>
 
                   {% for row in trabajos %}
@@ -47,7 +49,10 @@
                         
                         <td class="row-data"><a href="/registrarValidacionTrabajo/{{row[0]}}">{{row[0]}}</a></td>
                         <td class="row-data">{{row[1]}}</td>
-                        
+                        <td class="row-data">{{row[2]}}</td>
+                        <td class="row-data">{{row[3]}}</td>
+                        <td class="row-data">{{row[4]}}</td>
+                        <td class="row-data">{{row[5]}}</td>
                     
 
 
