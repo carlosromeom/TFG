@@ -15,7 +15,19 @@
   				<p>Poblacion: <input type="text" name="poblacion" size="40"></p>
   				<p>Codigo postal: <input type="number" name="codigoPostal"></p>
   				<p>DNI: <input type="text" name="DNI" size="25"></p>
-  				<p>Titulacion: <input type="text" name="titulacion" size="40"></p>
+  				<select name="titulacion">
+            <option selected value="0"> Titulaciones </option>
+            <optgroup label="EPSC"> 
+              <option value="informatica">I. Informatica</option> 
+              <option value="industrial">I. Industrial</option> 
+              <option value="electronica">I. Electronica</option> 
+            </optgroup> 
+            <optgroup label="ETSIAM"> 
+              <option value="veterinaria">Veterinaria</option> 
+              <option value="medicina">Medicina</option> 
+              <option value="enfermeria">Enfermeria</option> 
+            </optgroup> 
+          </select>
   				<p>Telefono fijo: <input type="number" name="tFijo"></p>
   				<p>Telefono movil: <input type="number" name="tMovil"></p>
   				<p>Email: <input type="text" name="email" size="40"></p>
@@ -33,3 +45,8 @@
     				<input type="reset" value="Borrar">
   				</p>
 			</form>
+
+
+
+
+<a class="button" href="/">Atras</a>

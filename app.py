@@ -396,7 +396,7 @@ def checkFileExistance(filePath):
 
 @app.route("/consultarTramites")
 def consultarTramites():
-    if checkFileExistance("/home/carlos/Escritorio/TFG/peticiondetema") and checkFileExistance("/home/carlos/Escritorio/TFG/TFGCarlos") :
+    if checkFileExistance("/home/carlos/Escritorio/TFG/peticiondetema") and checkFileExistance("/home/carlos/Escritorio/TFG/TFGCarlos.pdf") :
         return render_template('consultarTramitesTodoEntregado.html')
     else:
         return render_template('consultarTramitesSoloPeticion.html')

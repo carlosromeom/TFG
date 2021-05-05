@@ -18,7 +18,19 @@
 
 
 			<form action="/registrarTFG" method="post">
-  				<p>Titulacion: <input type="text" name="titulacion" size="40"></p>
+  			<select name="titulacion">
+            <option selected value="0"> Titulaciones </option>
+            <optgroup label="EPSC"> 
+              <option value="informatica">I. Informatica</option> 
+              <option value="industrial">I. Industrial</option> 
+              <option value="electronica">I. Electronica</option> 
+            </optgroup> 
+            <optgroup label="ETSIAM"> 
+              <option value="veterinaria">Veterinaria</option> 
+              <option value="medicina">Medicina</option> 
+              <option value="enfermeria">Enfermeria</option> 
+            </optgroup> 
+          </select>
   				<p>Nombre: <input type="text" name="nombre" size="40"></p>
   				<p>Director 1: <input type="text" name="director1" size="40"></p>
   				<p>Director 2: <input type="text" name="director2" size="40"></p>
@@ -28,3 +40,5 @@
     				<input type="reset" value="Borrar">
   				</p>
 			</form>
+
+<a class="button" href="/">Atras</a>
