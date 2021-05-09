@@ -32,15 +32,3 @@ class User(UserMixin):
             "VALUES (?, ?, ?, ?, ?)",
             (id_, name, email, profile_pic, "Estudiante"),  ) #inicialmente todos los usuarios tendran el rol de Estudiante
         db.commit()
-        
-
-    @staticmethod
-    def getRol(user_id):
-        db = get_db()
-        user = db.execute(
-            "SELECT * FROM user WHERE id = ?", (user_id,)
-        ).fetchone()
-        if not user:
-            return None
-
-        return user[4]

@@ -72,26 +72,6 @@ def load_user(user_id):
     return User.get(user_id)
 
 
-
-
-
-
-# homepage
-@app.route("/")
-def index():
-   
-    if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "Estudiante"):
-        return render_template('menuprincipal.html') #En caso de que sea estudiante
-    if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "MiembroComision"):
-        return render_template('menuprincipalMiembroComision.html') #En caso de que sea miembro de comision
-    if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "MiembroTribunal"):
-        return render_template('menuprincipalMiembroTribunal.html') #En caso de que sea miembro de tribunal
-    if current_user.is_authenticated and (current_user.getRol(session["user_id"])== "MiembroSecretaria"):
-        return render_template('menuprincipalMiembroSecretaria.html') #En caso de que sea miembro de secretaria
-    else:
-        return render_template('inicio.html')
-
-
 # login
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
@@ -183,6 +163,24 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
+
+
+# Homepage
+@app.route("/")
+def index():
+    print(current_user)
+    if current_user.is_authenticated:
+        print(current_user.rol)
+        if current_user.rol == "Estudiante":
+            return render_template('menuprincipal.html') #En caso de que sea estudiante
+        if current_user.rol == "MiembroComision":
+            return render_template('menuprincipalMiembroComision.html') #En caso de que sea miembro de comision
+        if current_user.rol == "MiembroTribunal":
+            return render_template('menuprincipalMiembroTribunal.html') #En caso de que sea miembro de tribunal
+        if current_user.rol == "MiembroSecretaria":
+            return render_template('menuprincipalMiembroSecretaria.html') #En caso de que sea miembro de secretaria
+    else:
+        return render_template('inicio.html')
 
 
 
