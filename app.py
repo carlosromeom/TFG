@@ -1,30 +1,18 @@
-# Python standard libraries
+# Python standard library
 import json
 import os
 import sqlite3
 from datetime import date
 from datetime import datetime
-from fpdf import FPDF
-from flask import make_response
-from flask_login import UserMixin
-from flask import flash 
-from werkzeug.utils import secure_filename
-
 from os import listdir
 from os.path import isfile, join
 
-
-UPLOAD_FOLDER = '/home/carlos/Escritorio/TFG'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-
-
-
+# Flask modules
+from flask import make_response
+from flask import flash 
 from flask import send_file
-
-from db import get_db
-
-# Third-party libraries
 from flask import Flask, redirect, request, render_template, url_for, session
+from flask_login import UserMixin
 from flask_login import (
     LoginManager,
     current_user,
@@ -32,15 +20,18 @@ from flask_login import (
     login_user,
     logout_user,
 )
+from werkzeug.utils import secure_filename
+
+# Third-party modules
+from fpdf import FPDF
+from db import get_db
+from db import init_db_command
+
 from oauthlib.oauth2 import WebApplicationClient
 import requests
 
-
-
 # Internal imports
-from db import init_db_command
 from user import User
-
 
 # Configuration
 #GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
@@ -50,6 +41,9 @@ GOOGLE_CLIENT_SECRET = "rXylh-_s055kBqz_ltF_u6t3"
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )
+
+UPLOAD_FOLDER = '/home/carlos/Escritorio/TFG'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 
 # Flask app setup
@@ -342,7 +336,6 @@ def allowed_file(filename):
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-
     
     if request.method == 'POST':
         # check if the post request has the file part
@@ -381,7 +374,6 @@ def upload_file():
 
 
 #Consultar estado de los tramites
-
 def checkFileExistance(filePath):
     try:
         with open(filePath, 'r') as f:
