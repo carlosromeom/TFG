@@ -220,12 +220,23 @@ def prepararPDF():
         check2="No"
 
 
+    if request.form.get('director1Externo'):
+        director1=request.form['director1'] + " EXTERNO"
+    else:
+        director1=request.form['director1']
+
+    if request.form.get('director2Externo'):
+        director2=request.form['director2'] + " EXTERNO"
+    else:
+        director2=request.form['director2']
+
+
     #introducimos los datos de la plantilla en la base de datos
     db = get_db()
     db.execute(
             "INSERT INTO peticiones (nombre, direccion, poblacion, codigoPostal, DNI, titulacion, telefonoFijo, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, director1, director2, presidente, estado, fecha)"
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['director1'], request.form['director2'], request.form['presidente'], "Creada", str(datetime.datetime.now()))
+            (request.form['nombre'], request.form['direccion'], request.form['poblacion'], request.form['codigoPostal'], request.form['DNI'], request.form['titulacion'], request.form['tFijo'], request.form['tMovil'], request.form['email'], request.form['creditosPendientes'], request.form['titulo'], check1, check2, request.form['propuestaTribunal'], director1, director2, request.form['presidente'], "Creada", str(datetime.datetime.now()))
         )
 
     db.commit()
@@ -269,8 +280,8 @@ def prepararPDF():
 
     pdf.cell(200, 10, txt="", ln=2, align="L")
 
-    pdf.cell(200, 10, txt="Director 1: "+str(request.form['director1']), ln=2, align="L")
-    pdf.cell(200, 10, txt="Director 2: "+str(request.form['director2']), ln=2, align="L")
+    pdf.cell(200, 10, txt="Director 1: "+director1, ln=2, align="L")
+    pdf.cell(200, 10, txt="Director 2: "+director2, ln=2, align="L")
 
     pdf.cell(200, 10, txt="", ln=2, align="L")
 
@@ -278,7 +289,8 @@ def prepararPDF():
     pdf.cell(200, 10, txt="", ln=2, align="L")
     pdf.cell(200, 10, txt="Peticion creada en: "+str(date.today()), ln=2, align="L")
 
-    pdf.output('peticiondetema', 'F')
+    #nombrePDF="PeticionTema"+request.form['DNI']+str(datetime.datetime.now())
+    pdf.output("peticiondetema", 'F')
 
 
     #response = make_response(pdf.output(dest='F').encode('latin-1'))
@@ -392,6 +404,67 @@ def consultarTramites():
     else:
         return render_template('consultarTramitesSoloPeticion.html')
     
+
+
+
+
+
+"""
+
+
+@app.route("/consultarEvaluacionPeticion")
+def consultarEvaluacionPeticion():
+    db = get_db()
+    peticiones=db.execute(
+        "SELECT estado FROM peticiones where DNI = METER DNI" # a la espera de sacarlo del login de la uco
+        ).fetchall()
+
+    db.commit()
+
+    if checkFileExistance("/home/carlos/Escritorio/TFG/peticiondetema"):
+        if (peticiones== "Aceptada"):
+            return render_template('peticionAceptada.html')
+        if (peticiones== "Denegada"):
+            return render_template('peticionDenegada.html')
+        if (peticiones== "Ampliar Memoria"):
+            return render_template('peticionAmpliar.html')
+        if (peticiones== "Aceptada con sugerencias"):
+            db = get_db()
+            sugerencias=db.execute(
+                "SELECT sugerencias FROM peticiones where DNI = METER DNI" # a la espera de sacarlo del login de la uco
+            ).fetchall()
+
+            db.commit()
+            return render_template('peticionSugerencias.html', sugerencias=sugerencias)
+        else:
+            return render_template('NoEvaluada.html')
+    else:
+        return render_template('errorNoEncontrado.html')
+
+
+
+
+
+
+@app.route("/guardarSugerencias", methods=['POST'])
+def guardarSugerencias():
+    if (request.form.get('Accion') == "Aceptar"):
+        db = get_db()
+        db.execute("UPDATE peticiones SET estado='Aceptadas' WHERE DNI= ?", (SACAR DNI,),
+        )
+        db.commit()
+        return render_template('sugerenciasAceptadas.html')
+    else:
+        db = get_db()
+        db.execute("UPDATE peticiones SET estado='No Aceptadas' WHERE DNI= ?", (SACAR DNI,),
+        )
+        db.commit()
+        return render_template('sugerenciasNoAceptadas.html')
+    
+
+"""
+
+
 
 
 
