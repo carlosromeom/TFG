@@ -13,7 +13,7 @@ CREATE TABLE peticiones (
   direccion TEXT NOT NULL,
   poblacion TEXT NOT NULL,
   codigoPostal TEXT  NOT NULL,
-  DNI TEXT PRIMARY KEY,
+  DNI TEXT NOT NULL,
   titulacion TEXT NOT NULL,
   telefonoFijo NUMBER,
   telefonoMovil NUMBER,
@@ -28,7 +28,9 @@ CREATE TABLE peticiones (
   presidente TEXT NOT NULL,
   estado TEXT NOT NULL,
   resolucion TEXT,
-  sugerencias TEXT
+  sugerencias TEXT,
+  fecha TEXT NOT NULL, 
+  PRIMARY KEY(DNI, fecha)
 
 );
 
