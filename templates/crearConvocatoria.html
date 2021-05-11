@@ -1,0 +1,41 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+    <title>Crear nueva convocatoria</title>
+</head> 
+<body bgcolor=#e73057> 
+<p>Hello, {email}! You're logged in! Email: {email}</p>
+            
+            <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
+            <h1> <center> Crear nueva convocatoria para lectura de trabajos </center></h1>
+
+			<form action="{{ url_for('registrarNuevaConvocatoria') }}" method="post">
+  				<select name="titulacion">
+            <option selected value="0"> Titulaciones </option>
+            <optgroup label="EPSC"> 
+              <option value="informatica">I. Informatica</option> 
+              <option value="industrial">I. Industrial</option> 
+              <option value="electronica">I. Electronica</option> 
+            </optgroup> 
+            <optgroup label="ETSIAM"> 
+              <option value="veterinaria">Veterinaria</option> 
+              <option value="medicina">Medicina</option> 
+              <option value="enfermeria">Enfermeria</option> 
+            </optgroup> 
+          </select>
+
+          <select name="trabajo">
+            <option selected value="0"> Trabajo </option>
+              <option value="TFG">TFG</option> 
+              <option value="TFM">TFM</option> 
+          </select>
+
+  				<p>Fecha inicio: <input type="date" id="fechainicio" name="fechainicio"></p>
+  				<p>Fecha fin: <input type="date" id="fechafin" name="fechafin"></p>
+          <p>Notas: <input type="text" name="notas" size="40"></p>
+  				
+  				<p>
+    				<input type="submit" value="Enviar">
+    				<input type="reset" value="Borrar">
+  				</p>
+			</form>

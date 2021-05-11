@@ -65,3 +65,12 @@ CREATE TABLE tribunal (
   presidente TEXT NOT NULL,
   titulacion TEXT NOT NULL
 );
+
+
+CREATE TABLE lectura (
+  titulacion TEXT NOT NULL,
+  tipoTrabajo TEXT NOT NULL,
+  fechainicio TEXT NOT NULL, 
+  fechafin TEXT NOT NULL, 
+  aclaraciones TEXT
+);

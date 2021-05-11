@@ -997,6 +997,37 @@ def registrarModificacionTribunal():
 
 
 
+@app.route("/publicarConvocatorias")
+def publicarConvocatorias():
+    #return ("hola crearComision")
+    return render_template('crearConvocatoria.html')
+
+
+
+@app.route("/registrarNuevaConvocatoria", methods=['POST'])
+def registrarNuevaConvocatoria():
+    
+    #return("hola registrarNuevaComision")
+
+    #return render_template('descargadocumento.html')
+
+
+
+    #introducimos los datos de la plantilla en la base de datos
+    db = get_db()
+    db.execute(
+            "INSERT INTO lectura (titulacion, tipoTrabajo, fechainicio, fechafin, aclaraciones)"
+            "VALUES (?, ?, ?, ?, ?)",
+            (request.form['titulacion'], request.form['trabajo'], request.form['fechainicio'], request.form['fechafin'], request.form['notas'])
+        )
+
+    db.commit()
+    return render_template('pantallaOK.html')
+
+
+
+
+
 
 
 
@@ -1068,6 +1099,26 @@ def filtrarProfesor2():
    
     #return ("hola")
     return render_template('listarTribunales.html', tribunales=tribunales)
+
+
+
+
+@app.route('/consultarConvocatoriasLectura', methods=['GET', 'POST'])
+def consultarConvocatoriasLectura():
+    #return(request.form['titulacion'])
+
+    fechaHoy=datetime.datetime.now()
+    db = get_db()
+    convocatorias=db.execute(
+        "SELECT * FROM lectura WHERE date(fechafin) >= ? ", (fechaHoy.strftime("%x"),),
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('listarConvocatorias.html', convocatorias=convocatorias)
+
+
+
+
 
 
 

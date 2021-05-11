@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <title>Listado de convocatorias para lectura</title>
+<style>
+.table-layout {
+    text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-family:"Trebuchet MS";
+    margin: 0 auto 0;
+}
+.table-layout td, .table-layout th {
+    border: 1px solid grey;
+    padding: 5px 5px 0;
+}
+.table-layout td {
+    text-align: left;
+}
+.selected {
+    color: red;
+}
+</style>
+</head>  
+
+
+
+<body bgcolor=#e73057> 
+
+	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
+            <h1> <center> Listado de convocatorias vigentes para la lectura de los trabajos</center></h1>
+
+
+<div id="display-table">
+<table class="table-layout">
+    <thead>
+        <tr>
+            <th>Titulacion</th>
+            <th>Tipo de trabajo</th>
+            <th>Fecha inicio</th>
+            <th>Fecha fin</th>
+            <th>Aclaraciones</th>
+        </tr>
+
+    </thead>
+
+                  {% for row in convocatorias %}
+               
+
+                  <tr>
+                        <td class="row-data">{{row[0]}}</td>
+                        <td class="row-data">{{row[1]}}</td>
+                        <td class="row-data">{{row[2]}}</td>
+                        <td class="row-data">{{row[3]}}</td>
+                        <td class="row-data">{{row[4]}}</td>
+                        
+                        
+                  </tr>
+          
+                  {% endfor %}
+            </table>
+      </div>
+
+
+           
+
+
+    <p>
+        <input type="button" value="Crear PDF" 
+            id="btPrint" onclick="createPDF()" />
+    </p>
+</body>
+
+
+<script>
+    function createPDF() {
+        var sTable = document.getElementById('display-table').innerHTML;
+
+        var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 3px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: center;}";
+        style = style + "</style>";
+
+        // CREATE A WINDOW OBJECT.
+        var win = window.open('', '', 'height=700,width=700');
+
+        win.document.write('<html><head>');
+        win.document.write('<title>Profile</title>');   // <title> FOR PDF HEADER.
+        win.document.write(style);          // ADD STYLE INSIDE THE HEAD TAG.
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(sTable);         // THE TABLE CONTENTS INSIDE THE BODY TAG.
+        win.document.write('</body></html>');
+
+        win.document.close();   // CLOSE THE CURRENT WINDOW.
+
+        win.print();    // PRINT THE CONTENTS.
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
+
+
+
+
+
