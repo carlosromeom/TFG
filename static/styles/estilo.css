@@ -20,7 +20,7 @@ TD  {
 }
 
 BODY  {
- background-image: url(http://backgroundlabs.com/files/painted-wood-planks-large-background-2899.jpg);
+ background-image: url('fondo.jpg');
  font-family : arial;
  color : White;
 }
