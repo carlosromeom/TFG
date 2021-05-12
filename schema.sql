@@ -9,6 +9,7 @@ CREATE TABLE user (
 
 
 CREATE TABLE peticiones (
+  ID TEXT PRIMARY KEY,
   nombre TEXT NOT NULL,
   DNI TEXT NOT NULL,
   titulacion TEXT NOT NULL,
@@ -33,18 +34,16 @@ CREATE TABLE peticiones (
   DNIDirectorExterno TEXT,
   emailDirectorExterno TEXT,
   TitulacionDirectorExterno TEXT,
-
   estado TEXT NOT NULL,
   resolucion TEXT,
   sugerencias TEXT,
-  fecha TEXT NOT NULL, 
-  PRIMARY KEY(DNI, fecha)
-
+  fecha TEXT NOT NULL
 );
 
 
 CREATE TABLE TFGs (
-  trabajo BLOB NOT NULL,
+  ID TEXT PRIMARY KEY,
+  nombre TEXT NOT NULL,
   estado TEXT NOT NULL,
   director1 TEXT NOT NULL,
   director2 TEXT, 

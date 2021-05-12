@@ -236,14 +236,14 @@ def prepararPDF():
     else:
         creditos="No"
     
-
+    ID = str(current_user.email)+str(datetime.datetime.now())
 
     #introducimos los datos de la plantilla en la base de datos
     db = get_db()
     db.execute(
-            "INSERT INTO peticiones (nombre, DNI, titulacion, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director1Ext, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (request.form['nombre'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], request.form['email'], creditos, request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], director1Ext, request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
+            "INSERT INTO peticiones (ID, nombre, DNI, titulacion, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director1Ext, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (ID, request.form['nombre'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], current_user.email, creditos, request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], director1Ext, request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
         )
 
     db.commit()
@@ -253,6 +253,7 @@ def prepararPDF():
 
     pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
     pdf.cell(200, 10, txt="Peticion de tema de TFG", ln=1, align="C")
+    pdf.cell(200, 10, txt="ID: "+ID, ln=1, align="C")
     pdf.cell(200, 10, txt="", ln=2, align="L")
     pdf.cell(200, 10, txt="", ln=2, align="L")
     pdf.cell(200, 10, txt="", ln=2, align="L")
@@ -263,7 +264,7 @@ def prepararPDF():
     pdf.cell(200, 10, txt="DNI: "+str(request.form['DNI']), ln=2, align="L")
     pdf.cell(200, 10, txt="Titulacion: "+str(request.form['titulacion']), ln=2, align="L")
     pdf.cell(200, 10, txt="Telefono movil: "+str(request.form['tMovil']), ln=2, align="L")
-    pdf.cell(200, 10, txt="Email: "+str(request.form['email']), ln=2, align="L")
+    pdf.cell(200, 10, txt="Email: "+str(current_user.email), ln=2, align="L")
     pdf.cell(200, 10, txt="", ln=2, align="L")
 
     pdf.cell(200, 10, txt="Confirmo cumplimiento requisito creditos pendientes EPSC: "+creditos, ln=2, align="L")
@@ -271,7 +272,6 @@ def prepararPDF():
     pdf.cell(200, 10, txt="Solicita,en virtud de lo dispuesto en la normativa de referencia, la aprobación del Tema para ", ln=2, align="L")
     pdf.cell(200, 10, txt="la realización del Proyecto Fin de Carrera que a continuación se describe, y para la cual se adjunta", ln=2, align="L") 
     pdf.cell(200, 10, txt="documento memoria descriptiva del mismo.", ln=2, align="L")
-
 
     pdf.cell(200, 10, txt="", ln=2, align="L")
 
@@ -349,8 +349,51 @@ def return_files_tut():
 # Entregar TFG
 @app.route("/subirTFG")
 def subirTFG():
-    return render_template('subirTFG.html')
+    #lo primero es sacar todas las peticiones de tema de la BD
 
+
+    db = get_db()
+    peticiones=db.execute(
+        "SELECT * FROM peticiones where estado = 'Revisada' and email = ?", (str(current_user.email),),
+        ).fetchall()
+   
+    #return ("hola")
+    return render_template('consultarPeticionPresentarTrabajo.html', peticiones=peticiones)
+
+
+
+    #return render_template('subirTFG.html')
+
+
+@app.route("/registrarTFG/<string:id>")
+def registrarTFG(id):
+    db = get_db()
+    aux=db.execute(
+        "SELECT * FROM peticiones where ID = ?", (id,),
+        ).fetchall()
+
+    #hasta aqui va bien
+
+
+
+
+
+    db = get_db()
+    db.execute(
+    "INSERT INTO TFGs (ID, nombre, estado, director1, director2, titulacion)"
+    "VALUES (?, ?, ?, ?, ?, ?)",
+    (id, trabajo, 'Creado', director1, director2, titulacion)
+    )
+    db.commit()
+
+
+    return("hola")
+    return render_template('evaluar.html', id=id)
+
+
+
+
+"""
 @app.route('/registrarTFG', methods=['GET', 'POST'])
 def registrarTFG():
     db = get_db()
@@ -362,7 +405,7 @@ def registrarTFG():
     db.commit()
     return render_template('aux.html')
 
-
+"""
 
 
 def allowed_file(filename):
@@ -513,6 +556,8 @@ def consultarPeticionesdeTema():
 @app.route("/evaluarPeticion/<int:dni>")
 def evaluarPeticion(dni):
     return render_template('evaluar.html', dni=dni)
+
+
 
 @app.route("/registrarEvaluacion", methods=['GET', 'POST'])
 def registrarEvaluacion():
