@@ -338,7 +338,9 @@ def return_files_tut():
         return str(e)
 
 
-
+@app.route('/subirMemoria', methods=['GET', 'POST'])
+def subirMemoria():
+    return render_template('aux.html')
 
 
 
