@@ -37,22 +37,30 @@
 <table id="display-table" class="table-layout">
     <thead>
             <th>Nombre</th>
-            <th>Direccion</th>
-            <th>Poblacion</th>
-            <th>CP</th>
             <th>DNI</th>
             <th>Titulacion</th>
-            <th>Telefono Fijo</th>
             <th>Telefono Movil</th>
             <th>Email</th>
-            <th>Creditos Pendientes</th>
+            <th>Confirmacion requisito creditos Pendientes</th>
             <th>Titulo</th>
             <th>Modificacion Ampliacion</th>
             <th>Solicitud adelanto</th>
             <th>Propuesta de tribunal</th>
+            <th>Nombre M. tribunal</th>
+            <th>Apellido M. tribunal</th>
+            <th>DNI M. tribunal</th>
+            <th>Email M. tribunal</th>
+            <th>Titulacion M. tribunal</th>
             <th>Director 1</th>
+            <th>Externo</th>
             <th>Director 2</th>
-            <th>Presidente de la comision de</th>
+            <th>Externo</th>
+            <th>Nombre Dir. 2 Externo</th>
+            <th>Apellido Dir. 2 Externo</th>
+            <th>DNI Dir. 2 Externo</th>
+            <th>Email Dir. 2 Externo</th>
+            <th>Titulacion Dir. 2 Externo</th>
+
             <th>Estado</th>
             <th>Fecha</th>
             
@@ -64,10 +72,10 @@
                   <tr>
                         
                         <td class="row-data">{{row[0]}}</td>
-                        <td class="row-data">{{row[1]}}</td>
+                        <td class="row-data"><a href="/evaluarPeticion/{{row[1]}}">{{row[1]}}</a></td>
                         <td class="row-data">{{row[2]}}</td>
                         <td class="row-data">{{row[3]}}</td>
-                        <td class="row-data"><a href="/evaluarPeticion/{{row[4]}}">{{row[4]}}</a></td>
+                        <td class="row-data">{{row[4]}}</td>
                         <td class="row-data">{{row[5]}}</td>
                         <td class="row-data">{{row[6]}}</td>
                         <td class="row-data">{{row[7]}}</td>
@@ -82,6 +90,14 @@
                         <td class="row-data">{{row[16]}}</td>
                         <td class="row-data">{{row[17]}}</td>
                         <td class="row-data">{{row[18]}}</td>
+                        <td class="row-data">{{row[19]}}</td>
+                        <td class="row-data">{{row[20]}}</td>
+                        <td class="row-data">{{row[21]}}</td>
+                        <td class="row-data">{{row[22]}}</td>
+                        <td class="row-data">{{row[23]}}</td>
+                        <td class="row-data">{{row[24]}}</td>
+                        <td class="row-data">{{row[25]}}</td>
+                        
 
                         
                   </tr>
