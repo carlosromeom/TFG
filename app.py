@@ -552,27 +552,27 @@ def marcarCancelada(id):
 def consultarEvaluacionPeticion():
     db = get_db()
     aceptadas=db.execute(
-        "SELECT * FROM peticiones WHERE email = ? and estado='Aceptada'", (str(current_user.email),),
+        "SELECT * FROM peticiones WHERE email = ? and resolucion='Aceptada'", (str(current_user.email),),
         ).fetchall()
 
     db = get_db()
     denegadas=db.execute(
-        "SELECT * FROM peticiones WHERE email = ? and estado='Denegada'", (str(current_user.email),),
+        "SELECT * FROM peticiones WHERE email = ? and resolucion='Denegada'", (str(current_user.email),),
         ).fetchall()
 
     db = get_db()
     ampliar=db.execute(
-        "SELECT * FROM peticiones WHERE email = ? and estado='AmpliarMemoria'", (str(current_user.email),),
+        "SELECT * FROM peticiones WHERE email = ? and resolucion='AmpliarMemoria'", (str(current_user.email),),
         ).fetchall()
 
     db = get_db()
     sugerencias=db.execute(
-        "SELECT * FROM peticiones WHERE email = ? and estado='AceptadaSugerencias'", (str(current_user.email),),
+        "SELECT * FROM peticiones WHERE email = ? and resolucion='AceptadaSugerencias'", (str(current_user.email),),
         ).fetchall()
 
     db = get_db()
     resto=db.execute(
-        "SELECT * FROM peticiones WHERE email = ? and not estado = ('AceptadaSugerencias' or 'AmpliarMemoria' or 'Denegada' or 'Aceptada' or 'sugerenciasAceptadas' or 'sugerenciasDenegadas')", (str(current_user.email),),
+        "SELECT * FROM peticiones WHERE email = ? and not resolucion = ('AceptadaSugerencias' or 'AmpliarMemoria' or 'Denegada' or 'Aceptada' or 'sugerenciasAceptadas' or 'sugerenciasDenegadas')", (str(current_user.email),),
         ).fetchall()
 
     return render_template('consultarEvaluacionPeticion.html', aceptadas=aceptadas, denegadas=denegadas, ampliar=ampliar, sugerencias=sugerencias, resto=resto)
@@ -626,7 +626,7 @@ def revisarSugerencias(id):
 def guardarSugerencias():
 
     db = get_db()
-    db.execute("UPDATE peticiones SET estado=? WHERE ID= ?", (request.form['marcarSugerencias'],request.form['id'],),
+    db.execute("UPDATE peticiones SET resolucion=? WHERE ID= ?", (request.form['marcarSugerencias'],request.form['id'],),
 
 
         )
