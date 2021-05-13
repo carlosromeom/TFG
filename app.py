@@ -551,12 +551,35 @@ def marcarCancelada(id):
 @app.route("/consultarEvaluacionPeticion")
 def consultarEvaluacionPeticion():
     db = get_db()
-    peticiones=db.execute(
-        "SELECT estado FROM peticiones where DNI = METER DNI" # a la espera de sacarlo del login de la uco
+    aceptadas=db.execute(
+        "SELECT * FROM peticiones WHERE email = ? and estado='Aceptada'", (str(current_user.email),),
         ).fetchall()
 
-    db.commit()
+    db = get_db()
+    denegadas=db.execute(
+        "SELECT * FROM peticiones WHERE email = ? and estado='Denegada'", (str(current_user.email),),
+        ).fetchall()
 
+    db = get_db()
+    ampliar=db.execute(
+        "SELECT * FROM peticiones WHERE email = ? and estado='AmpliarMemoria'", (str(current_user.email),),
+        ).fetchall()
+
+    db = get_db()
+    sugerencias=db.execute(
+        "SELECT * FROM peticiones WHERE email = ? and estado='AceptadaSugerencias'", (str(current_user.email),),
+        ).fetchall()
+
+    db = get_db()
+    resto=db.execute(
+        "SELECT * FROM peticiones WHERE email = ? and not estado = ('AceptadaSugerencias' or 'AmpliarMemoria' or 'Denegada' or 'Aceptada' or 'sugerenciasAceptadas' or 'sugerenciasDenegadas')", (str(current_user.email),),
+        ).fetchall()
+
+    return render_template('consultarEvaluacionPeticion.html', aceptadas=aceptadas, denegadas=denegadas, ampliar=ampliar, sugerencias=sugerencias, resto=resto)
+
+
+
+"""
     if checkFileExistance("/home/carlos/Escritorio/TFG/peticiondetema"):
         if (peticiones== "Aceptada"):
             return render_template('peticionAceptada.html')
@@ -579,25 +602,38 @@ def consultarEvaluacionPeticion():
 
 
 
+"""
+
+
+
+
+
+
+@app.route("/revisarSugerencias/<string:id>")
+def revisarSugerencias(id):
+    db = get_db()
+    sugerencias=db.execute(
+        "SELECT sugerencias FROM peticiones WHERE ID = ? ", (id,),
+        ).fetchall()
+
+    return render_template('marcarSugerencias.html', sugerencias=sugerencias, id=id)
+
+
 
 
 
 @app.route("/guardarSugerencias", methods=['POST'])
 def guardarSugerencias():
-    if (request.form.get('Accion') == "Aceptar"):
-        db = get_db()
-        db.execute("UPDATE peticiones SET estado='Aceptadas' WHERE DNI= ?", (SACAR DNI,),
-        )
-        db.commit()
-        return render_template('sugerenciasAceptadas.html')
-    else:
-        db = get_db()
-        db.execute("UPDATE peticiones SET estado='No Aceptadas' WHERE DNI= ?", (SACAR DNI,),
-        )
-        db.commit()
-        return render_template('sugerenciasNoAceptadas.html')
-    
 
+    db = get_db()
+    db.execute("UPDATE peticiones SET estado=? WHERE ID= ?", (request.form['marcarSugerencias'],request.form['id'],),
+
+
+        )
+
+    db.commit()
+
+    return render_template('pantallaOK.html')
 
 
 
