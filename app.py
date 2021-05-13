@@ -643,6 +643,27 @@ def guardarSugerencias():
 
 
 
+
+
+@app.route("/ampliar/<string:id>")
+def ampliar(id):
+    db = get_db()
+    sugerencias=db.execute(
+        "SELECT sugerencias FROM peticiones WHERE ID = ? ", (id,),
+        ).fetchall()
+
+    return render_template('ampliar.html', sugerencias=sugerencias, id=id)
+
+
+
+
+
+
+
+
+
+
+
 ####FUNCIONES PARA EL ACTOR MIEMBRO DE COMISION####
 
 #Consultar peticiones de tema
