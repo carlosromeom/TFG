@@ -3,6 +3,7 @@
     <title>Validar peticion de tema</title>
 </head>  
 
+
 <body bgcolor=#e73057> 
 
 	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
@@ -10,9 +11,8 @@
 
 
            
-            <a href="/return-files/" target="blank"><button class='btn btn-default'>Descargar</button></a>
-            <h4>{{dni}}</h4>
-
+            <a href="/return-files3/{{email}}" target="blank"><button class='btn btn-default'>Descargar</button></a>
+            <h4>{{id}}</h4>
 
 
 
@@ -43,7 +43,7 @@ function highlight_row() {
 
                   
 
-                        <input type="hidden" name="dni" value={{dni}}>
+                        <input type="text" size="70" name="id" value={{id}}>
 
                         <p>
                         <input type="submit" value="Enviar">

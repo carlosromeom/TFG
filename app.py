@@ -496,7 +496,7 @@ def descargarPeticion():
 
 @app.route("/return-files3/<string:email>")
 def return_files3(email):
-    #return(email)
+    return(email)
 
     try:
         return send_file(UPLOAD_FOLDER+"/"+email+"PETICION.pdf", attachment_filename='ohhey.pdf')
@@ -679,9 +679,14 @@ def consultarPeticionesdeTema():
     return render_template('consultarPeticionesdeTema.html', peticiones=peticiones)
 
 
-@app.route("/evaluarPeticion/<int:dni>")
-def evaluarPeticion(dni):
-    return render_template('evaluar.html', dni=dni)
+@app.route("/evaluarPeticion/<string:id>")
+def evaluarPeticion(id):
+    db = get_db()
+    email=db.execute(
+        "SELECT email FROM peticiones where id = ?", (id,),
+        ).fetchall()
+
+    return render_template('evaluar.html', id=id, email=email)
 
 
 
@@ -697,16 +702,16 @@ def registrarEvaluacion():
     else :
         resolucion="Denegada"
 
-    id=(str(request.form.get('dni')))
+    
     sugerencias= (str(request.form.get('sugerencias')))
 
 
   
-
+    return(request.form['id'])
 
     #ahora se registra la peticion de tema como evaluada en la BD
     db = get_db()
-    db.execute("UPDATE peticiones SET estado='Revisada', resolucion=?, sugerencias=? WHERE DNI= ?", (resolucion, sugerencias, id,),
+    db.execute("UPDATE peticiones SET estado='Revisada', resolucion=?, sugerencias=? WHERE ID= ?", (resolucion, sugerencias, request.form['id'],),
 
 
         )
@@ -801,10 +806,10 @@ def upload_file2():
 
 
 
-####FUNCIONES PARA EL ACTOR MIEMBRO DE SECRETARIA####
+###################################FUNCIONES PARA EL ACTOR MIEMBRO DE SECRETARIA######################################
 @app.route("/validarPeticiones")
 def validarPeticiones():
-    #lo primero es sacar todas las trabajos sin validar de la BD
+    #lo primero es sacar todas las peticiones sin validar de la BD
 
     db = get_db()
     peticiones=db.execute(
@@ -815,9 +820,15 @@ def validarPeticiones():
     return render_template('validarPeticionesdeTema.html', peticiones=peticiones)
 
 
-@app.route("/validarPeticion/<int:dni>")
-def validarPeticion(dni):
-    return render_template('validar.html', dni=dni)
+@app.route("/validarPeticion/<string:id>")
+def validarPeticion(id):
+    db = get_db()
+    email=db.execute(
+        "SELECT * FROM peticiones where ID = ?", (id,),
+        ).fetchall()
+    
+    
+    return render_template('validar.html', id=id, email=email[0][6])
 
 
 
@@ -830,8 +841,11 @@ def registrarValidacion():
     else :
         validacion="NoValidada"
 
-    id=(str(request.form.get('dni')))
-    sugerencias= (str(request.form.get('sugerencias')))
+    id=(str(request.form.get('id')))
+
+
+    #return(id)
+    #sugerencias= (str(request.form.get('sugerencias')))
 
 
   
@@ -839,7 +853,7 @@ def registrarValidacion():
 
     #ahora se registra la peticion de tema como validada o no en la BD
     db = get_db()
-    db.execute("UPDATE peticiones SET estado=? WHERE DNI= ?", (validacion, id,),
+    db.execute("UPDATE peticiones SET estado=? WHERE ID= ?", (validacion, id,),
 
 
         )
