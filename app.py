@@ -241,9 +241,9 @@ def prepararPDF():
     #introducimos los datos de la plantilla en la base de datos
     db = get_db()
     db.execute(
-            "INSERT INTO peticiones (ID, nombre, DNI, titulacion, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director1Ext, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (ID, request.form['nombre'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], current_user.email, creditos, request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], director1Ext, request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
+            "INSERT INTO peticiones (ID, nombreTrabajo, nombreAlumno, DNI, titulacion, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director1Ext, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (ID, request.form['nombreTrabajo'], request.form['nombreAlumno'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], current_user.email, creditos, request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], director1Ext, request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
         )
 
     db.commit()
@@ -257,7 +257,8 @@ def prepararPDF():
     pdf.cell(200, 10, txt="", ln=2, align="L")
     pdf.cell(200, 10, txt="", ln=2, align="L")
     pdf.cell(200, 10, txt="", ln=2, align="L")
-    pdf.cell(200, 10, txt="Nombre y apellidos: "+str(request.form['nombre']), ln=2, align="L")
+    pdf.cell(200, 10, txt="Nombre del trabajo: "+str(request.form['nombreTrabajo']), ln=2, align="L")
+    pdf.cell(200, 10, txt="Nombre y apellidos: "+str(request.form['nombreAlumno']), ln=2, align="L")
 
     pdf.cell(200, 10, txt="", ln=2, align="L")
 
@@ -373,6 +374,8 @@ def registrarTFG(id):
     aux=db.execute(
         "SELECT * FROM peticiones where ID = ?", (id,),
         ).fetchall()
+    #print("AUX PRUEBA: " , aux[0][0])
+
 
     #hasta aqui va bien
 
@@ -384,13 +387,21 @@ def registrarTFG(id):
     db.execute(
     "INSERT INTO TFGs (ID, nombre, estado, director1, director2, titulacion)"
     "VALUES (?, ?, ?, ?, ?, ?)",
-    (id, trabajo, 'Creado', director1, director2, titulacion)
+    (id, aux[0][1], 'Creado', aux[0][17], aux[0][19], aux[0][4])
     )
     db.commit()
 
+    
+    db = get_db()
+    db.execute("UPDATE peticiones SET estado=? WHERE ID= ?", ('TrabajoSubido', id,),
+    )
 
-    return("hola")
-    return render_template('evaluar.html', id=id)
+    db.commit()
+
+
+
+
+    return render_template('aux.html')
 
 
 
@@ -466,19 +477,75 @@ def checkFileExistance(filePath):
 
 
 
-@app.route("/consultarTramites")
-def consultarTramites():
-    if checkFileExistance("/home/carlos/Escritorio/TFG/peticiondetema") and checkFileExistance("/home/carlos/Escritorio/TFG/TFGCarlos.pdf") :
-        return render_template('consultarTramitesTodoEntregado.html')
-    else:
-        return render_template('consultarTramitesSoloPeticion.html')
-    
+@app.route("/descargarDocumentos")
+def descargarDocumentos():
+    #primero el usuario elige que tipo de documentos ver
+    return render_template('elegirDocumentos.html')
+
+
+@app.route("/descargarPeticion")
+def descargarPeticion():
+    db = get_db()
+    peticiones=db.execute(
+        "SELECT * FROM peticiones WHERE email = ?", (str(current_user.email),),
+        ).fetchall()
+
+    return render_template('descargarPeticion.html', peticiones=peticiones)
+
+
+
+@app.route("/return-files3/<string:email>")
+def return_files3(email):
+    #return(email)
+
+    try:
+        return send_file(UPLOAD_FOLDER+"/"+email+"PETICION.pdf", attachment_filename='ohhey.pdf')
+    except Exception as e:
+        return str(e)
 
 
 
 
 
-"""
+
+@app.route("/descargarTrabajo")
+def descargarTrabajo():
+    try:
+        return send_file(UPLOAD_FOLDER+"/"+str(current_user.email)+"TRABAJO.pdf", attachment_filename='ohhey.pdf')
+    except Exception as e:
+        return str(e)
+
+
+
+
+@app.route("/cancelarPeticion")
+def cancelarPeticion():
+    db = get_db()
+    peticiones=db.execute(
+        "SELECT * FROM peticiones WHERE email = ?", (str(current_user.email),),
+        ).fetchall()
+
+    return render_template('cancelarPeticion.html', peticiones=peticiones)
+
+
+@app.route("/marcarCancelada/<string:id>")
+def marcarCancelada(id):
+    db = get_db()
+    db.execute("UPDATE peticiones SET estado='Cancelada' WHERE ID= ?", (id,),
+
+
+        )
+
+    db.commit()
+
+    return render_template('pantallaOK.html')
+
+
+
+
+
+
+
 
 
 @app.route("/consultarEvaluacionPeticion")
@@ -531,7 +598,7 @@ def guardarSugerencias():
         return render_template('sugerenciasNoAceptadas.html')
     
 
-"""
+
 
 
 

@@ -10,7 +10,8 @@ CREATE TABLE user (
 
 CREATE TABLE peticiones (
   ID TEXT PRIMARY KEY,
-  nombre TEXT NOT NULL,
+  nombreTrabajo TEXT NOT NULL,
+  nombreAlumno TEXT NOT NULL,
   DNI TEXT NOT NULL,
   titulacion TEXT NOT NULL,
   telefonoMovil NUMBER,

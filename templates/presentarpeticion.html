@@ -10,7 +10,8 @@
             <h1> <center> Presentar peticion de tema </center></h1>
 
 			<form action="{{ url_for('prepararPDF') }}" method="post">
-  				<p>Nombre y apellidos: <input type="text" name="nombre" size="40"></p>
+          <p>Nombre del trabajo: <input type="text" name="nombreTrabajo" size="40"></p>
+  				<p>Nombre y apellidos: <input type="text" name="nombreAlumno" size="40"></p>
   				
   				<p>DNI: <input type="text" name="DNI" size="25"></p>
   				<select name="titulacion">
