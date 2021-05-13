@@ -707,7 +707,7 @@ def registrarEvaluacion():
 
 
   
-    return(request.form['id'])
+    return(request.form['id']) #no lo saca
 
     #ahora se registra la peticion de tema como evaluada en la BD
     db = get_db()
