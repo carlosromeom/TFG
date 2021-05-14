@@ -14,7 +14,7 @@
 
   <form action="{{ url_for('asignarTribunal') }}" method="post">
           <p>ID tribunal: <input type="number" name="ID"></p>
-          <input type="hidden" name="trabajo" value={{nombreTFG}}>
+          <input type="hidden" name="trabajo" value='{{id}}'>
          
           <p>
             <input type="submit" value="Enviar">

@@ -10,7 +10,7 @@
 
 
            
-            <a href="/returnfiles2/{{nombreTFG}}" target="blank"><button class='btn btn-default'>Descargar</button></a>
+            <a href="/descargarTrabajo2/{{id}}" target="blank"><button class='btn btn-default'>Descargar</button></a>
             <h4>{{nombreTFG}}</h4>
 
 
@@ -31,7 +31,7 @@ function highlight_row() {
 -->
 
   <div align="right"><form action="/upload2" method="post"> <input type="submit" value="Subir acta" /> 
-<input type="hidden" name="nombreTFG" value={{nombreTFG}}>
+<input type="hidden" name="id" value='{{id}}'>
   </form>
 
 

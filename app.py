@@ -496,7 +496,7 @@ def descargarPeticion():
 
 @app.route("/return-files3/<string:email>")
 def return_files3(email):
-    return(email)
+    #return(email)
 
     try:
         return send_file(UPLOAD_FOLDER+"/"+email+"PETICION.pdf", attachment_filename='ohhey.pdf')
@@ -683,10 +683,10 @@ def consultarPeticionesdeTema():
 def evaluarPeticion(id):
     db = get_db()
     email=db.execute(
-        "SELECT email FROM peticiones where id = ?", (id,),
+        "SELECT email FROM peticiones where ID = ?", (id,),
         ).fetchall()
 
-    return render_template('evaluar.html', id=id, email=email)
+    return render_template('evaluar.html', id=id, email=email[0][0])
 
 
 
@@ -707,7 +707,7 @@ def registrarEvaluacion():
 
 
   
-    return(request.form['id']) #no lo saca
+    #return(request.form['id']) #no lo saca
 
     #ahora se registra la peticion de tema como evaluada en la BD
     db = get_db()
@@ -736,9 +736,9 @@ def consultarTrabajosPresentados():
     return render_template('consultarTrabajosPresentados.html', trabajos=trabajos)
 
 
-@app.route("/intermedio/<nombreTFG>")
-def intermedio(nombreTFG):
-    return render_template('intermedio.html', nombreTFG=nombreTFG)
+@app.route("/intermedio/<id>")
+def intermedio(id):
+    return render_template('intermedio.html', id=id)
 
 
 
@@ -754,10 +754,11 @@ def returnfiles2(nombreTFG):
 
 
 @app.route('/upload2', methods=['GET', 'POST'])
-def upload_file2():
-    nombre=request.form.get('nombreTFG')
+def upload2():
+
+    #return (request.form.get('id')) ##FALLO#####
     db = get_db()
-    db.execute("UPDATE TFGs SET estado=? WHERE trabajo= ?", ('Corregido', nombre,),
+    db.execute("UPDATE TFGs SET estado=? WHERE ID= ?", ('Corregido', request.form.get('id'),),
     )
 
     db.commit()
@@ -880,19 +881,19 @@ def validarTFG():
     #return ("hola")
     return render_template('validarTrabajos.html', trabajos=trabajos)
 
-@app.route("/registrarValidacionTrabajo/<nombreTFG>")
-def registrarValidacionTrabajo(nombreTFG):
+@app.route("/registrarValidacionTrabajo/<id>")
+def registrarValidacionTrabajo(id):
     #return("hola")
-    return render_template('registrarValidacionTrabajo.html', nombreTFG=nombreTFG)
+    return render_template('registrarValidacionTrabajo.html', id=id)
 
 
-@app.route("/marcarValidado/<nombreTFG>")
-def marcarValidado(nombreTFG):
+@app.route("/marcarValidado/<id>")
+def marcarValidado(id):
     #return("hola marcarValidado")
 
     #ahora lo metemos en la BD como Validado
     db = get_db()
-    db.execute("UPDATE TFGs SET estado='Validado' WHERE trabajo= ?", (nombreTFG,),
+    db.execute("UPDATE TFGs SET estado='Validado' WHERE ID= ?", (id,),
 
 
         )
@@ -900,7 +901,7 @@ def marcarValidado(nombreTFG):
     db.commit()
 
 
-    return render_template('asignarTribunal.html', nombreTFG=nombreTFG)
+    return render_template('asignarTribunal.html', id=id)
 
 
 @app.route("/asignarTribunal", methods=['POST'])
@@ -912,13 +913,13 @@ def asignarTribunal():
 
 
 
-
+#####FALLO NO RECIBE EL ID#######
 
     #return (request.form.get('trabajo'))
 
     #introducimos los datos de la plantilla en la base de datos
     db = get_db()
-    db.execute("UPDATE TFGs SET tribunal=? WHERE trabajo= ?", (request.form.get('ID'), request.form.get('trabajo')),
+    db.execute("UPDATE TFGs SET tribunal=? WHERE ID= ?", (request.form.get('ID'), request.form.get('trabajo')),
 
 
         )
@@ -1116,10 +1117,13 @@ def filtrarProfesor():
     #return(request.form['titulacion'])
 
 
+    cadena="%"+request.form['nombre']+"%"
+
+
     #ahora guardamos todos los trabajos que sean del director elegido
     db = get_db()
     trabajos=db.execute(
-        "SELECT * FROM TFGs WHERE director1= ?", (request.form['nombre'],),
+        "SELECT * FROM TFGs WHERE director1 LIKE ?", (cadena,),
         ).fetchall()
    
     #return ("hola")
@@ -1254,7 +1258,7 @@ def filtrado():
 @app.route("/consultarTFG")
 def consultarTFG():
 
-    #ahora guardamos todos los trabajos que sean del director elegido
+    #ahora guardamos todos los trabajos 
     db = get_db()
     trabajos=db.execute(
         "SELECT * FROM TFGs WHERE estado = 'Corregido'"
@@ -1326,6 +1330,32 @@ def consultarConvocatoriasLectura():
     return render_template('listarConvocatorias.html', convocatorias=convocatorias)
 
 
+
+
+
+
+
+
+
+
+
+
+##################FUNCIONES AUXILIARES##############################3
+
+@app.route("/descargarTrabajo2/<string:id>")
+def descargarTrabajo2(id):
+    
+    db = get_db()
+    email=db.execute(
+        "SELECT email FROM peticiones where ID = ?", (id,),
+        ).fetchall()
+
+    
+
+    try:
+        return send_file(UPLOAD_FOLDER+"/"+email[0][0]+"TRABAJO.pdf", attachment_filename='ohhey.pdf')
+    except Exception as e:
+        return str(e)
 
 
 
