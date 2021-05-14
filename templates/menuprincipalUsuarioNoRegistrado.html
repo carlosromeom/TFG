@@ -3,22 +3,30 @@
 <head>
 	<meta charset="utf-8">
     <title>Menu usuario no registrado</title>
+    <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilomenuprincipal.css') }}">
 </head> 
-<body bgcolor="db912f">
+<body>
 <p>Hello, {email}! You're logged in! Email: {email}</p>
             
-            <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
+            <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%">
+
+
+        <div style="color: #000099; font-weight: bold" align="center">
             <h1> <center> Menú principal para el usuario no registrado </center></h1>
+        </div>
+
+        <div style="text-align: center;">
 
 
+           <a class="button" href="/filtrado">Consultar trabajos</a>
 
-           <div align="left"><form action="/filtrado"> <input type="submit" value="Consultar trabajos" /> </form>
+           <a class="button" href="/consultarTribunalesTitulacion">Consultar tribunales por titulacion</a>
 
-           <div align="center"><form action="/consultarTribunalesTitulacion"> <input type="submit" value="Consultar tribunales por titulacion" /> </form>
+           <a class="button" href="consultarTribunalesProfesor">Consultar tribunales en los que participa un profesor</a>
 
-           <div align="right"><form action="/consultarTribunalesProfesor"> <input type="submit" value="Consultar tribunales en los que participa un profesor" /> </form>
+           <a class="button" href="consultarConvocatoriasLectura">Consultar convocatorias de lectura</a>
 
-           <div align="left"><form action="/consultarConvocatoriasLectura"> <input type="submit" value="Consultar convocatorias de lectura" /> </form>
+        </div>
 
 
 </div>
