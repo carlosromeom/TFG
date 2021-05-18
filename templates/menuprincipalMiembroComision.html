@@ -1,23 +1,28 @@
 
 <!doctype html>
 <head>
+	 <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilomenuprincipal.css') }}">
 	<meta charset="utf-8">
     <title>Menu de Miembro de Comision</title>
 </head> 
-<body bgcolor="db912f">
+<body>
 <p>Hello, {email}! You're logged in! Email: {email}</p>
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
-            <h1> <center> Menú principal para el miembro de la comision </center></h1>
+            <div style="color: #000099; font-weight: bold" align="center">
+            <h1> <center> Menú principal para el miembro de comision</center></h1>
 
 
+            <div style="text-align: center;">
 
-           <div align="left"><form action="/consultarPeticionesdeTema"> <input type="submit" value="Consultar y evaluar peticiones de tema asignadas" /> </form>
+<a class="button" href="/consultarPeticionesdeTema">Consultar y evaluar peticiones de tema asignadas</a>
+
+
 
            </div>
        </div>
    </body>
  <footer>
-	<a class="button" align="center" href="/logout">Logout</a>
+	<a class="button2" align="center" href="/logout">Logout</a>
 
 </footer>
