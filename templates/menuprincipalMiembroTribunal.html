@@ -1,22 +1,26 @@
 
 <!doctype html>
 <head>
+	<link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilomenuprincipal.css') }}">
 	<meta charset="utf-8">
     <title>Menu de Miembro de Tribunal</title>
 </head> 
-<body bgcolor="db912f">
+<body>
 <p>Hello, {email}! You're logged in! Email: {email}</p>
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
-            <h1> <center> Menú principal para el miembro de tribunal </center></h1>
+             <div style="color: #000099; font-weight: bold" align="center">
+            <h1> <center> Menú principal para el miembro de tribunal</center></h1>
+
+<div style="text-align: center;">
+            <a class="button" href="/consultarTrabajosPresentados">Consultar los trabajos presentados</a>
 
 
-
-           <div align="left"><form action="/consultarTrabajosPresentados"> <input type="submit" value="Consultar los trabajos presentados" /> </form>
+          
         </div>
     </div>
 </body>
 <footer>
-	<a class="button" align="center" href="/logout">Logout</a>
+	<a class="button2" align="center" href="/logout">Logout</a>
 
 </footer>
