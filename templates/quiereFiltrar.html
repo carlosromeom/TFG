@@ -1,24 +1,42 @@
-
-<!doctype html>
+<!DOCTYPE html>
+<html>
 <head>
-	<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
+
+<div id="banner">
+	<div class="inline-block">
+		<img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%" >
+	</div>
+
+	<div class="inline-block">
+		<img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%" >
+	</div>	
+</div>
+
+
+
+	
+	
     <title>Seleccionar opcion</title>
 </head> 
-<body bgcolor="db912f">
-<p>Hello, {email}! You're logged in! Email: {email}</p>
-            
-            <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
+<body>
+
+
+           
+   
             <h1> <center> Mostrar lista de todos los trabajos o filtrar </center></h1>
 
 
 
-           <div align="left"><form action="/consultarTFG"> <input type="submit" value="Consultar todos los trabajos" /> </form>
-
-           	<div align="right"><form action="/listarTFGProfesor"> <input type="submit" value="Filtrar los trabajos por nombre del director principal" /> </form>
 
 
+<div style="text-align: center;">
+            <a class="button" href="/consultarTFG">Consultar todos los trabajos </a>
+         	<a class="button" href="/listarTFGProfesor">Filtrar los trabajos por nombre del director principal</a>
 
 
+</div>
 
 
-
+</body>
+</html>

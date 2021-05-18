@@ -19,11 +19,7 @@ TD  {
  background-color : 666666;
 }
 
-BODY  {
- background-image: url('fondo.jpg');
- font-family : arial;
- color : White;
-}
+
 
 
 .button {
@@ -210,4 +206,31 @@ BODY  {
 
 .icon-send:before {
   content: "\f1d8";
+}
+
+
+
+
+
+
+
+.v1{
+  border-right: 6px solid green;
+  height: 150px;
+}
+
+
+.inline-block {
+  display: inline-block;
+}
+
+
+.footer{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: blue;
+  color: white;
+  text-align: left;
 }
