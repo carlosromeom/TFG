@@ -1,11 +1,13 @@
 
 <!doctype html>
 <head>
+	<link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
     <title>Pulse el boton para subir su trabajo</title>
 </head> 
-<body bgcolor="db912f">
+<body>
 <p>Hello, {email}! You're logged in! Email: {email}</p>
             
+	<a class="button" href="/upload">Entregar</a>
 
-           <div align="right"><form action="/upload"> <input type="submit" value="Entregar" /> </form>
+

@@ -572,7 +572,7 @@ def consultarEvaluacionPeticion():
 
     db = get_db()
     resto=db.execute(
-        "SELECT * FROM peticiones WHERE email = ? and not resolucion = ('AceptadaSugerencias' or 'AmpliarMemoria' or 'Denegada' or 'Aceptada' or 'sugerenciasAceptadas' or 'sugerenciasDenegadas')", (str(current_user.email),),
+        "SELECT * FROM peticiones WHERE email = ? and resolucion  != ('AceptadaSugerencias' or 'AmpliarMemoria' or 'Denegada' or 'Aceptada' or 'sugerenciasAceptadas' or 'sugerenciasDenegadas')", (str(current_user.email),),
         ).fetchall()
 
     return render_template('consultarEvaluacionPeticion.html', aceptadas=aceptadas, denegadas=denegadas, ampliar=ampliar, sugerencias=sugerencias, resto=resto)

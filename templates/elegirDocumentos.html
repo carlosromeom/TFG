@@ -1,21 +1,22 @@
 
 <!doctype html>
 <head>
+	<link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
     <title>Elegir tipo de documentacion a descargar</title>
 </head> 
-<body bgcolor="db912f">
+<body>
 <p>Hello, {email}! You're logged in! Email: {email}</p>
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
             <h1> <center> Elegir tipo de documentacion a descargar </center></h1>
 
+            <div style="text-align: center;">
+            <a class="button" href="/descargarPeticion">Descargar peticion de tema</a>
 
+            <a class="button" href="/descargarTrabajo">Descargar trabajo registrado</a>
 
-           <div align="left"><form action="/descargarPeticion"> <input type="submit" value="Descargar peticion de tema" /> </form>
-
-           <div align="center"><form action="/descargarTrabajo"> <input type="submit" value="Descargar trabajo registrado" /> </form>
-
+</div>
 
 </div>
 </div>
@@ -25,6 +26,6 @@
 
 
 <footer>
-	<a class="button" align="center" href="/logout">Logout</a>
+	<a class="button2" align="center" href="/logout">Logout</a>
 
 </footer>

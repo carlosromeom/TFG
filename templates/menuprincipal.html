@@ -1,25 +1,36 @@
 
 <!doctype html>
 <head>
+  <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilomenuprincipal.css') }}">
 	<meta charset="utf-8">
     <title>Menu de estudiante</title>
 </head> 
-<body bgcolor="db912f">
+<body>
 <p>Hello, {email}! You're logged in! Email: {email}</p>
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
-            <h1> <center> Menú principal </center></h1>
+            <div style="color: #000099; font-weight: bold" align="center">
+            <h1> <center> Menú principal</center></h1>
+        </div>
+
+
+            <div style="text-align: center;">
+              <a class="button" href="/peticion">Presentar peticion de tema</a>
+
+              <a class="button" href="/descargarDocumentos">Descargar documentos registrados en el sistema</a>
+
+              <a class="button" href="/subirTFG">Entregar TFG/M</a>
+
+              <a class="button" href="/consultarEvaluacionPeticion">Consultar evaluacion de la peticion de tema</a>
+
+              <a class="button" href="/cancelarPeticion">Cancelar una peticion de tema presentada</a>
 
 
 
-           <div align="left"><form action="/peticion"> <input type="submit" value="Presentar petición de tema" /> </form>
 
-           <div align="center"><form action="/descargarDocumentos"> <input type="submit" value="Descargar documentos registrados en el sistema" /> </form>
-           <div align="right"><form action="/subirTFG"> <input type="submit" value="Entregar TFG/M" /> </form>
-           	<div align="left"><form action="/consultarEvaluacionPeticion"> <input type="submit" value="Consultar evaluacion de la peticion de tema" /> </form>
 
-           	<div align="center"><form action="/cancelarPeticion"> <input type="submit" value="Cancelar una peticion de tema presentada" /> </form>
 
+</div>
 
 </div>
 </div>
@@ -29,6 +40,6 @@
 
 
 <footer>
-	<a class="button" align="center" href="/logout">Logout</a>
+	<a class="button2" align="center" href="/logout">Logout</a>
 
 </footer>

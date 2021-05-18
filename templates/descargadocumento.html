@@ -1,29 +1,37 @@
 
 <!doctype html>
 <head>
+	<link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
     <title>Descarga de documentos</title>
 </head> 
-<body bgcolor=#e73057> 
+<body> 
 <p>Hello, {email}! You're logged in! Email: {email}</p>
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
-            <h1> <center> Presione el boton para descargar su documento </center></h1>
 
            
 
 
 
 
+<div style="text-align: center;">
+	 <h1> <center> Presione el boton para descargar su documento </center></h1>
 
-            <a href="/return-files/" target="blank"><button class='btn btn-default'>Descargar</button></a>
+	<a class="button" href="/return-files">Descargar</a>
+	
 
 
-            <h1> <center> Peticion registrada, suba el documento de la memoria </center></h1>
-            <a href="/subirMemoria" target="blank"><button class='btn btn-default'>Subir</button></a>
+<h1> <center> Peticion registrada, suba el documento de la memoria </center></h1>
+		<a class="button" href="/subirMemoria">Subir</a>
+
+
+
+
+</div>
 
 
 <footer>
-           <a class="button" href="/">Atras</a>
+           <a class="button2" href="/">Atras</a>
 
            </footer>
