@@ -1,17 +1,18 @@
 <head>
+    <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
     <title>Validar peticion de tema</title>
 </head>  
 
 
-<body bgcolor=#e73057> 
+<body> 
 
 	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
             <h1> <center> Validar peticion de tema</center></h1>
 
 
-           
-            <a href="/return-files3/{{email}}" target="blank"><button class='btn btn-default'>Descargar</button></a>
+           <a class="button" href="/return-files3/{{email}}">Descargar</a>
+            
             <h4>{{id}}</h4>
 
 
@@ -71,7 +72,7 @@ function highlight_row() {
 
 
 
-<a class="button" href="/">Atras</a>
+<a class="button2" href="/">Atras</a>
 
 
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
     <title>Gestionar comisiones</title>
 <style>
@@ -26,7 +27,7 @@
 
 
 
-<body bgcolor=#e73057> 
+<body> 
 
 	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
             <h1> <center> Gestionar comisiones</center></h1>
@@ -61,7 +62,7 @@
             </table>
       </div>
 
-<a href="/crearComision"> Crear nueva comision</a>
+<a class="button" href="/crearComision"> Crear nueva comision</a>
 
            
 <!--
@@ -122,7 +123,7 @@ function highlight_row() {
 </html>
 
 
-<a class="button" href="/">Atras</a>
+<a class="button2" href="/">Atras</a>
 
 
 
