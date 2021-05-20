@@ -60,10 +60,10 @@ def create_app(test_config=None):
     login_manager = LoginManager()
     login_manager.init_app(app)
 
+    from . import database
     # Naive database setup
-    # from . import db
     # try:
-    #     db.init_db_command()
+    #     database.init_db_command()
     # except sqlite3.OperationalError:
     #     # Assume it's already been created
     #     pass
@@ -146,7 +146,7 @@ def create_app(test_config=None):
 
         # Create a user in your db with the information provided
         # by Google
-        user = user.User(
+        user_object = user.User(
             id_=unique_id, name=users_name, email=users_email, profile_pic=picture, rol_="Estudiante"
         )
 
@@ -155,7 +155,7 @@ def create_app(test_config=None):
             user.User.create(unique_id, users_name, users_email, picture, "Estudiante" )
 
         # Begin user session by logging the user in
-        login_user(user)
+        login_user(user_object)
 
         # Send user back to homepage
         return redirect(url_for("index"))
@@ -243,7 +243,7 @@ def create_app(test_config=None):
         ID = str(current_user.email)+str(datetime.datetime.now())
 
         #introducimos los datos de la plantilla en la base de datos
-        db = db.db.get_db()
+        db = database.get_db()
         db.execute(
                 "INSERT INTO peticiones (ID, nombreTrabajo, nombreAlumno, DNI, titulacion, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director1Ext, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -359,7 +359,7 @@ def create_app(test_config=None):
         #lo primero es sacar todas las peticiones de tema de la BD
 
 
-        db = db.get_db()
+        db = database.get_db()
         peticiones=db.execute(
             "SELECT * FROM peticiones where estado = 'Revisada' and email = ?", (str(current_user.email),),
             ).fetchall()
@@ -374,7 +374,7 @@ def create_app(test_config=None):
 
     @app.route("/registrarTFG/<string:id>")
     def registrarTFG(id):
-        db = db.get_db()
+        db = database.get_db()
         aux=db.execute(
             "SELECT * FROM peticiones where ID = ?", (id,),
             ).fetchall()
@@ -387,7 +387,7 @@ def create_app(test_config=None):
 
 
 
-        db = db.get_db()
+        db = database.get_db()
         db.execute(
         "INSERT INTO TFGs (ID, nombre, estado, director1, director2, titulacion)"
         "VALUES (?, ?, ?, ?, ?, ?)",
@@ -396,7 +396,7 @@ def create_app(test_config=None):
         db.commit()
 
         
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE peticiones SET estado=? WHERE ID= ?", ('TrabajoSubido', id,),
         )
 
@@ -413,7 +413,7 @@ def create_app(test_config=None):
     """
     @app.route('/registrarTFG', methods=['GET', 'POST'])
     def registrarTFG():
-        db = db.get_db()
+        db = database.get_db()
         db.execute(
         "INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
         "VALUES (?, ?, ?, ?, ?)",
@@ -446,7 +446,7 @@ def create_app(test_config=None):
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                #db = db.get_db()
+                #db = database.get_db()
                 #db.execute(
                 #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
                 #"VALUES (?, ?, ?, ?, ?)",
@@ -489,7 +489,7 @@ def create_app(test_config=None):
 
     @app.route("/descargarPeticion")
     def descargarPeticion():
-        db = db.get_db()
+        db = database.get_db()
         peticiones=db.execute(
             "SELECT * FROM peticiones WHERE email = ?", (str(current_user.email),),
             ).fetchall()
@@ -524,7 +524,7 @@ def create_app(test_config=None):
 
     @app.route("/cancelarPeticion")
     def cancelarPeticion():
-        db = db.get_db()
+        db = database.get_db()
         peticiones=db.execute(
             "SELECT * FROM peticiones WHERE email = ?", (str(current_user.email),),
             ).fetchall()
@@ -534,7 +534,7 @@ def create_app(test_config=None):
 
     @app.route("/marcarCancelada/<string:id>")
     def marcarCancelada(id):
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE peticiones SET estado='Cancelada' WHERE ID= ?", (id,),
 
 
@@ -554,27 +554,27 @@ def create_app(test_config=None):
 
     @app.route("/consultarEvaluacionPeticion")
     def consultarEvaluacionPeticion():
-        db = db.get_db()
+        db = database.get_db()
         aceptadas=db.execute(
             "SELECT * FROM peticiones WHERE email = ? and resolucion='Aceptada'", (str(current_user.email),),
             ).fetchall()
 
-        db = db.get_db()
+        db = database.get_db()
         denegadas=db.execute(
             "SELECT * FROM peticiones WHERE email = ? and resolucion='Denegada'", (str(current_user.email),),
             ).fetchall()
 
-        db = db.get_db()
+        db = database.get_db()
         ampliar=db.execute(
             "SELECT * FROM peticiones WHERE email = ? and resolucion='AmpliarMemoria'", (str(current_user.email),),
             ).fetchall()
 
-        db = db.get_db()
+        db = database.get_db()
         sugerencias=db.execute(
             "SELECT * FROM peticiones WHERE email = ? and resolucion='AceptadaSugerencias'", (str(current_user.email),),
             ).fetchall()
 
-        db = db.get_db()
+        db = database.get_db()
         resto=db.execute(
             "SELECT * FROM peticiones WHERE email = ? and resolucion  != ('AceptadaSugerencias' or 'AmpliarMemoria' or 'Denegada' or 'Aceptada' or 'sugerenciasAceptadas' or 'sugerenciasDenegadas')", (str(current_user.email),),
             ).fetchall()
@@ -592,7 +592,7 @@ def create_app(test_config=None):
             if (peticiones== "Ampliar Memoria"):
                 return render_template('peticionAmpliar.html')
             if (peticiones== "Aceptada con sugerencias"):
-                db = db.get_db()
+                db = database.get_db()
                 sugerencias=db.execute(
                     "SELECT sugerencias FROM peticiones where DNI = METER DNI" # a la espera de sacarlo del login de la uco
                 ).fetchall()
@@ -615,7 +615,7 @@ def create_app(test_config=None):
 
     @app.route("/revisarSugerencias/<string:id>")
     def revisarSugerencias(id):
-        db = db.get_db()
+        db = database.get_db()
         sugerencias=db.execute(
             "SELECT sugerencias FROM peticiones WHERE ID = ? ", (id,),
             ).fetchall()
@@ -629,7 +629,7 @@ def create_app(test_config=None):
     @app.route("/guardarSugerencias", methods=['POST'])
     def guardarSugerencias():
 
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE peticiones SET resolucion=? WHERE ID= ?", (request.form['marcarSugerencias'],request.form['id'],),
 
 
@@ -651,7 +651,7 @@ def create_app(test_config=None):
 
     @app.route("/ampliar/<string:id>")
     def ampliar(id):
-        db = db.get_db()
+        db = database.get_db()
         sugerencias=db.execute(
             "SELECT sugerencias FROM peticiones WHERE ID = ? ", (id,),
             ).fetchall()
@@ -674,7 +674,7 @@ def create_app(test_config=None):
     @app.route("/consultarPeticionesdeTema")
     def consultarPeticionesdeTema():
         #lo primero es sacar todas las peticiones de tema de la BD
-        db = db.get_db()
+        db = database.get_db()
         peticiones=db.execute(
             "SELECT * FROM peticiones where estado = 'Validada'"
             ).fetchall()
@@ -685,7 +685,7 @@ def create_app(test_config=None):
 
     @app.route("/evaluarPeticion/<string:id>")
     def evaluarPeticion(id):
-        db = db.get_db()
+        db = database.get_db()
         email=db.execute(
             "SELECT email FROM peticiones where ID = ?", (id,),
             ).fetchall()
@@ -714,7 +714,7 @@ def create_app(test_config=None):
         #return(request.form['id']) #no lo saca
 
         #ahora se registra la peticion de tema como evaluada en la BD
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE peticiones SET estado='Revisada', resolucion=?, sugerencias=? WHERE ID= ?", (resolucion, sugerencias, request.form['id'],),
 
 
@@ -731,7 +731,7 @@ def create_app(test_config=None):
     def consultarTrabajosPresentados():
         #lo primero es sacar todos los trabajos sin corregir de la BD
 
-        db = db.get_db()
+        db = database.get_db()
         trabajos=db.execute(
             "SELECT * FROM TFGs where estado = 'Validado'"
             ).fetchall()
@@ -761,7 +761,7 @@ def create_app(test_config=None):
     def upload2():
 
         #return (request.form.get('id')) ##FALLO#####
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE TFGs SET estado=? WHERE ID= ?", ('Corregido', request.form.get('id'),),
         )
 
@@ -816,7 +816,7 @@ def create_app(test_config=None):
     def validarPeticiones():
         #lo primero es sacar todas las peticiones sin validar de la BD
 
-        db = db.get_db()
+        db = database.get_db()
         peticiones=db.execute(
             "SELECT * FROM peticiones where estado = 'Creada'"
             ).fetchall()
@@ -827,7 +827,7 @@ def create_app(test_config=None):
 
     @app.route("/validarPeticion/<string:id>")
     def validarPeticion(id):
-        db = db.get_db()
+        db = database.get_db()
         email=db.execute(
             "SELECT * FROM peticiones where ID = ?", (id,),
             ).fetchall()
@@ -857,7 +857,7 @@ def create_app(test_config=None):
 
 
         #ahora se registra la peticion de tema como validada o no en la BD
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE peticiones SET estado=? WHERE ID= ?", (validacion, id,),
 
 
@@ -877,7 +877,7 @@ def create_app(test_config=None):
     def validarTFG():
         #lo primero es sacar todos los trabajos sin validar de la BD
 
-        db = db.get_db()
+        db = database.get_db()
         trabajos=db.execute(
             "SELECT * FROM TFGs where estado = 'Creado'"
             ).fetchall()
@@ -896,7 +896,7 @@ def create_app(test_config=None):
         #return("hola marcarValidado")
 
         #ahora lo metemos en la BD como Validado
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE TFGs SET estado='Validado' WHERE ID= ?", (id,),
 
 
@@ -922,7 +922,7 @@ def create_app(test_config=None):
         #return (request.form.get('trabajo'))
 
         #introducimos los datos de la plantilla en la base de datos
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE TFGs SET tribunal=? WHERE ID= ?", (request.form.get('ID'), request.form.get('trabajo')),
 
 
@@ -943,7 +943,7 @@ def create_app(test_config=None):
     def gestionarComisiones():
         #lo primero es sacar todas las comisiones ya registradas en la BD
 
-        db = db.get_db()
+        db = database.get_db()
         comisiones=db.execute(
             "SELECT * FROM comisiones"
             ).fetchall()
@@ -970,7 +970,7 @@ def create_app(test_config=None):
 
 
         #introducimos los datos de la plantilla en la base de datos
-        db = db.get_db()
+        db = database.get_db()
         db.execute(
                 "INSERT INTO comisiones (nombre, id, estado, miembros, presidente)"
                 "VALUES (?, ?, 'Activa', ?, ?)",
@@ -1011,7 +1011,7 @@ def create_app(test_config=None):
         #return (request.form.get('ID'))
 
         #introducimos los datos de la plantilla en la base de datos
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE comisiones SET estado=? WHERE ID= ?", (nuevoEstado, request.form.get('ID')),
 
 
@@ -1033,7 +1033,7 @@ def create_app(test_config=None):
         ID=request.form.get('ID')
         #return(ID)
         #sacamos los miembros de la comision
-        db = db.get_db()
+        db = database.get_db()
         miembros=db.execute("SELECT miembros FROM comisiones WHERE id= ?", (ID,),
 
 
@@ -1053,7 +1053,7 @@ def create_app(test_config=None):
 
 
         #introducimos los datos de la plantilla en la base de datos
-        db = db.get_db()
+        db = database.get_db()
         db.execute("UPDATE comisiones SET miembros=? WHERE ID= ?", (request.form.get('miembros'), request.form.get('ID')),
 
 
@@ -1098,7 +1098,7 @@ def create_app(test_config=None):
 
 
         #ahora guardamos todos los trabajos que sean de la titulacion elegida
-        db = db.get_db()
+        db = database.get_db()
         trabajos=db.execute(
             "SELECT * FROM TFGs WHERE titulacion= ?", (request.form['titulacion'],),
             ).fetchall()
@@ -1125,7 +1125,7 @@ def create_app(test_config=None):
 
 
         #ahora guardamos todos los trabajos que sean del director elegido
-        db = db.get_db()
+        db = database.get_db()
         trabajos=db.execute(
             "SELECT * FROM TFGs WHERE director1 LIKE ?", (cadena,),
             ).fetchall()
@@ -1154,7 +1154,7 @@ def create_app(test_config=None):
 
 
         #introducimos los datos de la plantilla en la base de datos
-        db = db.get_db()
+        db = database.get_db()
         db.execute(
                 "INSERT INTO tribunal (nombre, id, estado, miembros, presidente, titulacion)"
                 "VALUES (?, ?, 'Activo', ?, ?, ?)",
@@ -1170,7 +1170,7 @@ def create_app(test_config=None):
     @app.route("/modificarTribunal")
     def modificarTribunal():
         #ahora guardamos todos los tribunales
-        db = db.get_db()
+        db = database.get_db()
         tribunales=db.execute(
             "SELECT * FROM tribunal"
             ).fetchall()
@@ -1192,7 +1192,7 @@ def create_app(test_config=None):
 
 
         #introducimos los datos de la plantilla en la base de datos
-        db = db.get_db()
+        db = database.get_db()
         db.execute("DELETE from tribunal WHERE ID= ?", (request.form.get('ID')),
 
 
@@ -1216,7 +1216,7 @@ def create_app(test_config=None):
 
     @app.route("/publicarConvocatorias")
     def publicarConvocatorias():
-        db = db.get_db()
+        db = database.get_db()
         trabajos=db.execute(
             "SELECT * FROM TFGs WHERE estado = 'Corregido'"
             ).fetchall()
@@ -1238,7 +1238,7 @@ def create_app(test_config=None):
     def registrarNuevaConvocatoria():
         #id=request.form['id']
         #return(id)
-        #db = db.get_db()
+        #db = database.get_db()
         #titulacion=db.execute(
         #   "SELECT titulacion FROM peticiones WHERE ID LIKE ?", (id,),
         #  ).fetchall()
@@ -1254,7 +1254,7 @@ def create_app(test_config=None):
 
         # return(aux[0][4])
         #introducimos los datos de la plantilla en la base de datos
-        db = db.get_db()
+        db = database.get_db()
         db.execute(
                 "INSERT INTO lectura (titulacion, tipoTrabajo, fecha, hora, alumno, titulo, aclaraciones)"
                 "VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -1289,7 +1289,7 @@ def create_app(test_config=None):
     def consultarTFG():
 
         #ahora guardamos todos los trabajos 
-        db = db.get_db()
+        db = database.get_db()
         trabajos=db.execute(
             "SELECT * FROM TFGs WHERE estado = 'Corregido'"
             ).fetchall()
@@ -1312,7 +1312,7 @@ def create_app(test_config=None):
 
 
         #ahora guardamos todos los tribunales que sean de la titulacion elegida
-        db = db.get_db()
+        db = database.get_db()
         tribunales=db.execute(
             "SELECT * FROM tribunal WHERE titulacion= ?", (request.form['titulacion'],),
             ).fetchall()
@@ -1335,7 +1335,7 @@ def create_app(test_config=None):
 
         #ahora guardamos todos los tribunales en los que se encuentre el profesor
         cadena="%"+request.form['nombre']+"%"
-        db = db.get_db()
+        db = database.get_db()
         tribunales=db.execute(
             "SELECT * FROM tribunal WHERE miembros LIKE ? ", (cadena,),
             ).fetchall()
@@ -1351,7 +1351,7 @@ def create_app(test_config=None):
         #return(request.form['titulacion'])
 
         fechaHoy=datetime.datetime.now()
-        db = db.get_db()
+        db = database.get_db()
         convocatorias=db.execute(
             "SELECT * FROM lectura WHERE date(fecha) >= ? ", (fechaHoy.strftime("%x"),),
             ).fetchall()
@@ -1375,7 +1375,7 @@ def create_app(test_config=None):
     @app.route("/descargarTrabajo2/<string:id>")
     def descargarTrabajo2(id):
         
-        db = db.get_db()
+        db = database.get_db()
         email=db.execute(
             "SELECT email FROM peticiones where ID = ?", (id,),
             ).fetchall()

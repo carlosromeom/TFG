@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 
-from . import db
+from . import database
 
 class User(UserMixin):
     def __init__(self, id_, name, email, profile_pic, rol_):
@@ -12,8 +12,8 @@ class User(UserMixin):
 
     @staticmethod
     def get(user_id):
-        db = db.get_db()
-        user = db.execute(
+        db_object = database.get_db()
+        user = db_object.execute(
             "SELECT * FROM user WHERE id = ?", (user_id,)
         ).fetchone()
         if not user:
@@ -26,9 +26,9 @@ class User(UserMixin):
 
     @staticmethod
     def create(id_, name, email, profile_pic, rol):
-        db = db.get_db()
-        db.execute(
+        db_object = database.get_db()
+        db_object.execute(
             "INSERT INTO user (id, name, email, profile_pic, rol) "
             "VALUES (?, ?, ?, ?, ?)",
             (id_, name, email, profile_pic, "Estudiante"),  ) #inicialmente todos los usuarios tendran el rol de Estudiante
-        db.commit()
+        db_object.commit()
