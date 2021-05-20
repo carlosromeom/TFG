@@ -78,7 +78,9 @@ CREATE TABLE tribunal (
 CREATE TABLE lectura (
   titulacion TEXT NOT NULL,
   tipoTrabajo TEXT NOT NULL,
-  fechainicio TEXT NOT NULL, 
-  fechafin TEXT NOT NULL, 
+  fecha TEXT NOT NULL, 
+  hora TEXT NOT NULL,
+  alumno TEXT NOT NULL,
+  titulo TEXT NOT NULL, 
   aclaraciones TEXT
 );
