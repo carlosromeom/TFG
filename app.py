@@ -1212,27 +1212,53 @@ def registrarModificacionTribunal():
 
 @app.route("/publicarConvocatorias")
 def publicarConvocatorias():
+    db = get_db()
+    trabajos=db.execute(
+        "SELECT * FROM TFGs WHERE estado = 'Corregido'"
+        ).fetchall()
+   
+    return render_template('seleccionarTrabajoLectura.html', trabajos=trabajos)
+
     #return ("hola crearComision")
-    return render_template('crearConvocatoria.html')
+    #return render_template('crearConvocatoria.html')
+    
+
+@app.route("/datosExtra/<string:id>")
+def datosExtra(id):
+    return render_template('crearConvocatoria.html', id=id)
+
 
 
 
 @app.route("/registrarNuevaConvocatoria", methods=['POST'])
 def registrarNuevaConvocatoria():
+    #id=request.form['id']
+    #return(id)
+    #db = get_db()
+    #titulacion=db.execute(
+     #   "SELECT titulacion FROM peticiones WHERE ID LIKE ?", (id,),
+      #  ).fetchall()
+    #db.commit()
+
+    
+    #return(titulacion[0][0])
     
     #return("hola registrarNuevaComision")
 
     #return render_template('descargadocumento.html')
 
 
-
+    # return(aux[0][4])
     #introducimos los datos de la plantilla en la base de datos
     db = get_db()
     db.execute(
-            "INSERT INTO lectura (titulacion, tipoTrabajo, fechainicio, fechafin, aclaraciones)"
-            "VALUES (?, ?, ?, ?, ?)",
-            (request.form['titulacion'], request.form['trabajo'], request.form['fechainicio'], request.form['fechafin'], request.form['notas'])
+            "INSERT INTO lectura (titulacion, tipoTrabajo, fecha, hora, alumno, titulo, aclaraciones)"
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (request.form['titulacion'], request.form['trabajo'], request.form['fecha'], request.form['hora'], request.form['alumno'], request.form['titulo'], request.form['notas'])
+        
+
         )
+
 
     db.commit()
     return render_template('pantallaOK.html')
@@ -1323,7 +1349,7 @@ def consultarConvocatoriasLectura():
     fechaHoy=datetime.datetime.now()
     db = get_db()
     convocatorias=db.execute(
-        "SELECT * FROM lectura WHERE date(fechafin) >= ? ", (fechaHoy.strftime("%x"),),
+        "SELECT * FROM lectura WHERE date(fecha) >= ? ", (fechaHoy.strftime("%x"),),
         ).fetchall()
    
     #return ("hola")
