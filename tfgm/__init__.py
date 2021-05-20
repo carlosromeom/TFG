@@ -61,12 +61,12 @@ def create_app(test_config=None):
     login_manager.init_app(app)
 
     # Naive database setup
-    from . import db
-    try:
-        db.init_db_command()
-    except sqlite3.OperationalError:
-        # Assume it's already been created
-        pass
+    # from . import db
+    # try:
+    #     db.init_db_command()
+    # except sqlite3.OperationalError:
+    #     # Assume it's already been created
+    #     pass
 
     # OAuth 2 client setup
     client = WebApplicationClient(app.config['GOOGLE_CLIENT_ID'])
@@ -120,7 +120,7 @@ def create_app(test_config=None):
             token_url,
             headers=headers,
             data=body,
-            auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+            auth=(app.config['GOOGLE_CLIENT_ID'], app.config['GOOGLE_CLIENT_SECRET']),
         )
 
         # Parse the tokens!
