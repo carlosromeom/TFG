@@ -114,5 +114,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Editor backups
+*~
+
 # Specific to this project
 config.py
