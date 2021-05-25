@@ -257,7 +257,7 @@ def create_app(test_config=None):
 
         pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
         pdf.cell(200, 10, txt="Peticion de tema de TFG", ln=1, align="C")
-        pdf.cell(200, 10, txt="ID: "+ID, ln=1, align="C")
+        pdf.cell(200, 10, txt="ID: "+ID, ln=1, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
@@ -318,8 +318,8 @@ def create_app(test_config=None):
         pdf.cell(200, 10, txt="Peticion creada en: "+str(date.today()), ln=2, align="L")
         
 
-        #nombrePDF="PeticionTema"+request.form['DNI']+str(datetime.datetime.now())
-        pdf.output("peticiondetema", 'F')
+        nombrePDF=current_user.email+"PETICIONTEMA.pdf"
+        pdf.output(nombrePDF, 'F')
 
 
         #response = make_response(pdf.output(dest='F').encode('latin-1'))
@@ -338,7 +338,7 @@ def create_app(test_config=None):
     @app.route('/return-files/')
     def return_files_tut():
         try:
-            return send_file('/home/carlos/Escritorio/TFG/peticiondetema', attachment_filename='ohhey.pdf')
+            return send_file('/home/carlos/Escritorio/TFG/'+current_user.email+"PETICIONTEMA", attachment_filename='ohhey.pdf')
         except Exception as e:
             return str(e)
 
@@ -561,7 +561,7 @@ def create_app(test_config=None):
 
         db = database.get_db()
         denegadas=db.execute(
-            "SELECT * FROM peticiones WHERE email = ? and resolucion='Denegada'", (str(current_user.email),),
+            "SELECT * FROM peticiones WHERE email = ? and resolucion='Denegada' or estado='NoValidada' ", (str(current_user.email),),
             ).fetchall()
 
         db = database.get_db()
@@ -571,7 +571,7 @@ def create_app(test_config=None):
 
         db = database.get_db()
         sugerencias=db.execute(
-            "SELECT * FROM peticiones WHERE email = ? and resolucion='AceptadaSugerencias'", (str(current_user.email),),
+            "SELECT * FROM peticiones WHERE email = ? and resolucion='AceptadaSugerencias' or resolucion='SugerenciasAceptadas' or resolucion='sugerenciasDenegadas'", (str(current_user.email),),
             ).fetchall()
 
         db = database.get_db()
@@ -579,7 +579,7 @@ def create_app(test_config=None):
             "SELECT * FROM peticiones WHERE email = ? and resolucion  != ('AceptadaSugerencias' or 'AmpliarMemoria' or 'Denegada' or 'Aceptada' or 'sugerenciasAceptadas' or 'sugerenciasDenegadas')", (str(current_user.email),),
             ).fetchall()
 
-        return render_template('consultarEvaluacionPeticion.html', aceptadas=aceptadas, denegadas=denegadas, ampliar=ampliar, sugerencias=sugerencias, resto=resto)
+        return render_template('consultarEvaluacionPeticion.html', aceptadas=aceptadas, denegadas=denegadas, ampliar=ampliar, sugerencias=sugerencias)#, resto=resto)
 
 
 
@@ -619,8 +619,9 @@ def create_app(test_config=None):
         sugerencias=db.execute(
             "SELECT sugerencias FROM peticiones WHERE ID = ? ", (id,),
             ).fetchall()
+        aux=sugerencias[0][0]
 
-        return render_template('marcarSugerencias.html', sugerencias=sugerencias, id=id)
+        return render_template('marcarSugerencias.html', sugerencias=aux, id=id)
 
 
 
@@ -628,9 +629,15 @@ def create_app(test_config=None):
 
     @app.route("/guardarSugerencias", methods=['POST'])
     def guardarSugerencias():
+        if request.form.get('Aceptar')=="Aceptar":
+            resolucion="SugerenciasAceptadas"
+        if request.form.get('Denegar')=="Denegar":
+            resolucion="sugerenciasDenegadas"
+
+
 
         db = database.get_db()
-        db.execute("UPDATE peticiones SET resolucion=? WHERE ID= ?", (request.form['marcarSugerencias'],request.form['id'],),
+        db.execute("UPDATE peticiones SET resolucion=? WHERE ID= ?", (resolucion,request.form['id'],),
 
 
             )
@@ -656,7 +663,7 @@ def create_app(test_config=None):
             "SELECT sugerencias FROM peticiones WHERE ID = ? ", (id,),
             ).fetchall()
 
-        return render_template('ampliar.html', sugerencias=sugerencias, id=id)
+        return render_template('ampliar.html', sugerencias=sugerencias[0][0], id=id)
 
 
 
@@ -676,7 +683,7 @@ def create_app(test_config=None):
         #lo primero es sacar todas las peticiones de tema de la BD
         db = database.get_db()
         peticiones=db.execute(
-            "SELECT * FROM peticiones where estado = 'Validada'"
+            "SELECT * FROM peticiones where estado = 'Validada'or resolucion='SugerenciasAceptadas' or resolucion='sugerenciasDenegadas'"
             ).fetchall()
     
         #return ("hola")
@@ -697,20 +704,23 @@ def create_app(test_config=None):
     @app.route("/registrarEvaluacion", methods=['GET', 'POST'])
     def registrarEvaluacion():
         #return("hola")
-        if request.form.get('Aceptada'):
+        if request.form.get('Aceptada')=="Aceptada":
             resolucion="Aceptada"
-        if request.form.get('AceptadaSugerencias'):
-            resolucion="Aceptada con sugerencias"
-        if request.form.get('AmpliarMemoria'):
-            resolucion="Ampliar memoria"
-        else :
+        if request.form.get('AceptadaSugerencias')=="AceptadaSugerencias":
+            resolucion="AceptadaSugerencias"
+        if request.form.get('AmpliarMemoria')=="AmpliarMemoria":
+            resolucion="AmpliarMemoria"
+        if request.form.get('Denegada')=="Denegada":
             resolucion="Denegada"
+        
+
+        
 
         
         sugerencias= (str(request.form.get('sugerencias')))
 
 
-    
+      
         #return(request.form['id']) #no lo saca
 
         #ahora se registra la peticion de tema como evaluada en la BD

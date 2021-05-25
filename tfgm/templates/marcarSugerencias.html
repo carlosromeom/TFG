@@ -14,14 +14,16 @@
             <p>{{sugerencias}}</p>
 
             <form action="/guardarSugerencias" method="post">
-            <select name="marcarSugerencias">
-            
-              <option value="sugerenciasAceptadas">Aceptar</option> 
-              <option value="sugerenciasDenegadas">Denegar</option> 
+              <input type="radio" id="Aceptar" name="Aceptar" value="Aceptar">
+                        <label for="Aceptar">Aceptar</label><br>
 
-          </select>
+                        <input type="radio" id="Denegar" name="Denegar" value="Denegar">
+                        <label for="Denegar">Denegar</label><br>
 
-          <input type="hidden" name="id" value={{id}}>
+
+  
+
+          <input type="hidden" name="id" value='{{id}}'>
 
 				<p>
     				<input type="submit" value="Enviar">
