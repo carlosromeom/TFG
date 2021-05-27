@@ -2,10 +2,15 @@ CREATE TABLE user (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
-  profile_pic TEXT NOT NULL,
   rol TEXT NOT NULL
 );
 
+-- INSERT INTO table1 (column1,column2 ,..)
+-- VALUES 
+--    (value1,value2 ,...),
+--    (value1,value2 ,...),
+--     ...
+--    (value1,value2 ,...);
 
 
 CREATE TABLE peticiones (

@@ -139,7 +139,6 @@ def create_app(test_config=None):
         if userinfo_response.json().get("email_verified"):
             unique_id = userinfo_response.json()["sub"]
             users_email = userinfo_response.json()["email"]
-            picture = userinfo_response.json()["picture"]
             users_name = userinfo_response.json()["given_name"]
         else:
             return "User email not available or not verified by Google.", 400
@@ -147,7 +146,7 @@ def create_app(test_config=None):
         # Create a user in your db with the information provided
         # by Google
         user_object = user.User(
-            id_=unique_id, name=users_name, email=users_email, profile_pic=picture, rol_="Estudiante"
+            id_=unique_id, name=users_name, email=users_email, rol_="Estudiante"
         )
 
         # Doesn't exist? Add it to the database.
