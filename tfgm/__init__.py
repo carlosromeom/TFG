@@ -143,14 +143,13 @@ def create_app(test_config=None):
         else:
             return "User email not available or not verified by Google.", 400
 
-        # Create a user in your db with the information provided
-        # by Google
-
-        # Doesn't exist? Add it to the database.
-        if not user.User.get(unique_id):
-            user.User.create(unique_id, users_name, users_email, "Estudiante" )
-
-        # Begin user session by logging the user in
+        # Login (or sign and login)
+        user_object = user.User.get(unique_id)
+        if not user_object:
+            user_object = user.User(
+                id_=unique_id, name=users_name, email=users_email, rol_="Estudiante"
+            )
+            user.User.create(user_object)
         login_user(user_object)
 
         # Send user back to homepage

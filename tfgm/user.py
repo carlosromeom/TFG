@@ -24,10 +24,10 @@ class User(UserMixin):
         return user
 
     @staticmethod
-    def create(id_, name, email, rol):
+    def create(obj):
         db_object = database.get_db()
         db_object.execute(
             "INSERT INTO user (id, name, email, rol) "
             "VALUES (?, ?, ?, ?)",
-            (id_, name, email, "Estudiante"),  ) #inicialmente todos los usuarios tendran el rol de Estudiante
+            (obj.id_, obj.name, obj.email, "Estudiante"),  ) #inicialmente todos los usuarios tendran el rol de Estudiante
         db_object.commit()
