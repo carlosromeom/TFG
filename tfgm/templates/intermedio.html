@@ -1,4 +1,5 @@
 <head>
+    <link rel="icon" type="image/png" href="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png">
     <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
     <title>Descargar trabajo</title>
@@ -15,74 +16,9 @@
             <h4>{{nombreTFG}}</h4>
 
 
-
-
-<!--
-<script>
-highlight_row();
-function highlight_row() {
-
-    //alert(localStorage["DNI"]);
-    //String dni = localStorage["DNI"]
-    //document.cookie="DNIEscogido="+ encodeURIComponent(dni);
-    //alert(document.cookie);
-}
-</script>
-
--->
-
   <div align="right"><form action="/upload2" method="post"> <input type="submit" value="Subir acta" /> 
 <input type="hidden" name="id" value='{{id}}'>
   </form>
-
-
-
-
-<!--
-                  <form action="{{ url_for('registrarEvaluacion') }}" method="post">
-                        <p>Una vez valorada la memoria adjunta a la presente solicitud, la Comision de Proyectos correspondiente, en el dia de la fecha, ha resuelto lo que a continuacion se indica:</p> <input type="radio" id="Aceptada" name="Aceptada" value="Aceptada">
-                        <label for="Aceptada">Aceptada</label><br>
-
-                        <input type="radio" id="AceptadaSugerencias" name="AceptadaSugerencias" value="AceptadaSugerencias">
-                        <label for="AceptadaSugerencias">Aceptada con sugerencias</label><br>
-
-
-                        <input type="radio" id="AmpliarMemora" name="AmpliarMemora" value="AmpliarMemora">
-                        <label for="AmpliarMemora">Ampliar memoria</label><br>
-
-                        <input type="radio" id="Denegada" name="Denegada" value="Denegada">
-                        <label for="Denegada">Denegada</label><br>
-
-                        <p>Sugerencias: <input type="text" name="sugerencias" size="230"></p>
-
-                        <input type="hidden" name="dni" value={{dni}}>
-
-                        <p>
-                        <input type="submit" value="Enviar">
-                        <input type="reset" value="Borrar">
-                        </p>
-
-
-                  </form>
-
-
-
--->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <a class="button2" href="/">Atras</a>

@@ -1,12 +1,12 @@
 
 <!doctype html>
 <head>
+  <link rel="icon" type="image/png" href="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png">
   <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
     <title>Modificacion de los datos de una comision</title>
 </head> 
 <body>
-<p>Hello, {email}! You're logged in! Email: {email}</p>
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
             <h1> <center> Modificacion de los datos de una comision </center></h1>
@@ -17,16 +17,6 @@
 
            <div align="left">
             <a class="button" href="/cambiarEstadoComision/{{ID}}">Cambiar el estado de la comision</a>
-
-
-<!--
-           	<div align="left"><form action="/modificarProfesoresComision/{{ID}}"> <input type="submit" value="Dar de alta/baja un profesor en la comision" /> </form>
-
-
-
--->
-
-
 
         
            		<div align="right"><form action="{{ url_for ('modificarProfesoresComision') }}" method="post"> <input type="submit" value="Gestionar comisiones" /> 
