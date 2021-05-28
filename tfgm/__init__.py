@@ -422,7 +422,7 @@ def create_app(test_config=None):
 
     def allowed_file(filename):
         return '.' in filename and \
-            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
     @app.route('/upload', methods=['GET', 'POST'])
     def upload_file():
@@ -1264,9 +1264,7 @@ def create_app(test_config=None):
                 "INSERT INTO lectura (titulacion, tipoTrabajo, fecha, hora, alumno, titulo, aclaraciones)"
                 "VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (request.form['titulacion'], request.form['trabajo'], request.form['fecha'], request.form['hora'], request.form['alumno'], request.form['titulo'], request.form['notas'])
-            
-
-            )
+        )
 
 
         db.commit()
