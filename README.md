@@ -1,6 +1,6 @@
 # Aplicación web para la gestión de TFG/M en la EPSC
 
-Projecto de TFG de Carlos Romeo Muñoz para la gestión de TFG/M en la Escuela Politécnica Superior de Córdoba.
+Proyecto de TFG de Carlos Romeo Muñoz para la gestión de TFG/M en la Escuela Politécnica Superior de Córdoba.
 Es una aplicación web desarrollada mediante el microframework Flask donde los Estudiantes podrán subir sus peticiones de tema, sus TFG/M y donde los responsables de la Escuela podrán revisarlos, evaluarlos, etc. Además incluye gestión de comisiones y tribunales de la Escuela, publicación de convocatorias de lectura pública de los trabajos o consulta pública de los trabajos realizados en el pasado por otros alumnos entre otras funciones.
 
 ## Comenzando 🚀
