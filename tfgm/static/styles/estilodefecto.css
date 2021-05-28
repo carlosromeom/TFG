@@ -247,3 +247,28 @@ TD  {
   color: white;
   text-align: left;
 }
+
+.collapsible-block {
+  border: 1px solid #777;
+  padding: 0;
+  margin-top: 0.5em;
+}
+
+.collapsible {
+  background-color: #777;
+  color: white;																					
+  cursor: pointer;
+  padding: 0.4em 1em;
+  text-align: left;
+  outline: none;
+}
+
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.collapsible-content {
+  padding: 0 1em;
+  display: none;
+  overflow: hidden;
+}

@@ -72,15 +72,20 @@ div {
   				<input type="checkbox" name="modificacionAmpliacion">Modificacion o ampliacion de otra peticion
   				<input type="checkbox" name="solicitaAdelanto">Solicita adelanto de fecha de lectura
 				<textarea name="motivosAdelanto" rows="3" cols="30">Motivos para adelanto de fecha de lectura</textarea>
-				<p>Propuesta de tribunal (opcional): <input type="text" name="propuestaTribunal" size="40"></p>
-        <p>Datos del miembro propuesto para el tribunal (Rellenar solo si existe tal miembro):</p>
-        <p>Nombre: <input type="text" name="nombreMiembroTribunal" size="40"></p>
-        <p>Apellidos: <input type="text" name="apellidosMiembroTribunal" size="40"></p>
-        <p>DNI: <input type="text" name="DNIMiembroTribunal" size="25"></p>
-        <p>Email: <input type="text" name="emailMiembroTribunal" size="40"></p>
-        <p>Titulacion: <input type="text" name="TitulacionMiembroTribunal" size="40"></p>
 
-				<p>Director 1: <input type="text" name="director1" size="40"></p>
+        <div class="collapsible-block">
+          <div class="collapsible">Propuesta de persona para tribunal (opcional)</div>
+          <div class=collapsible-content>
+            <p>Persona externa a la EPSC que reúna la titulación adecuada (según reglamento)</p>
+            <p>Nombre: <input type="text" name="nombreMiembroTribunal" size="40"></p>
+            <p>Apellidos: <input type="text" name="apellidosMiembroTribunal" size="40"></p>
+            <p>DNI: <input type="text" name="DNIMiembroTribunal" size="25"></p>
+            <p>Email: <input type="text" name="emailMiembroTribunal" size="40"></p>
+            <p>Titulacion: <input type="text" name="TitulacionMiembroTribunal" size="40"></p>
+          </div>
+        </div>
+
+          <p>Director 1: <input type="text" name="director1" size="40"></p>
         <input type="checkbox" name="director1Externo">Marque en caso de ser director externo
 
 
@@ -108,3 +113,21 @@ div {
 
 
 <a class="button2" href="/">Atras</a>
+
+<!-- Para los desplegables -->
+<script>
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+  
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var content = this.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    });
+  }
+</script>
