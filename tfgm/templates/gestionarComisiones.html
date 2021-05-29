@@ -38,10 +38,11 @@
 
 <table id="display-table" class="table-layout">
     <thead>
-            <th>Nombre</th>
-            <th>ID</th>
+            <th>Titulacion</th>
             <th>Estado</th>
-            <th>Miembros</th>
+            <th>Profesor 1</th>
+            <th>Profesor 2</th>
+            <th>Profesor 3</th>
             <th>Presidente</th>
 
     </thead>
@@ -50,11 +51,13 @@
                
 
                   <tr>
-                        <td class="row-data">{{row[0]}}</td>
-                        <td class="row-data"><a href="/modificarComision/{{row[1]}}">{{row[1]}}</a></td>
+                        <td class="row-data"><a href="/modificarComision/{{row[0]}}">{{row[0]}}</a></td>
+                        <td class="row-data">{{row[1]}}</a></td>
                         <td class="row-data">{{row[2]}}</td>
                         <td class="row-data">{{row[3]}}</td>
                         <td class="row-data">{{row[4]}}</td>
+                        <td class="row-data">{{row[5]}}</td>
+
                         
                         
                   </tr>
@@ -63,14 +66,14 @@
             </table>
       </div>
 
-<a class="button" href="/crearComision"> Crear nueva comision</a>
+<a class="button" href="/crearComision"> Crear nueva comisión</a>
 
            
 </body>
 </html>
 
 
-<a class="button2" href="/">Atras</a>
+<a class="button2" href="/">Atrás</a>
 
 
 

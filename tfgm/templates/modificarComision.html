@@ -4,23 +4,23 @@
   <link rel="icon" type="image/png" href="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png">
   <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
-    <title>Modificacion de los datos de una comision</title>
+    <title>Modificacion de los datos de una comisión</title>
 </head> 
 <body>
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
-            <h1> <center> Modificacion de los datos de una comision </center></h1>
+            <h1> <center> Modificacion de los datos de una comisión </center></h1>
 
-             <h2> <center> Modificacion de la comision {{ID}}</center></h2>
+             <h2> <center> Modificacion de la comisión {{titulacion}}</center></h2>
 
 
 
            <div align="left">
-            <a class="button" href="/cambiarEstadoComision/{{ID}}">Cambiar el estado de la comision</a>
+            <a class="button" href="/cambiarEstadoComision/{{titulacion}}">Cambiar el estado de la comision</a>
 
         
            		<div align="right"><form action="{{ url_for ('modificarProfesoresComision') }}" method="post"> <input type="submit" value="Gestionar comisiones" /> 
-           	<input id="ID" type="hidden" name="ID" value={{ID}}>
+           	<input id="titulacion" type="hidden" name="titulacion" value={{titulacion}}>
            </form>
 
 

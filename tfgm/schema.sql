@@ -66,10 +66,11 @@ CREATE TABLE TFGs (
 
 
 CREATE TABLE comisiones (
-  nombre TEXT NOT NULL,
-  id NUMBER PRIMARY KEY,
+  titulacion TEXT PRIMARY KEY,
   estado TEXT NOT NULL,
-  miembros TEXT NOT NULL,
+  profesor1 TEXT NOT NULL,
+  profesor2 TEXT NOT NULL,
+  profesor3 TEXT NOT NULL,
   presidente TEXT NULL NULL
 );
 
@@ -84,6 +85,7 @@ CREATE TABLE tribunal (
   titulacion TEXT NOT NULL
 );
 
+--Valores de ejemplo:
 INSERT INTO tribunal (id, estado , email_presidente, email_secretario, email_vocal, titulacion)
 VALUES 
     (0,"Activo","aalbujer", "ir1araza", "jlavila", "informatica");

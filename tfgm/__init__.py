@@ -738,15 +738,24 @@ def create_app(test_config=None):
     ####FUNCIONES PARA EL ACTOR PROFESOR MIEMBRO DE COMISION####
 
     #Consultar peticiones de tema
-    @app.route("/consultarPeticionesdeTema")
+    @app.route("/consultarPeticionesdeTema") #OJO MODIFICAR
     def consultarPeticionesdeTema():
-        #lo primero es sacar todas las peticiones de tema de la BD
+        #lo primero es buscar a que comision pertenece el usuario actual
+        db = database.get_db()
+        comision=db.execute(
+            "SELECT * FROM comisiones where profesor1 = ? or profesor2= ? or profesor3=? or presidente=?", ("aalbujer", "aalbujer", "aalbujer", "aalbujer",), #(current_user.email, current_user.email, current_user.email, current_user.email,),
+            ).fetchall()
+
+
+        #return(comision[0][0])
+
+        #Ahora sacamos todas las peticiones de tema de la BD que correspondan a la comision
         db = database.get_db()
         peticiones=db.execute(
-            "SELECT * FROM peticiones where estado = 'Validada'or resolucion='SugerenciasAceptadas' or resolucion='sugerenciasDenegadas'"
+            "SELECT * FROM peticiones where estado = 'Validada'or resolucion='SugerenciasAceptadas' or resolucion='sugerenciasDenegadas' and titulacion= ?", (comision[0][0],),
             ).fetchall()
     
-        #return ("hola")
+        
         return render_template('consultarPeticionesdeTema.html', peticiones=peticiones)
 
 
@@ -796,8 +805,8 @@ def create_app(test_config=None):
 
 
 
-    ####FUNCIONES PARA EL ACTOR MIEMBRO DE TRIBUNAL####
-    @app.route("/consultarTrabajosPresentados")
+    ####FUNCIONES PARA EL ACTOR PROFESOR MIEMBRO DE TRIBUNAL####
+    @app.route("/consultarTrabajosPresentados")#MODIFICAR CUANDO SE TENGA EL USUARIO
     def consultarTrabajosPresentados():
 
         #lo primero es sacar cuales son los tribunales del usuario actual
@@ -811,7 +820,7 @@ def create_app(test_config=None):
 
 
 
-        #lo primero es sacar todos los trabajos sin corregir de la BD
+        #Sacamos todos los trabajos sin corregir de la BD
 
         db = database.get_db()
         trabajos=db.execute(
@@ -1054,9 +1063,9 @@ def create_app(test_config=None):
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
         db.execute(
-                "INSERT INTO comisiones (nombre, id, estado, miembros, presidente)"
-                "VALUES (?, ?, 'Activa', ?, ?)",
-                (request.form['nombre'], request.form['ID'], request.form['miembros'], request.form['presidente'])
+                "INSERT INTO comisiones (titulacion, estado, profesor1, profesor2, profesor3, presidente)"
+                "VALUES (?,'Activa', ?, ?, ?, ?)",
+                (request.form['titulacion'], request.form['profesor1'], request.form['profesor2'], request.form['profesor3'],  request.form['presidente'])
             )
 
         db.commit()
@@ -1094,7 +1103,7 @@ def create_app(test_config=None):
 
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
-        db.execute("UPDATE comisiones SET estado=? WHERE ID= ?", (nuevoEstado, request.form.get('ID')),
+        db.execute("UPDATE comisiones SET estado=? WHERE titulacion= ?", (nuevoEstado, request.form.get('titulacion')),
 
 
             )
@@ -1112,17 +1121,29 @@ def create_app(test_config=None):
     @app.route("/modificarProfesoresComision", methods=['POST'])
     def modificarProfesoresComision():
         
-        ID=request.form.get('ID')
+        titulacion=request.form.get('titulacion')
         #return(ID)
         #sacamos los miembros de la comision
         db = database.get_db()
-        miembros=db.execute("SELECT miembros FROM comisiones WHERE id= ?", (ID,),
+        profesor1=db.execute("SELECT profesor1 FROM comisiones WHERE titulacion= ?", (titulacion,),
+
+
+            ).fetchone()[0]
+        profesor2=db.execute("SELECT profesor2 FROM comisiones WHERE titulacion= ?", (titulacion,),
+
+
+            ).fetchone()[0]
+        profesor3=db.execute("SELECT profesor3 FROM comisiones WHERE titulacion= ?", (titulacion,),
+
+
+            ).fetchone()[0]
+        presidente=db.execute("SELECT presidente FROM comisiones WHERE titulacion= ?", (titulacion,),
 
 
             ).fetchone()[0]
 
         #return(miembros)
-        return render_template('modificarProfesoresComision.html', ID=ID, miembros=miembros)
+        return render_template('modificarProfesoresComision.html', titulacion=titulacion, profesor1=profesor1, profesor2=profesor2, profesor3=profesor3, presidente=presidente)
 
 
 
@@ -1136,7 +1157,7 @@ def create_app(test_config=None):
 
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
-        db.execute("UPDATE comisiones SET miembros=? WHERE ID= ?", (request.form.get('miembros'), request.form.get('ID')),
+        db.execute("UPDATE comisiones SET profesor1=?, profesor2=?, profesor3=?, presidente=? WHERE titulacion= ?", (request.form.get('profesor1'), request.form.get('profesor2'), request.form.get('profesor3'), request.form.get('presidente'), request.form.get('titulacion')),
 
 
             )

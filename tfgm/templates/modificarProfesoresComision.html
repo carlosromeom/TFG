@@ -2,28 +2,37 @@
     <link rel="icon" type="image/png" href="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png">
     <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
-    <title>Modificar profesores de la comision</title>
+    <title>Modificar profesores de la comisión</title>
 </head>  
 
 <body> 
 
 	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
-            <h1> <center> Modificar profesores de la comision</center></h1>
+            <h1> <center> Modificar profesores de la comisión</center></h1>
             
 
 
-<h2> <left>Introduzca los cambios en los componentes de la comision</left></h2>
+<h2> <left>Introduzca los cambios en los componentes de la comisión</left></h2>
 
                   <form action="{{ url_for('registrarCambioProfesoresComision') }}" method="post">
                         
 
 
-                        <input type="text" id="miembros" name="miembros" value='{{miembros}}'>
-                        <label for="miembros">Miembros</label><br>
+                        <input type="text" id="profesor1" name="profesor1" value='{{profesor1}}'>
+                        <label for="profesor1">Profesor 1</label><br>
+
+                        <input type="text" id="profesor2" name="profesor2" value='{{profesor2}}'>
+                        <label for="profesor2">Profesor 2</label><br>
+
+                        <input type="text" id="profesor3" name="profesor3" value='{{profesor3}}'>
+                        <label for="profesor3">Profesor 3</label><br>
+
+                        <input type="text" id="presidente" name="presidente" value='{{presidente}}'>
+                        <label for="miembros">Presidente</label><br>
 
                        
 
-                        <input type="hidden" name="ID" value={{ID}}>
+                        <input type="hidden" name="titulacion" value={{titulacion}}>
 
                         <p>
                         <input type="submit" value="Enviar">
@@ -35,7 +44,7 @@
 
 
 
-<a class="button2" href="/">Atras</a>
+<a class="button2" href="/">Atrás</a>
 
 
 

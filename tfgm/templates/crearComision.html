@@ -3,7 +3,7 @@
   <link rel="icon" type="image/png" href="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png">
   <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
   <meta charset="utf-8">
-    <title>Crear nueva comision</title>
+    <title>Crear nueva comisión</title>
 </head> 
 
 <style>
@@ -40,16 +40,16 @@ div {
 </style>
 
 <body> 
-<p>Hello, {email}! You're logged in! Email: {email}</p>
-            
+
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
-            <h1> <center> Crear nueva comision </center></h1>
+            <h1> <center> Crear nueva comisión </center></h1>
 
 			<form action="{{ url_for('registrarNuevaComision') }}" method="post">
-  				<p>Nombre: <input type="text" name="nombre" size="40"></p>
-          <p>ID: <input type="number" name="ID"></p>
-  				<p>Miembros: <input type="text" name="miembros" size="230"></p>
-  				<p>Presidente: <input type="text" name="presidente" size="40"></p>
+  				<p>Titulación: <input type="text" name="titulacion" size="40"></p>
+  				<p>Profesor1 (email sin @uco.es): <input type="text" name="profesor1" size="230"></p>
+          <p>Profesor2 (email sin @uco.es): <input type="text" name="profesor2" size="230"></p>
+          <p>Profesor3 (email sin @uco.es): <input type="text" name="profesor3" size="230"></p>
+  				<p>Presidente (email sin @uco.es): <input type="text" name="presidente" size="40"></p>
   				
   				<p>
     				<input type="submit" value="Enviar">
