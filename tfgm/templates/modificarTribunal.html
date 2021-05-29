@@ -41,17 +41,36 @@ div {
 
 
 <body> 
-<p>Hello, {email}! You're logged in! Email: {email}</p>
+
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
             <h1> <center> Modificar tribunal </center></h1>
 
 			<form action="{{ url_for('registrarModificacionTribunal') }}" method="post">
-  				<p>Nombre: <input type="text" name="nombre" size="40"></p>
-          <p>ID: <input type="number" name="ID" value={{ID}}></p>
-  				<p>Miembros: <input type="text" name="miembros" size="230"></p>
-  				<p>Presidente: <input type="text" name="presidente" size="40"></p>
-          <p>Titulación: <input type="text" name="titulacion" size="40"></p>
+
+                        <input type="radio" id="Activo" name="Activo" value="Activo">
+                        <label for="Activo">Activo</label><br>
+
+                        <input type="radio" id="Inactivo" name="Inactivo" value="Inactivo">
+                        <label for="Inactivo">Inactivo</label><br>
+
+
+
+  				<p>Login presidente (sin @uco.es): <input type="text" name="presidente" size="40"></p>
+          <p>Login secretario (sin @uco.es): <input type="text" name="secretario" size="40"></p>
+          <p>Login vocal (sin @uco.es): <input type="text" name="vocal" size="40"></p>
+          <p>ID: <input name="ID" value={{ID}} readonly></p>
+          <select name="titulacion">
+            <option selected value="0"> Titulaciones </option>
+
+              <option value="informatica">Grado en Ingeniería Informática</option> 
+              <option value="electronicaindustrial">Grado en Ingeniería Electrónica Industrial</option> 
+              <option value="electronica">Grado en Ingeniería Electrónica</option> 
+              <option value="mecanica">Grado en Ingeniería Mecánica</option>
+              <option value="dobleenergiaelectrica">Doble Grado en Ingeniería Energía y Rec. Min e Ing. Electica</option> 
+              <option value="masterindustrial">Máster en Ingeniería Industrial</option>  
+ 
+          </select>
   				
   				<p>
     				<input type="submit" value="Enviar">

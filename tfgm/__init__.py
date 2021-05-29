@@ -919,12 +919,12 @@ def create_app(test_config=None):
     @app.route("/validarPeticion/<string:id>")
     def validarPeticion(id):
         db = database.get_db()
-        email=db.execute(
+        datos=db.execute(
             "SELECT * FROM peticiones where ID = ?", (id,),
             ).fetchall()
         
         
-        return render_template('validar.html', id=id, email=email[0][6])
+        return render_template('validar.html', id=id, datos=datos)
 
 
 
@@ -1075,14 +1075,14 @@ def create_app(test_config=None):
 
 
 
-    @app.route("/modificarComision/<int:ID>")
-    def modificarComision(ID):
-        return render_template('modificarComision.html', ID=ID)
+    @app.route("/modificarComision/<string:titulacion>")
+    def modificarComision(titulacion):
+        return render_template('modificarComision.html', titulacion=titulacion)
 
 
-    @app.route("/cambiarEstadoComision/<int:ID>")
-    def cambiarEstadoComision(ID):
-        return render_template('cambiarEstadoComision.html', ID=ID)
+    @app.route("/cambiarEstadoComision/<string:titulacion>")
+    def cambiarEstadoComision(titulacion):
+        return render_template('cambiarEstadoComision.html', titulacion=titulacion)
 
 
     @app.route("/registrarNuevoEstadoComision", methods=['POST'])
@@ -1288,7 +1288,10 @@ def create_app(test_config=None):
 
     @app.route("/registrarModificacionTribunal", methods=['POST'])
     def registrarModificacionTribunal():
-        #return(request.form.get('miembros'))
+        if request.form.get('Activo'):
+            nuevoEstado="Activo"
+        else :
+            nuevoEstado="Inactivo"
 
 
         #introducimos los datos de la plantilla en la base de datos
@@ -1302,9 +1305,9 @@ def create_app(test_config=None):
         db.commit()
 
         db.execute(
-                "INSERT INTO tribunal (nombre, id, estado, miembros, presidente, titulacion)"
-                "VALUES (?, ?, 'Activo', ?, ?, ?)",
-                (request.form['nombre'], request.form['ID'], request.form['miembros'], request.form['presidente'], request.form['titulacion'])
+                "INSERT INTO tribunal (id, estado, email_presidente, email_secretario, email_vocal, titulacion)"
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (request.form['ID'], nuevoEstado, request.form['presidente'], request.form['secretario'], request.form['vocal'], request.form['titulacion'])
             )
         db.commit()
 
