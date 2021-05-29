@@ -2,7 +2,7 @@
   <link rel="icon" type="image/png" href="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png">
     <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
-    <title>Evaluar peticion de tema</title>
+    <title>Evaluar petición de tema</title>
 </head>  
 
 
@@ -41,10 +41,32 @@ div {
 }
 </style>
 
+
+<style>
+.table-layout {
+    text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-family:"Trebuchet MS";
+    margin: 0 auto 0;
+}
+.table-layout td, .table-layout th {
+    border: 1px solid grey;
+    padding: 5px 5px 0;
+}
+.table-layout td {
+    text-align: left;
+}
+.selected {
+    color: red;
+}
+</style>
+
+
 <body> 
 
 	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
-            <h1> <center> Evaluar peticion de tema</center></h1>
+            <h1> <center> Evaluar petición de tema</center></h1>
 
 
 
@@ -53,17 +75,96 @@ div {
             <a class="button" href="/return-files3/{{email}}">Descargar</a>
            
 
-            <h4>Peticion {{id}} </h4>
+            <h4>Petición {{id}} </h4>
         
 
 </div>
 
 
 
-<h2> <left>Introduzca los campos para evaluar la peticion de tema  </left></h2>
+<h1> <center> Datos de la petición de tema</center></h1>
+
+
+<table id="display-table" class="table-layout">
+    <thead>
+            <th>ID</th>
+            <th>Nombre trabajo</th>
+            <th>Nombre alumno</th>
+            <th>DNI</th>
+            <th>Titulacion</th>
+            <th>Telefono Movil</th>
+            <th>Email</th>
+            <th>Confirmacion requisito creditos Pendientes</th>
+            <th>Modificacion Ampliacion</th>
+
+            <th>Propuesta de tribunal</th>
+            <th>Nombre M. tribunal</th>
+            <th>Apellido M. tribunal</th>
+            <th>DNI M. tribunal</th>
+            <th>Email M. tribunal</th>
+            <th>Titulacion M. tribunal</th>
+            <th>Director 1</th>
+            <th>Externo</th>
+            <th>Director 2</th>
+
+            <th>Nombre Dir. 2 Externo</th>
+            <th>Apellido Dir. 2 Externo</th>
+            <th>DNI Dir. 2 Externo</th>
+            <th>Email Dir. 2 Externo</th>
+            <th>Titulacion Dir. 2 Externo</th>
+
+            <th>Estado</th>
+            <th>Resolucion</th>
+            
+    </thead>
+
+                  {% for row in datos %}
+               
+
+                  <tr>
+                        
+                        <td class="row-data">{{row[0]}}</a></td>
+                        <td class="row-data">{{row[1]}}</a></td>
+                        <td class="row-data">{{row[2]}}</td>
+                        <td class="row-data">{{row[3]}}</td>
+                        <td class="row-data">{{row[4]}}</td>
+                        <td class="row-data">{{row[5]}}</td>
+                        <td class="row-data">{{row[6]}}</td>
+                        <td class="row-data">{{row[7]}}</td>
+                        <td class="row-data">{{row[8]}}</td>
+                        <td class="row-data">{{row[9]}}</td>
+                        <td class="row-data">{{row[10]}}</td>
+                        <td class="row-data">{{row[11]}}</td>
+                        <td class="row-data">{{row[12]}}</td>
+                        <td class="row-data">{{row[13]}}</td>
+                        <td class="row-data">{{row[14]}}</td>
+                        <td class="row-data">{{row[15]}}</td>
+                        <td class="row-data">{{row[16]}}</td>
+                        <td class="row-data">{{row[17]}}</td>
+                        <td class="row-data">{{row[18]}}</td>
+                        <td class="row-data">{{row[19]}}</td>
+                        <td class="row-data">{{row[20]}}</td>
+                        <td class="row-data">{{row[21]}}</td>
+                        <td class="row-data">{{row[22]}}</td>
+                        <td class="row-data">{{row[23]}}</td>
+                        <td class="row-data">{{row[24]}}</td>
+
+
+                        
+
+                        
+                  </tr>
+          
+                  {% endfor %}
+            </table>
+
+
+
+
+<h2> <left>Introduzca los campos para evaluar la petición de tema  </left></h2>
 
                   <form action="{{ url_for('registrarEvaluacion') }}" method="post">
-                        <p>Una vez valorada la memoria adjunta a la presente solicitud, la Comision de Proyectos correspondiente, en el dia de la fecha, ha resuelto lo que a continuacion se indica:</p> <input type="radio" id="Aceptada" name="Aceptada" value="Aceptada">
+                        <p>Una vez valorada la memoria adjunta a la presente solicitud, la Comisión de Proyectos correspondiente ha resuelto lo que a continuación se indica:</p> <input type="radio" id="Aceptada" name="Aceptada" value="Aceptada">
                         <label for="Aceptada">Aceptada</label><br>
 
                         <input type="radio" id="AceptadaSugerencias" name="AceptadaSugerencias" value="AceptadaSugerencias">
@@ -91,7 +192,7 @@ div {
 
 
 
-<a class="button2" href="/">Atras</a>
+<a class="button2" href="/">Atrás</a>
 
 
 

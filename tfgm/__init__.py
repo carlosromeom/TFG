@@ -762,11 +762,11 @@ def create_app(test_config=None):
     @app.route("/evaluarPeticion/<string:id>")
     def evaluarPeticion(id):
         db = database.get_db()
-        email=db.execute(
-            "SELECT email FROM peticiones where ID = ?", (id,),
+        datos=db.execute(
+            "SELECT * FROM peticiones where ID = ?", (id,),
             ).fetchall()
 
-        return render_template('evaluar.html', id=id, email=email[0][0])
+        return render_template('evaluar.html', id=id, datos=datos)
 
 
 
@@ -812,7 +812,7 @@ def create_app(test_config=None):
         #lo primero es sacar cuales son los tribunales del usuario actual
         db2 = database.get_db()
         tribunales=db2.execute(
-            "SELECT * FROM tribunal where email_presidente = ? or email_vocal = ? or email_secretario = ?", ("aalbujer", "aalbujer", "aalbujer",),#(current_user.email,),
+            "SELECT * FROM tribunal where email_presidente = ? or email_vocal = ? or email_secretario = ?", ("aalbujer", "aalbujer", "aalbujer",),#(current_user.email, current_user.email, current_user.email,),
             ).fetchall()        
 
         
