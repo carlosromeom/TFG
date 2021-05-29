@@ -185,10 +185,76 @@ def create_app(test_config=None):
 
 
     #presentar peticion de tema
-    @app.route("/peticion")
+
+    @app.route('/peticion')
     def presentarPeticion():
-        #return ("hola")
-        return render_template('presentarpeticion.html')
+        return render_template('aux2.html')
+
+    @app.route('/uploadPeticion', methods=['GET', 'POST'])
+    def upload_file2():
+        
+        if request.method == 'POST':
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                #db = database.get_db()
+                #db.execute(
+                #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
+                #"VALUES (?, ?, ?, ?, ?)",
+                #(filename, 'Creado', request.form['director1'], request.form['director2'], request.form['titulacion'] )
+                #)
+                #db.commit()
+                        #sacamos una lista con todos los usuarios profesores registrados
+                db = database.get_db()
+                profesores=db.execute(
+                    "SELECT * FROM user where rol = 'Profesor'"
+                    ).fetchall()
+    
+
+                return render_template('presentarpeticion.html', profesores=profesores)
+        
+                #return render_template('pantallaOK.html')
+
+        return '''
+        <!doctype html>
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form method=post enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+        </form>
+        '''
+
+
+        
+
+
+
+
+
+
+
+
+    #@app.route("/peticion")
+    #def presentarPeticion():
+        #sacamos una lista con todos los usuarios profesores registrados
+     #   db = database.get_db()
+     #   profesores=db.execute(
+      #      "SELECT * FROM user where rol = 'Profesor'"
+       #     ).fetchall()
+    
+
+        #return render_template('presentarpeticion.html', profesores=profesores)
         
 
 
@@ -213,17 +279,6 @@ def create_app(test_config=None):
         else:
             check1="No"
 
-        if request.form.get('solicitaAdelanto'):
-            check2="Si"
-        else:
-            check2="No"
-
-
-        if request.form.get('director1Externo'):
-            director1Ext="Si"
-        else:
-            director1Ext="No"
-
         if request.form.get('director2Externo'):
             director2Ext="Si"
         else:
@@ -238,16 +293,28 @@ def create_app(test_config=None):
         ID = str(current_user.email)+str(datetime.datetime.now())
 
         #introducimos los datos de la plantilla en la base de datos
+   
         db = database.get_db()
         db.execute(
-                "INSERT INTO peticiones (ID, nombreTrabajo, nombreAlumno, DNI, titulacion, telefonoMovil, email, creditosPendientes, titulo, modificacionAmpliacion, solicitaAdelanto, propuestaTribunal, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director1Ext, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (ID, request.form['nombreTrabajo'], request.form['nombreAlumno'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], current_user.email, creditos, request.form['titulo'], check1, check2, request.form['propuestaTribunal'], request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], director1Ext, request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
+                "INSERT INTO peticiones (ID, nombreTrabajo, nombreAlumno, DNI, titulacion, telefonoMovil, email, creditosPendientes, modificacionAmpliacion, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (ID, request.form['nombreTrabajo'], request.form['nombreAlumno'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], current_user.email, creditos, check1, request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
             )
 
         db.commit()
 
 
+
+
+
+
+        #para que aparezca el nombre del director 1 en el pdf lo buscamos en la base de datos
+        db = database.get_db()
+        nombre=db.execute(
+            "SELECT name FROM user where email = ?", (request.form['director1'],),
+            ).fetchall()
+
+   
 
 
         pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
@@ -275,13 +342,13 @@ def create_app(test_config=None):
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Titulo del proyecto: "+str(request.form['titulo']), ln=2, align="L")
+
         pdf.cell(200, 10, txt="Modificacion o ampliacion: "+check1, ln=2, align="L")
-        pdf.cell(200, 10, txt="Solicita adelanto: "+check2, ln=2, align="L")
+
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Propuesta de tribunal: "+str(request.form['propuestaTribunal']), ln=2, align="L")
+       # pdf.cell(200, 10, txt="Propuesta de tribunal: "+str(request.form['propuestaTribunal']), ln=2, align="L")
         pdf.cell(200, 10, txt="Nombre miembro tribunal: "+str(request.form['nombreMiembroTribunal']), ln=2, align="L")
         pdf.cell(200, 10, txt="Apellidos miembro tribunal: "+str(request.form['apellidosMiembroTribunal']), ln=2, align="L")
         pdf.cell(200, 10, txt="DNI miembro de tribunal: "+str(request.form['DNIMiembroTribunal']), ln=2, align="L")
@@ -290,8 +357,8 @@ def create_app(test_config=None):
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Director 1: "+str(request.form['director1']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Director 1 Externo: "+director1Ext, ln=2, align="L")
+        pdf.cell(200, 10, txt="Director 1: "+nombre[0][0]+" - "+str(request.form['director1']), ln=2, align="L")
+
 
 
         pdf.cell(200, 10, txt="Director 2: "+str(request.form['director2']), ln=2, align="L")
@@ -325,6 +392,7 @@ def create_app(test_config=None):
 
 
         return render_template('descargadocumento.html')
+
 
 
 
@@ -366,7 +434,6 @@ def create_app(test_config=None):
 
         #return render_template('subirTFG.html')
 
-
     @app.route("/registrarTFG/<string:id>")
     def registrarTFG(id):
         db = database.get_db()
@@ -401,7 +468,6 @@ def create_app(test_config=None):
 
 
         return render_template('aux.html')
-
 
 
 

@@ -29,5 +29,5 @@ class User(UserMixin):
         db_object.execute(
             "INSERT INTO user (id, name, email, rol) "
             "VALUES (?, ?, ?, ?)",
-            (obj.id_, obj.name, obj.email, "Estudiante"),  ) #inicialmente todos los usuarios tendran el rol de Estudiante
+            (obj.id, obj.name, obj.email, "Estudiante"),  ) #inicialmente todos los usuarios tendran el rol de Estudiante
         db_object.commit()

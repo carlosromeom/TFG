@@ -1,10 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <head>
   <link rel="icon" type="image/png" href="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png">
   <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
   <meta charset="utf-8">
     <title>Presentar petición de tema</title>
-</head> 
+
 
 <style>
 input[type=text], select {
@@ -32,26 +32,146 @@ input[type=submit]:hover {
   background-color: #45a049;
 }
 
-div {
-  border-radius: 5px;
-  background-color: #f2f2f2;
-  padding: 20px;
-}
+
 </style>
 
 
 
-<body> 
-            
+
+
+
+
+
+<style>
+.collapsible {
+  background-color: #33d4ff;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .collapsible:hover {
+  background-color: #33a2ff;
+}
+
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #33d4ff;
+}
+
+</style>
+
+
+
+
+
+
+<style>
+/*the container must be positioned relative:*/
+.custom-select {
+  position: relative;
+  font-family: Arial;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element:*/
+}
+
+.select-selected {
+  background-color: DodgerBlue;
+}
+
+/*style the arrow inside the select element:*/
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent #fff transparent;
+  top: 7px;
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+  color: #ffffff;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+/*style items (options):*/
+.select-items {
+  position: absolute;
+  background-color: DodgerBlue;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<style>
+  div {
+  border-radius: 5px;
+  
+  padding: 20px;
+}</style>
+
+</head> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body background-color: #f2f2f2;> 
+
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
             <h1> <center> Presentar peticion de tema </center></h1>
 
 			<form action="{{ url_for('prepararPDF') }}" method="post">
+
           <p>Nombre del trabajo: <input type="text" name="nombreTrabajo" size="40"></p>
   				<p>Nombre y apellidos: <input type="text" name="nombreAlumno" size="40"></p>
   				
   				<p>DNI: <input type="text" name="DNI" size="25"></p>
-  				<select name="titulacion">
+  			
+          <div class="custom-select" >
+          <select name="titulacion">
             <option selected value="0"> Titulaciones </option>
 
               <option value="informatica">Grado en Ingenieria Informatica</option> 
@@ -62,20 +182,21 @@ div {
               <option value="masterindustrial">Master en Ingenieria Industrial</option>  
  
           </select>
+          </div>
+
   				<p>Telefono movil: <input type="tel" name="tMovil"></p>
   				
   				
           <input type="checkbox" name="creditosPendientes">Confirmo que cumplo el requisito del minimo numero de creditos aprovados para pedir la peticion de tema segun la normativa de la EPSC
   				
 
-          <p>Titulo del proyecto: <input type="text" name="titulo" size="100"></p>
-  				<input type="checkbox" name="modificacionAmpliacion">Modificacion o ampliacion de otra peticion
-  				<input type="checkbox" name="solicitaAdelanto">Solicita adelanto de fecha de lectura
-				<textarea name="motivosAdelanto" rows="3" cols="30">Motivos para adelanto de fecha de lectura</textarea>
 
-        <div class="collapsible-block">
-          <div class="collapsible">Propuesta de persona para tribunal (opcional)</div>
-          <div class=collapsible-content>
+  				<input type="checkbox" name="modificacionAmpliacion">Modificacion o ampliacion de otra peticion
+
+
+        <div class="collapsible-block" aria-expanded="false" >
+          <div class="collapsible" aria-expanded="false" >Propuesta de persona para tribunal (opcional)</div>
+          <div class=collapsible-content aria-expanded="false" >
             <p>Persona externa a la EPSC que reúna la titulación adecuada (según reglamento)</p>
             <p>Nombre: <input type="text" name="nombreMiembroTribunal" size="40"></p>
             <p>Apellidos: <input type="text" name="apellidosMiembroTribunal" size="40"></p>
@@ -85,29 +206,54 @@ div {
           </div>
         </div>
 
-          <p>Director 1: <input type="text" name="director1" size="40"></p>
-        <input type="checkbox" name="director1Externo">Marque en caso de ser director externo
+          
+
+        <div class="custom-select" >
+          <select name="director1">
+            <option selected value="0"> Director 1 </option>
+             {% for row in profesores %}
+              <option value={{row[2]}}>{{row[1]}}</option> 
+              {% endfor %}
+          </select>
+          </div>
 
 
 
-				<p>Director 2: <input type="text" name="director2" size="40"></p>
+
+
+
+       
+
+
+<p>Director 2: <input type="text" name="director2" size="40"></p>
+				
+
+
         <input type="checkbox" name="director2Externo">Marque en caso de ser director externo
         <p>Rellenar en caso de que el director 2 sea externo:</p>
+
+
+        <div class="collapsible-block" aria-expanded="false" >
+          <div class="collapsible" aria-expanded="false" >Datos director 2 externo</div>
+          <div class=collapsible-content aria-expanded="false" >
         <p>Nombre: <input type="text" name="nombreDirectorExterno" size="40"></p>
         <p>Apellidos: <input type="text" name="apellidosDirectorExterno" size="40"></p>
         <p>DNI: <input type="text" name="DNIDirectorExterno" size="25"></p>
         <p>Email: <input type="text" name="emailDirectorExterno" size="40"></p>
         <p>Titulacion: <input type="text" name="TitulacionDirectorExterno" size="40"></p>
 
-
+          </div>
+        </div>
 
 
 				
   				<p>
-    				<input type="submit" value="Enviar">
+    				<input type="submit" value="Subir documento">
     				<input type="reset" value="Borrar">
   				</p>
 			</form>
+
+
 
 
 
@@ -130,4 +276,89 @@ div {
       }
     });
   }
+</script>
+
+
+
+
+
+<script>
+var x, i, j, l, ll, selElmnt, a, b, c;
+/*look for any elements with the class "custom-select":*/
+x = document.getElementsByClassName("custom-select");
+l = x.length;
+for (i = 0; i < l; i++) {
+  selElmnt = x[i].getElementsByTagName("select")[0];
+  ll = selElmnt.length;
+  /*for each element, create a new DIV that will act as the selected item:*/
+  a = document.createElement("DIV");
+  a.setAttribute("class", "select-selected");
+  a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+  x[i].appendChild(a);
+  /*for each element, create a new DIV that will contain the option list:*/
+  b = document.createElement("DIV");
+  b.setAttribute("class", "select-items select-hide");
+  for (j = 1; j < ll; j++) {
+    /*for each option in the original select element,
+    create a new DIV that will act as an option item:*/
+    c = document.createElement("DIV");
+    c.innerHTML = selElmnt.options[j].innerHTML;
+    c.addEventListener("click", function(e) {
+        /*when an item is clicked, update the original select box,
+        and the selected item:*/
+        var y, i, k, s, h, sl, yl;
+        s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+        sl = s.length;
+        h = this.parentNode.previousSibling;
+        for (i = 0; i < sl; i++) {
+          if (s.options[i].innerHTML == this.innerHTML) {
+            s.selectedIndex = i;
+            h.innerHTML = this.innerHTML;
+            y = this.parentNode.getElementsByClassName("same-as-selected");
+            yl = y.length;
+            for (k = 0; k < yl; k++) {
+              y[k].removeAttribute("class");
+            }
+            this.setAttribute("class", "same-as-selected");
+            break;
+          }
+        }
+        h.click();
+    });
+    b.appendChild(c);
+  }
+  x[i].appendChild(b);
+  a.addEventListener("click", function(e) {
+      /*when the select box is clicked, close any other select boxes,
+      and open/close the current select box:*/
+      e.stopPropagation();
+      closeAllSelect(this);
+      this.nextSibling.classList.toggle("select-hide");
+      this.classList.toggle("select-arrow-active");
+    });
+}
+function closeAllSelect(elmnt) {
+  /*a function that will close all select boxes in the document,
+  except the current select box:*/
+  var x, y, i, xl, yl, arrNo = [];
+  x = document.getElementsByClassName("select-items");
+  y = document.getElementsByClassName("select-selected");
+  xl = x.length;
+  yl = y.length;
+  for (i = 0; i < yl; i++) {
+    if (elmnt == y[i]) {
+      arrNo.push(i)
+    } else {
+      y[i].classList.remove("select-arrow-active");
+    }
+  }
+  for (i = 0; i < xl; i++) {
+    if (arrNo.indexOf(i)) {
+      x[i].classList.add("select-hide");
+    }
+  }
+}
+/*if the user clicks anywhere outside the select box,
+then close all select boxes:*/
+document.addEventListener("click", closeAllSelect);
 </script>
