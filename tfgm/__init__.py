@@ -173,10 +173,9 @@ def create_app(test_config=None):
             print(current_user.rol)
             if current_user.rol == "Estudiante":
                 return render_template('menuprincipal.html') #En caso de que sea estudiante
-            if current_user.rol == "MiembroComision":
-                return render_template('menuprincipalMiembroComision.html') #En caso de que sea miembro de comision
-            if current_user.rol == "MiembroTribunal":
-                return render_template('menuprincipalMiembroTribunal.html') #En caso de que sea miembro de tribunal
+            if current_user.rol == "Profesor":
+                return render_template('menuprincipalProfesor.html') #En caso de que sea un profesor
+            
             if current_user.rol == "MiembroSecretaria":
                 return render_template('menuprincipalMiembroSecretaria.html') #En caso de que sea miembro de secretaria
         else:
@@ -736,7 +735,7 @@ def create_app(test_config=None):
 
 
 
-    ####FUNCIONES PARA EL ACTOR MIEMBRO DE COMISION####
+    ####FUNCIONES PARA EL ACTOR PROFESOR MIEMBRO DE COMISION####
 
     #Consultar peticiones de tema
     @app.route("/consultarPeticionesdeTema")
@@ -800,11 +799,23 @@ def create_app(test_config=None):
     ####FUNCIONES PARA EL ACTOR MIEMBRO DE TRIBUNAL####
     @app.route("/consultarTrabajosPresentados")
     def consultarTrabajosPresentados():
+
+        #lo primero es sacar cuales son los tribunales del usuario actual
+        db2 = database.get_db()
+        tribunales=db2.execute(
+            "SELECT * FROM tribunal where email_presidente = ? or email_vocal = ? or email_secretario = ?", ("aalbujer", "aalbujer", "aalbujer",),#(current_user.email,),
+            ).fetchall()        
+
+        
+       # return(tribunales[0][1])
+
+
+
         #lo primero es sacar todos los trabajos sin corregir de la BD
 
         db = database.get_db()
         trabajos=db.execute(
-            "SELECT * FROM TFGs where estado = 'Validado'"
+            "SELECT * FROM TFGs where estado = 'Validado' and tribunal = ?", (tribunales[0][0],),
             ).fetchall()
     
         #return ("hola")
@@ -1215,21 +1226,18 @@ def create_app(test_config=None):
         return render_template('crearTribunal.html')
 
 
+
+
+
+
     @app.route("/registrarNuevoTribunal", methods=['POST'])
     def registrarNuevoTribunal():
-        
-        #return("hola registrarNuevaComision")
-
-        #return render_template('descargadocumento.html')
-
-
-
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
         db.execute(
-                "INSERT INTO tribunal (nombre, id, estado, miembros, presidente, titulacion)"
-                "VALUES (?, ?, 'Activo', ?, ?, ?)",
-                (request.form['nombre'], request.form['ID'], request.form['miembros'], request.form['presidente'], request.form['titulacion'])
+                "INSERT INTO tribunal (id, estado, email_presidente, email_secretario, email_vocal, titulacion)"
+                "VALUES (?,'Activo', ?, ?, ?, ?)",
+                (request.form['id'], request.form['email_presidente'], request.form['email_secretario'], request.form['email_vocal'], request.form['titulacion'])
             )
 
         db.commit()
