@@ -1053,8 +1053,15 @@ def create_app(test_config=None):
 
     @app.route("/gestionarComisiones") #####FALLO################
     def gestionarComisiones():
-        #lo primero es sacar todas las comisiones ya registradas en la BD
+        db = database.get_db()
+        comisiones=db.execute(
+            "SELECT * FROM comisiones, user as u1, user as u2, user as u3, user as u4 WHERE comisiones.profesor1 == u1.email AND comisiones.profesor2 == u2.email AND comisiones.profesor3 == u3.email AND comisiones.presidente == u4.email"
+            ).fetchall()
 
+        return render_template('gestionarComisiones.html', comisiones=comisiones)
+
+    '''
+        #lo primero es sacar todas las comisiones ya registradas en la BD
         db = database.get_db()
         comisiones=db.execute(
             "SELECT * FROM comisiones"
@@ -1135,7 +1142,7 @@ def create_app(test_config=None):
     
         #return ("hola")
         return render_template('gestionarComisiones.html', matriz=matriz)
-
+    '''
 
 
     @app.route("/crearComision")
