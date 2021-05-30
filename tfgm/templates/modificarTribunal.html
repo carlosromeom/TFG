@@ -56,9 +56,43 @@ div {
 
 
 
-  				<p>Login presidente (sin @uco.es): <input type="text" name="presidente" size="40"></p>
-          <p>Login secretario (sin @uco.es): <input type="text" name="secretario" size="40"></p>
-          <p>Login vocal (sin @uco.es): <input type="text" name="vocal" size="40"></p>
+  				            <label for="presidente">Presidente:</label>
+                      <input list="nombres" name="presidente" id="presidente" value="{{datos[0][2]}}" required>
+                      <datalist id="nombres">
+                        {% for row in profesores %}
+                        <option value={{row[2]}}>{{row[1]}}</option> 
+                        {% endfor %}
+                      </datalist>
+
+
+                      <label for="secretario">Secretario:</label>
+                      <input list="nombres" name="secretario" id="secretario" value="{{datos[0][3]}}" required>
+                      <datalist id="nombres">
+                        {% for row in profesores %}
+                        <option value={{row[2]}}>{{row[1]}}</option> 
+                        {% endfor %}
+                      </datalist>
+
+
+                      <label for="secretario">Vocal:</label>
+                      <input list="nombres" name="vocal" id="vocal" value="{{datos[0][4]}}" required>
+                      <datalist id="nombres">
+                        {% for row in profesores %}
+                        <option value={{row[2]}}>{{row[1]}}</option> 
+                        {% endfor %}
+                      </datalist>
+
+          
+
+
+
+
+
+
+
+
+
+       
           <p>ID: <input name="ID" value={{ID}} readonly></p>
           <select name="titulacion">
             <option selected value="0"> Titulaciones </option>
@@ -67,7 +101,7 @@ div {
               <option value="electronicaindustrial">Grado en Ingeniería Electrónica Industrial</option> 
               <option value="electronica">Grado en Ingeniería Electrónica</option> 
               <option value="mecanica">Grado en Ingeniería Mecánica</option>
-              <option value="dobleenergiaelectrica">Doble Grado en Ingeniería Energía y Rec. Min e Ing. Electica</option> 
+              <option value="dobleenergiaelectrica">Doble Grado en Ingeniería Energía y Rec. Min e Ing. Eléctrica</option> 
               <option value="masterindustrial">Máster en Ingeniería Industrial</option>  
  
           </select>
