@@ -7,15 +7,58 @@
 </head> 
 <body> 
 
-<p>{{ID}}</p>
-<p>{{nombreTFG}}</p>
+
             
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
             <h1> <center> Seleccionar tribunal para el trabajo </center></h1>
 
 
   <form action="{{ url_for('asignarTribunal') }}" method="post">
-          <p>ID tribunal: <input type="number" name="ID"></p>
+          <div class="custom-select" >
+          <select name="tribunal" required>
+            <option selected value="0"> Tribunales de {{titulacion}} </option>
+             {% for row in tribunales %}
+              <option value={{row[0]}}>{{row[0], row[2]}}</option> 
+              {% endfor %}
+          </select>
+          </div>
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           <input type="hidden" name="trabajo" value='{{id}}'>
          
           <p>

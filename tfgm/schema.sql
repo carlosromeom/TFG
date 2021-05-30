@@ -99,5 +99,6 @@ CREATE TABLE lectura (
   hora TEXT NOT NULL,
   alumno TEXT NOT NULL,
   titulo TEXT NOT NULL, 
-  aclaraciones TEXT  --localizacion
+  localizacion TEXT NOT NULL,
+  aclaraciones TEXT 
 ); 

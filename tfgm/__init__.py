@@ -25,6 +25,7 @@ from werkzeug.utils import secure_filename
 
 # Third-party modules
 from fpdf import FPDF
+import numpy as np
 
 from oauthlib.oauth2 import WebApplicationClient
 import requests
@@ -989,8 +990,24 @@ def create_app(test_config=None):
 
         db.commit()
 
+        #Sacamos la titulación del trabajo
+        db = database.get_db()
+        titulacion=db.execute(
+            "SELECT titulacion FROM TFGs WHERE ID= ?", (id,),
+            ).fetchall()
 
-        return render_template('asignarTribunal.html', id=id)
+
+
+        #Sacamos los tribunales de la BD que sean de la misma titulacion que el trabajo
+        db = database.get_db()
+        tribunales=db.execute(
+            "SELECT * FROM tribunal where estado = 'Activo' and titulacion = ?", (titulacion[0][0],),
+            ).fetchall()
+
+
+
+
+        return render_template('asignarTribunal.html', id=id, tribunales=tribunales, titulacion=titulacion[0][0])
 
 
     @app.route("/asignarTribunal", methods=['POST'])
@@ -1024,7 +1041,7 @@ def create_app(test_config=None):
 
 
 
-    @app.route("/gestionarComisiones")
+    @app.route("/gestionarComisiones") #####FALLO################
     def gestionarComisiones():
         #lo primero es sacar todas las comisiones ya registradas en la BD
 
@@ -1032,9 +1049,82 @@ def create_app(test_config=None):
         comisiones=db.execute(
             "SELECT * FROM comisiones"
             ).fetchall()
+
+        #cuento las comisiones
+        c=0
+        for row in comisiones:
+            c=c+1
+        #fin del loop
+        #return(c)
+
+        matriz = []
+        for h in range(9):
+            matriz.append([])
+            for g in range(c):
+                matriz[h].append(None)
+
+        return(matriz[0][0])
+        
+        i = 0
+
+        for row in comisiones:
+            j = 0
+            #equivalencia entre id y nombre real
+            matriz[i][j]=comisiones[i][0] #titulacion de la comision
+            j=j+1
+            
+            matriz[i][j]=comisiones[i][1]
+            j=j+1
+
+
+            db = database.get_db()
+            nombre=db.execute(
+                "SELECT name FROM user WHERE email= ?", (comisiones[i][2],),
+                ).fetchall()
+            matriz[i][j]=comisiones[i][2]
+            j=j+1
+
+            matriz[i][j]=nombre[0][0]
+            j=j+1
+
+
+            db = database.get_db()
+            nombre2=db.execute(
+                "SELECT name FROM user WHERE email= ?", (comisiones[i][3],),
+                ).fetchall()
+            matriz[i][j]=comisiones[i][3]
+            j=j+1
+
+            matriz[i][j]=nombre2[0][0]
+            j=j+1
+
+            db = database.get_db()
+            nombre3=db.execute(
+                "SELECT name FROM user WHERE email= ?", (comisiones[i][4],),
+                ).fetchall()
+            matriz[i][j]=comisiones[i][4]
+            j=j+1
+
+            matriz[i][j]=nombre3[0][0]
+            j=j+1
+
+            db = database.get_db()
+            nombre4=db.execute(
+                "SELECT name FROM user WHERE email= ?", (comisiones[i][5],),
+                ).fetchall()
+            matriz[i][j]=comisiones[i][5]
+            j=j+1
+
+            matriz[i][j]=nombre4[0][0]
+            
+
+
+            i=i+1
+            #fin del loop
+
     
         #return ("hola")
-        return render_template('gestionarComisiones.html', comisiones=comisiones)
+        return render_template('gestionarComisiones.html', matriz=matriz)
 
 
 
@@ -1209,22 +1299,32 @@ def create_app(test_config=None):
 
     @app.route("/listarTFGProfesor")
     def listarTFGProfesor():
-        return render_template('seleccionarProfesor.html')
+    #sacamos la lista de profesores
+        db = database.get_db()
+        profesores=db.execute(
+            "SELECT * FROM user WHERE rol= 'Profesor'"
+            ).fetchall()
+
+
+
+
+        return render_template('seleccionarProfesor.html', profesores=profesores)
 
 
 
     @app.route('/filtrarProfesor', methods=['GET', 'POST'])
     def filtrarProfesor():
         #return(request.form['titulacion'])
+        #return(request.form['nombre'])
+        #return(request.form.get('nombre'))
 
-
-        cadena="%"+request.form['nombre']+"%"
+        #cadena="%"+request.form['nombre']+"%"
 
 
         #ahora guardamos todos los trabajos que sean del director elegido
         db = database.get_db()
         trabajos=db.execute(
-            "SELECT * FROM TFGs WHERE director1 LIKE ?", (cadena,),
+            "SELECT * FROM TFGs WHERE director1 LIKE ?", (request.form['nombre'],),
             ).fetchall()
     
         #return ("hola")
@@ -1353,9 +1453,9 @@ def create_app(test_config=None):
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
         db.execute(
-                "INSERT INTO lectura (titulacion, tipoTrabajo, fecha, hora, alumno, titulo, aclaraciones)"
-                "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (request.form['titulacion'], request.form['trabajo'], request.form['fecha'], request.form['hora'], request.form['alumno'], request.form['titulo'], request.form['notas'])
+                "INSERT INTO lectura (titulacion, tipoTrabajo, fecha, hora, alumno, titulo, localizacion, aclaraciones)"
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (request.form['titulacion'], request.form['trabajo'], request.form['fecha'], request.form['hora'], request.form['alumno'], request.form['titulo'], request.form['localizacion'], request.form['notas'])
         )
 
 

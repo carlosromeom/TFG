@@ -11,12 +11,20 @@
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
             <h1> <center> Seleccionar profesor para filtrar </center></h1>
 
-			<form action="{{ url_for('filtrarProfesor') }}" method="post">
-        <p>Nombre y apellidos: <input type="text" name="nombre" size="40"></p>
-  				
 
-  				<p>
-    				<input type="submit" value="Enviar">
-    				<input type="reset" value="Borrar">
-  				</p>
-			</form>
+        
+<form action="{{ url_for('filtrarProfesor') }}" method="post">
+  <label for="nombre">Nombre del director principal:</label>
+  <input list="nombres" name="nombre" id="nombre">
+  <datalist id="nombres">
+    {% for row in profesores %}
+    <option value={{row[2]}}>{{row[1]}}</option> 
+    {% endfor %}
+  </datalist>
+  <input type="submit">
+</form>
+
+
+
+
+
