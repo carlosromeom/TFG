@@ -178,11 +178,11 @@ input[type=submit]:hover {
             <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
             <h1> <center> Presentar petición de tema </center></h1>
 
-			<form action="{{ url_for('prepararPDF') }}" method="post">
+      <form action="{{ url_for('prepararPDF') }}" method="post">
 
           <p>Nombre del trabajo: <input type="text" name="nombreTrabajo" size="40" required></p>
-  				<p>Nombre y apellidos: <input type="text" name="nombreAlumno" size="40" required></p>
-  				
+          <p>Nombre y apellidos: <input type="text" name="nombreAlumno" size="40" required></p>
+          
           <p>DNI<input type="text" name="DNI" placeholder="Introduzca su DNI" pattern="[0-9]{8}[A-Za-z]{1}" title="Debe poner 8 números y una letra" id="DNI" required /></p>
 
           <div class="custom-select" >
@@ -193,20 +193,20 @@ input[type=submit]:hover {
               <option value="electronicaindustrial">Grado en Ingeniería Electrónica Industrial</option> 
               <option value="electronica">Grado en Ingeniería Electrónica</option> 
               <option value="mecanica">Grado en Ingeniería Mecánica</option>
-              <option value="dobleenergiaelectrica">Doble Grado en Ingeniería Energia y Rec. Min e Ing. Electica</option> 
+              <option value="dobleenergiaelectrica">Doble Grado en Ingeniería Energia y Rec. Min e Ing. Eléctrica</option> 
               <option value="masterindustrial">Máster en Ingeniería Industrial</option>  
  
           </select>
           </div>
 
-  				<p>Teléfono móvil: <input type="tel" name="tMovil" required></p>
-  				
-  				
+          <p>Teléfono móvil: <input type="tel" name="tMovil" required></p>
+          
+          
           <input type="checkbox" name="creditosPendientes" required>Confirmo que cumplo el requisito del minimo numero de créditos aprovados para pedir la peticion de tema según la normativa de la EPSC
-  				
+          
 
 
-  				<input type="checkbox" name="modificacionAmpliacion">Modificación o ampliación de otra petición
+          <input type="checkbox" name="modificacionAmpliacion">Modificación o ampliación de otra petición
 
 
         <div class="collapsible-block" aria-expanded="false" >
@@ -241,7 +241,7 @@ input[type=submit]:hover {
 
 
 <p>Director 2: <input type="text" name="director2" size="40" required></p>
-				
+        
 
 
         <input type="checkbox" name="director2Externo">Marque en caso de ser director externo
@@ -261,12 +261,12 @@ input[type=submit]:hover {
         </div>
 
 
-				
-  				<p>
-    				<input type="submit" value="Presentar">
-    				<input type="reset" value="Borrar">
-  				</p>
-			</form>
+        
+          <p>
+            <input type="submit" value="Presentar">
+            <input type="reset" value="Borrar">
+          </p>
+      </form>
 
 
 

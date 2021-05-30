@@ -569,10 +569,20 @@ def create_app(test_config=None):
 
     @app.route("/descargarTrabajo")
     def descargarTrabajo():
-        try:
-            return send_file(UPLOAD_FOLDER+"/"+str(current_user.email)+"TRABAJO.pdf", attachment_filename='ohhey.pdf')
-        except Exception as e:
-            return str(e)
+        #primero se comprueba que el usuario halla subido un trabajo, para ello se ve si tiene alguna petición con el estado de Trabajo subido
+        trabajos="aux"
+        db = database.get_db()
+        trabajos=db.execute(
+            "SELECT * FROM peticiones WHERE email = ? and estado = 'TrabajoSubido'", (str(current_user.email),),
+            ).fetchone()
+
+        if trabajos==None:
+            return render_template('noTrabajo.html')
+        else:
+            try:
+                return send_file(UPLOAD_FOLDER+"/"+str(current_user.email)+"TRABAJO.pdf", attachment_filename='ohhey.pdf')
+            except Exception as e:
+                return str(e)
 
 
 
@@ -1337,8 +1347,13 @@ def create_app(test_config=None):
 
     @app.route("/crearTribunal")
     def crearTribunal():
+        db = database.get_db()
+        profesores=db.execute(
+            "SELECT * FROM user WHERE rol= 'Profesor'"
+            ).fetchall()
+
         #return ("hola crearComision")
-        return render_template('crearTribunal.html')
+        return render_template('crearTribunal.html', profesores=profesores)
 
 
 
@@ -1352,7 +1367,7 @@ def create_app(test_config=None):
         db.execute(
                 "INSERT INTO tribunal (id, estado, email_presidente, email_secretario, email_vocal, titulacion)"
                 "VALUES (?,'Activo', ?, ?, ?, ?)",
-                (request.form['id'], request.form['email_presidente'], request.form['email_secretario'], request.form['email_vocal'], request.form['titulacion'])
+                (request.form['id'], request.form['presidente'], request.form['secretario'], request.form['vocal'], request.form['titulacion'])
             )
 
         db.commit()
@@ -1376,7 +1391,16 @@ def create_app(test_config=None):
 
     @app.route("/modificarTribunal2/<int:ID>")
     def modificarTribunal2(ID):
-        return render_template('modificarTribunal.html', ID=ID)
+        db = database.get_db()
+        datos=db.execute(
+            "SELECT * FROM tribunal WHERE id = ?", (ID,),
+            ).fetchall()
+
+        db = database.get_db()
+        profesores=db.execute(
+            "SELECT * FROM user WHERE rol= 'Profesor'"
+            ).fetchall()
+        return render_template('modificarTribunal.html', ID=ID, datos=datos, profesores=profesores)
 
 
 
@@ -1519,7 +1543,14 @@ def create_app(test_config=None):
 
     @app.route("/consultarTribunalesProfesor")
     def consultarTribunalesProfesor():
-        return render_template('filtrarTribunalProfesor.html')
+        #sacamos la lista de profesores
+        db = database.get_db()
+        profesores=db.execute(
+            "SELECT * FROM user WHERE rol= 'Profesor'"
+            ).fetchall()
+
+
+        return render_template('filtrarTribunalProfesor.html', profesores=profesores)
 
 
 
@@ -1529,10 +1560,9 @@ def create_app(test_config=None):
 
 
         #ahora guardamos todos los tribunales en los que se encuentre el profesor
-        cadena="%"+request.form['nombre']+"%"
         db = database.get_db()
         tribunales=db.execute(
-            "SELECT * FROM tribunal WHERE miembros LIKE ? ", (cadena,),
+            "SELECT * FROM tribunal WHERE email_vocal= ? or email_secretario=? or email_presidente=? ", (request.form['nombre'], request.form['nombre'],request.form['nombre'],),
             ).fetchall()
     
         #return ("hola")

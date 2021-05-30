@@ -47,9 +47,34 @@ div {
 
 			<form action="{{ url_for('registrarNuevoTribunal') }}" method="post">
         <p>ID: <input type="number" name="id" size="230"></p>
-  				<p>Login presidente: <input type="text" name="email_presidente" size="230"></p>
-  				<p>Login secretario: <input type="text" name="email_secretario" size="40"></p>
-          <p>Login vocal: <input type="text" name="email_vocal" size="40"></p>
+  				
+            <label for="presidente">Presidente:</label>
+            <input list="nombres" name="presidente" id="presidente" required>
+            <datalist id="nombres">
+              {% for row in profesores %}
+              <option value={{row[2]}}>{{row[1]}}</option> 
+              {% endfor %}
+            </datalist>
+
+
+            <label for="secretario">Secretario:</label>
+            <input list="nombres" name="secretario" id="secretario" required>
+            <datalist id="nombres">
+              {% for row in profesores %}
+              <option value={{row[2]}}>{{row[1]}}</option> 
+              {% endfor %}
+            </datalist>
+
+
+            <label for="secretario">Vocal:</label>
+            <input list="nombres" name="vocal" id="vocal" required>
+            <datalist id="nombres">
+              {% for row in profesores %}
+              <option value={{row[2]}}>{{row[1]}}</option> 
+              {% endfor %}
+            </datalist>
+
+
           <select name="titulacion">
             <option selected value="0"> Titulaciones </option>
 

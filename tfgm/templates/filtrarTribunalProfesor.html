@@ -11,18 +11,13 @@
             <h1> <center> Seleccionar profesor para filtrar </center></h1>
 
 			<form action="{{ url_for('filtrarProfesor2') }}" method="post">
-        <p>Nombre del profesor: <input type="text" name="nombre" size="50"></p>
-  				
-
-
-
-
-
-
-  				<p>
-    				<input type="submit" value="Enviar">
-    				<input type="reset" value="Borrar">
-  				</p>
-			</form>
-
-
+       
+          <label for="nombre">Nombre del director principal:</label>
+            <input list="nombres" name="nombre" id="nombre" required>
+            <datalist id="nombres">
+              {% for row in profesores %}
+              <option value={{row[2]}}>{{row[1]}}</option> 
+              {% endfor %}
+            </datalist>
+            <input type="submit">
+          </form>
