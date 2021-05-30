@@ -317,7 +317,7 @@ def create_app(test_config=None):
 
 
         pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
-        pdf.cell(200, 10, txt="Peticion de tema de TFG", ln=1, align="C")
+        pdf.cell(200, 10, txt="Resguardo de presentación de petición de tema", ln=1, align="C")
         pdf.cell(200, 10, txt="ID: "+ID, ln=1, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
@@ -328,21 +328,21 @@ def create_app(test_config=None):
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
         pdf.cell(200, 10, txt="DNI: "+str(request.form['DNI']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Titulacion: "+str(request.form['titulacion']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Telefono movil: "+str(request.form['tMovil']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación: "+str(request.form['titulacion']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Teléfono móvil: "+str(request.form['tMovil']), ln=2, align="L")
         pdf.cell(200, 10, txt="Email: "+str(current_user.email), ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Confirmo cumplimiento requisito creditos pendientes EPSC: "+creditos, ln=2, align="L")
+        pdf.cell(200, 10, txt="Confirmo cumplimiento requisito créditos pendientes EPSC: "+creditos, ln=2, align="L")
         pdf.cell(200, 10, txt="El alumno cuyos datos personales han quedado reflejados,", ln=2, align="L")
-        pdf.cell(200, 10, txt="Solicita,en virtud de lo dispuesto en la normativa de referencia, la aprobación del Tema para ", ln=2, align="L")
+        pdf.cell(200, 10, txt="Solicita,en virtud de lo dispuesto en la normativa de referencia, la aprobación del tema para ", ln=2, align="L")
         pdf.cell(200, 10, txt="la realización del Proyecto Fin de Carrera que a continuación se describe, y para la cual se adjunta", ln=2, align="L") 
         pdf.cell(200, 10, txt="documento memoria descriptiva del mismo.", ln=2, align="L")
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
 
-        pdf.cell(200, 10, txt="Modificacion o ampliacion: "+check1, ln=2, align="L")
+        pdf.cell(200, 10, txt="Modificación o ampliación: "+check1, ln=2, align="L")
 
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
@@ -352,9 +352,9 @@ def create_app(test_config=None):
         pdf.cell(200, 10, txt="Apellidos miembro tribunal: "+str(request.form['apellidosMiembroTribunal']), ln=2, align="L")
         pdf.cell(200, 10, txt="DNI miembro de tribunal: "+str(request.form['DNIMiembroTribunal']), ln=2, align="L")
         pdf.cell(200, 10, txt="Email miembro de tribunal: "+str(request.form['emailMiembroTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Titulacion miembro de tribunal: "+str(request.form['TitulacionMiembroTribunal']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación miembro de tribunal: "+str(request.form['TitulacionMiembroTribunal']), ln=2, align="L")
 
-        pdf.cell(200, 10, txt="", ln=2, align="L")
+
 
         pdf.cell(200, 10, txt="Director 1: "+nombre[0][0]+" - "+str(request.form['director1']), ln=2, align="L")
 
@@ -367,19 +367,13 @@ def create_app(test_config=None):
         pdf.cell(200, 10, txt="Apellidos director externo: "+str(request.form['apellidosDirectorExterno']), ln=2, align="L")
         pdf.cell(200, 10, txt="DNI director externo: "+str(request.form['DNIDirectorExterno']), ln=2, align="L")
         pdf.cell(200, 10, txt="Email director externo: "+str(request.form['emailDirectorExterno']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Titulacion director externo: "+str(request.form['TitulacionDirectorExterno']), ln=2, align="L")
-
-
-
-
-        pdf.cell(200, 10, txt="", ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación director externo: "+str(request.form['TitulacionDirectorExterno']), ln=2, align="L")
 
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
         pdf.cell(200, 10, txt="Peticion creada en: "+str(date.today()), ln=2, align="L")
-        
 
-        nombrePDF=current_user.email+"PETICIONTEMA.pdf"
+        nombrePDF=current_user.email+"ResguardoPeticion.pdf"
         pdf.output(nombrePDF, 'F')
 
 
