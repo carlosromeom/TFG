@@ -175,10 +175,10 @@ input[type=submit]:hover {
 
 <body background-color: #f2f2f2;> 
 
-            <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"</img>
-            <h1> <center> Presentar petición de tema </center></h1>
+    <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/></div>
+    <h1> <center> Presentar petición de tema </center></h1>
 
-			<form action="{{ url_for('prepararPDF') }}" method="post">
+    <form action="{{ url_for('prepararPDF') }}" method="post" enctype="multipart/form-data">        
 
           <p>Nombre del trabajo: <input type="text" name="nombreTrabajo" size="40" required></p>
   				<p>Nombre y apellidos: <input type="text" name="nombreAlumno" size="40" required></p>
@@ -240,13 +240,10 @@ input[type=submit]:hover {
        
 
 
-<p>Director 2: <input type="text" name="director2" size="40" required></p>
+      <p>Director 2: <input type="text" name="director2" size="40" required></p>
 				
-
-
         <input type="checkbox" name="director2Externo">Marque en caso de ser director externo
         <p>Rellenar en caso de que el director 2 sea externo:</p>
-
 
         <div class="collapsible-block" aria-expanded="false" >
           <div class="collapsible" aria-expanded="false" >Datos director 2 externo</div>
@@ -260,13 +257,13 @@ input[type=submit]:hover {
           </div>
         </div>
 
-
-				
-  				<p>
-    				<input type="submit" value="Presentar">
-    				<input type="reset" value="Borrar">
-  				</p>
-			</form>
+      <input type=file name=file>
+        
+      <p>
+        <input type="submit" value="Presentar">
+        <input type="reset" value="Borrar">
+      </p>
+    </form>
 
 
 
