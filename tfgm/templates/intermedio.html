@@ -3,6 +3,23 @@
     <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/estilodefecto.css') }}">
 	<meta charset="utf-8">
     <title>Descargar trabajo</title>
+
+    <style type="text/css">
+      input[type=submit] {
+
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+    </style>
 </head>  
 
 <body> 
@@ -16,7 +33,9 @@
             <h4>{{nombreTFG}}</h4>
 
 
-  <div align="right"><form action="/upload2" method="post"> <input type="submit" value="Subir acta" /> 
+  <div align="right">
+    <form action="/upload2" method="post"> 
+      <input type="submit" value="Subir acta" /> 
 <input type="hidden" name="id" value='{{id}}'>
   </form>
 
