@@ -34,9 +34,20 @@ import requests
 from . import user
 
 
+
+#manejo de errores
+def page_not_found(e):
+  return render_template('404.html'), 404
+
+def error500(e):
+  return render_template('500.html'), 404
+
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(400, error500)
     app.config.from_mapping(
         SECRET_KEY='developmentKey241',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
@@ -329,6 +340,7 @@ def create_app(test_config=None):
 
 
                 return response #render_template('descargadocumento.html')
+                #return render_template('pantallaOK.html'), response
 
         else:
             return '''No es metodo POST, esto no debería pasar'''
@@ -1566,5 +1578,8 @@ def create_app(test_config=None):
             return str(e)
 
 
-    return app
 
+
+
+    ##########FUNCIONES PARA MANEJO DE ERRORES#######################33
+    return app
