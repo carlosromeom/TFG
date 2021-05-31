@@ -1367,7 +1367,7 @@ def create_app(test_config=None):
 
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
-        db.execute("DELETE from tribunal WHERE ID= ?", (request.form.get('ID')),
+        db.execute("DELETE from tribunal WHERE ID= ?", (request.form.get('ID'),),
 
 
             )
