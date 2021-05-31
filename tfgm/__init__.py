@@ -371,12 +371,24 @@ def create_app(test_config=None):
     # Entregar TFG
     @app.route("/subirTFG")
     def subirTFG():
+        #Se comprueba que no halla subido ya un trabajo anteriormente
+                #primero se comprueba que el usuario halla subido un trabajo, para ello se ve si tiene alguna petición con el estado de Trabajo subido
+        db = database.get_db()
+        trabajos=db.execute(
+            "SELECT * FROM peticiones WHERE email = ? and estado = 'TrabajoSubido'", (str(current_user.email),),
+            ).fetchone()
+
+
+        if trabajos!=None:
+            return render_template('YaSubido.html')
+
+
         #lo primero es sacar todas las peticiones de tema de la BD
 
 
         db = database.get_db()
         peticiones=db.execute(
-            "SELECT * FROM peticiones where estado = 'Revisada' and email = ?", (str(current_user.email),),
+            "SELECT * FROM peticiones where estado = 'Revisada' and resolucion= 'Aceptada' and email = ?", (str(current_user.email),),
             ).fetchall()
     
         #return ("hola")
@@ -1581,5 +1593,5 @@ def create_app(test_config=None):
 
 
 
-    ##########FUNCIONES PARA MANEJO DE ERRORES#######################33
+
     return app
