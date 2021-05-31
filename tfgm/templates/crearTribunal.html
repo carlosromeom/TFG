@@ -58,7 +58,7 @@ input[type=submit]:hover {
             <h1> <center> Crear nuevo tribunal </center></h1>
 
 			<form action="{{ url_for('registrarNuevoTribunal') }}" method="post">
-        <p>ID: <input type="number" name="id" size="230"></p>
+        <p>ID: <input type="number" name="id" size="230" value="{{id}}" readonly></p>
   				
             <label for="presidente">Presidente:</label>
             <input list="nombres" name="presidente" id="presidente" required>

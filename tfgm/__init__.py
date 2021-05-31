@@ -1324,13 +1324,23 @@ def create_app(test_config=None):
 
     @app.route("/crearTribunal")
     def crearTribunal():
+        #Sacamos el id para el nuevo tribunal
+
+        #cuento los tribunales
+        db = database.get_db()
+        tribunales=db.execute(
+            "SELECT COUNT(*) FROM tribunal"
+            ).fetchall()
+        #print(trabajos[0][0])
+
+
         db = database.get_db()
         profesores=db.execute(
             "SELECT * FROM user WHERE rol= 'Profesor'"
             ).fetchall()
 
         #return ("hola crearComision")
-        return render_template('crearTribunal.html', profesores=profesores)
+        return render_template('crearTribunal.html', profesores=profesores, id=tribunales[0][0]+1)
 
 
 
