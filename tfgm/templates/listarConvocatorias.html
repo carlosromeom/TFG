@@ -71,15 +71,12 @@
       </div>
 
 
-           
-
-
-    <p>
-        <input type="button" value="Crear PDF" 
-            id="btPrint" onclick="createPDF()" />
-    </p>
-
-<input type="button" value="Crear CSV" name="" href="#" onclick="download_table_as_csv('tabla');"/>
+<p>
+            <div style="text-align: center;">
+                <a href="#"class="button" type="button" value="Crear PDF" id="btPrint" onclick="createPDF()"> Crear PDF </a>
+                <a href="#" class="button" value="Crear CSV" name="" onclick="download_table_as_csv('tabla');"> Crear CSV </a>
+            </div>
+</p>
 </body>
 
 
@@ -145,13 +142,6 @@ function download_table_as_csv(table_id, separator = ',') {
     link.click();
     document.body.removeChild(link);
 }
-
-
-
-
-
-
-
 
 </script>
 
