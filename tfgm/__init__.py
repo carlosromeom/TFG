@@ -205,6 +205,7 @@ def create_app(test_config=None):
             ).fetchall()
         return render_template('presentarpeticion.html', profesores=profesores)
 
+
     @app.route("/prepararPDF", methods=['POST'])
     def prepararPDF():
         if request.method == 'POST':
@@ -219,7 +220,9 @@ def create_app(test_config=None):
                 flash('No selected file')
                 return redirect(request.url)
             if not file or not allowed_file(file.filename):
-                return 'XXXXX Dar error tipo de fichero no permitido.'
+                #return 'XXXXX Dar error tipo de fichero no permitido.'
+                flash('Tipo de archivo no permitido, use PDF.')
+                return redirect(request.url)
             else:
                 id_file = str(current_user.email)+str(datetime.datetime.now())
                 filename = secure_filename(file.filename)
@@ -354,7 +357,7 @@ def create_app(test_config=None):
     @app.route('/return-files/')
     def return_files_tut():
         try:
-            return send_file('/home/carlos/Escritorio/TFG/'+current_user.email+"PETICIONTEMA", attachment_filename='ohhey.pdf')
+            return send_file(app.config['UPLOAD_FOLDER'] +current_user.email+"PETICIONTEMA", attachment_filename='ohhey.pdf')
         except Exception as e:
             return str(e)
 
@@ -471,7 +474,8 @@ def create_app(test_config=None):
                 return redirect(request.url)
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], current_user.email + 'TRABAJO.pdf'))
+
                 #db = database.get_db()
                 #db.execute(
                 #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
@@ -524,12 +528,10 @@ def create_app(test_config=None):
 
 
 
-    @app.route("/return-files3/<string:email>")
-    def return_files3(email):
-        #return(email)
-
+    @app.route("/return-files3/<string:id>")
+    def return_files3(id):
         try:
-            return send_file(app.config['UPLOAD_FOLDER'] + "/" + email + "PETICION.pdf", attachment_filename='peticionTema.pdf')
+            return send_file(app.config['UPLOAD_FOLDER'] + "/" + id + "PETICION.pdf", attachment_filename='peticionTema.pdf')
         except Exception as e:
             return str(e)
 
@@ -551,7 +553,7 @@ def create_app(test_config=None):
             return render_template('noTrabajo.html')
         else:
             try:
-                return send_file(UPLOAD_FOLDER+"/"+str(current_user.email)+"TRABAJO.pdf", attachment_filename='ohhey.pdf')
+                return send_file(app.config['UPLOAD_FOLDER']+"/"+str(current_user.email)+"TRABAJO.pdf", attachment_filename='trabajo.pdf')
             except Exception as e:
                 return str(e)
 
@@ -881,12 +883,19 @@ def create_app(test_config=None):
     ###################################FUNCIONES PARA EL ACTOR MIEMBRO DE SECRETARIA######################################
     @app.route("/validarPeticiones")
     def validarPeticiones():
-        #lo primero es sacar todas las peticiones sin validar de la BD
 
+        #Busco la equivalencia nombre y login
         db = database.get_db()
         peticiones=db.execute(
-            "SELECT * FROM peticiones where estado = 'Creada'"
+            "SELECT * FROM peticiones, user as u1 WHERE peticiones.director1 == u1.email AND peticiones.estado= 'Creada'"
             ).fetchall()
+
+        #lo primero es sacar todas las peticiones sin validar de la BD
+
+        #db = database.get_db()
+        #peticiones=db.execute(
+         #   "SELECT * FROM peticiones where estado = 'Creada'"
+          #  ).fetchall()
     
         #return ("hola")
         return render_template('validarPeticionesdeTema.html', peticiones=peticiones)
@@ -894,10 +903,18 @@ def create_app(test_config=None):
 
     @app.route("/validarPeticion/<string:id>")
     def validarPeticion(id):
+
+        #Busco la equivalencia nombre y login
         db = database.get_db()
         datos=db.execute(
-            "SELECT * FROM peticiones where ID = ?", (id,),
+            "SELECT * FROM peticiones, user as u1 WHERE peticiones.director1 == u1.email AND peticiones.estado= 'Creada' and peticiones.ID = ?", (id,),
             ).fetchall()
+
+
+        #db = database.get_db()
+        #datos=db.execute(
+         #   "SELECT * FROM peticiones where ID = ?", (id,),
+          #  ).fetchall()
         
         
         return render_template('validar.html', id=id, datos=datos)
@@ -1028,9 +1045,6 @@ def create_app(test_config=None):
         comisiones=db.execute(
             "SELECT * FROM comisiones, user as u1, user as u2, user as u3, user as u4 WHERE comisiones.profesor1 == u1.email AND comisiones.profesor2 == u2.email AND comisiones.profesor3 == u3.email AND comisiones.presidente == u4.email"
             ).fetchall()
-        for txt in comisiones:
-            for t in txt:
-                print(t)
 
         return render_template('gestionarComisiones.html', comisiones=comisiones)
 
@@ -1121,8 +1135,13 @@ def create_app(test_config=None):
 
     @app.route("/crearComision")
     def crearComision():
+        db = database.get_db()
+        profesores=db.execute(
+            "SELECT * FROM user WHERE rol= 'Profesor'"
+            ).fetchall()
+
         #return ("hola crearComision")
-        return render_template('crearComision.html')
+        return render_template('crearComision.html', profesores=profesores)
 
 
 
@@ -1132,6 +1151,17 @@ def create_app(test_config=None):
         #return("hola registrarNuevaComision")
 
         #return render_template('descargadocumento.html')
+
+        #comprobamos que la comisión no esté repetida
+        db = database.get_db()
+        comisiones=db.execute(
+            "SELECT * FROM comisiones WHERE titulacion = ?", (request.form['titulacion'],),
+            ).fetchone()
+
+
+        if comisiones!=None:
+            return render_template('ComisionRepetida.html')
+
 
 
 
@@ -1369,11 +1399,13 @@ def create_app(test_config=None):
 
     @app.route("/modificarTribunal")
     def modificarTribunal():
-        #ahora guardamos todos los tribunales
+
+        #Busco la equivalencia nombre y login
         db = database.get_db()
         tribunales=db.execute(
-            "SELECT * FROM tribunal"
+            "SELECT * FROM tribunal, user as u1, user as u2, user as u3 WHERE tribunal.email_presidente == u1.email AND tribunal.email_secretario == u2.email AND tribunal.email_vocal == u3.email"
             ).fetchall()
+
     
         #return ("hola")
         return render_template('mostrarTribunales.html', tribunales=tribunales)
@@ -1522,10 +1554,17 @@ def create_app(test_config=None):
 
 
         #ahora guardamos todos los tribunales que sean de la titulacion elegida
+        #db = database.get_db()
+        #tribunales=db.execute(
+         #   "SELECT * FROM tribunal WHERE titulacion= ?", (request.form['titulacion'],),
+          #  ).fetchall()
+
+        #Busco la equivalencia nombre y login
         db = database.get_db()
         tribunales=db.execute(
-            "SELECT * FROM tribunal WHERE titulacion= ?", (request.form['titulacion'],),
+            "SELECT * FROM tribunal, user as u1, user as u2, user as u3 WHERE tribunal.email_presidente == u1.email AND tribunal.email_secretario == u2.email AND tribunal.email_vocal == u3.email AND tribunal.titulacion= ?", (request.form['titulacion'],),
             ).fetchall()
+
     
         #return ("hola")
         return render_template('listarTribunales.html', tribunales=tribunales)
@@ -1551,10 +1590,18 @@ def create_app(test_config=None):
 
 
         #ahora guardamos todos los tribunales en los que se encuentre el profesor
+        #db = database.get_db()
+        #tribunales=db.execute(
+         #   "SELECT * FROM tribunal WHERE email_vocal= ? or email_secretario=? or email_presidente=? ", (request.form['nombre'], request.form['nombre'],request.form['nombre'],),
+          #  ).fetchall()
+
+
+        #Busco la equivalencia nombre y login
         db = database.get_db()
         tribunales=db.execute(
-            "SELECT * FROM tribunal WHERE email_vocal= ? or email_secretario=? or email_presidente=? ", (request.form['nombre'], request.form['nombre'],request.form['nombre'],),
+            "SELECT * FROM tribunal, user as u1, user as u2, user as u3 WHERE tribunal.email_presidente == u1.email AND tribunal.email_secretario == u2.email AND tribunal.email_vocal == u3.email AND (tribunal.email_secretario= ? or tribunal.email_vocal = ? or tribunal.email_presidente = ?)", (request.form['nombre'], request.form['nombre'],request.form['nombre'],),
             ).fetchall()
+
     
         #return ("hola")
         return render_template('listarTribunales.html', tribunales=tribunales)
@@ -1599,7 +1646,7 @@ def create_app(test_config=None):
         
 
         try:
-            return send_file(UPLOAD_FOLDER+"/"+email[0][0]+"TRABAJO.pdf", attachment_filename='ohhey.pdf')
+            return send_file(app.config['UPLOAD_FOLDER']+"/"+email[0][0]+"TRABAJO.pdf", attachment_filename='trabajo.pdf')
         except Exception as e:
             return str(e)
 
