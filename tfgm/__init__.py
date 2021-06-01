@@ -218,9 +218,12 @@ def create_app(test_config=None):
             if file.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
-            if file and allowed_file(file.filename):
+            if not file or not allowed_file(file.filename):
+                return 'XXXXX Dar error tipo de fichero no permitido.'
+            else:
+                id_file = str(current_user.email)+str(datetime.datetime.now())
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], id_file + 'PETICION.pdf'))
                 #db = database.get_db()
                 #db.execute(
                 #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
@@ -250,8 +253,6 @@ def create_app(test_config=None):
                     creditos="Si"
                 else:
                     creditos="No"
-                
-                ID = str(current_user.email)+str(datetime.datetime.now())
 
                 #introducimos los datos de la plantilla en la base de datos
         
@@ -259,7 +260,7 @@ def create_app(test_config=None):
                 db.execute(
                         "INSERT INTO peticiones (ID, nombreTrabajo, nombreAlumno, DNI, titulacion, telefonoMovil, email, creditosPendientes, modificacionAmpliacion, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                        (ID, request.form['nombreTrabajo'], request.form['nombreAlumno'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], current_user.email, creditos, check1, request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
+                        (id_file, request.form['nombreTrabajo'], request.form['nombreAlumno'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], current_user.email, creditos, check1, request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
                     )
 
                 db.commit()
@@ -276,7 +277,7 @@ def create_app(test_config=None):
 
                 pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
                 pdf.cell(200, 10, txt="Resguardo de presentación de petición de tema", ln=1, align="C")
-                pdf.cell(200, 10, txt="ID: "+ID, ln=1, align="L")
+                pdf.cell(200, 10, txt="ID: "+id_file, ln=1, align="L")
                 pdf.cell(200, 10, txt="", ln=2, align="L")
                 pdf.cell(200, 10, txt="", ln=2, align="L")
                 pdf.cell(200, 10, txt="", ln=2, align="L")
@@ -528,7 +529,7 @@ def create_app(test_config=None):
         #return(email)
 
         try:
-            return send_file(UPLOAD_FOLDER+"/"+email+"PETICION.pdf", attachment_filename='ohhey.pdf')
+            return send_file(app.config['UPLOAD_FOLDER'] + "/" + email + "PETICION.pdf", attachment_filename='peticionTema.pdf')
         except Exception as e:
             return str(e)
 
@@ -1027,6 +1028,9 @@ def create_app(test_config=None):
         comisiones=db.execute(
             "SELECT * FROM comisiones, user as u1, user as u2, user as u3, user as u4 WHERE comisiones.profesor1 == u1.email AND comisiones.profesor2 == u2.email AND comisiones.profesor3 == u3.email AND comisiones.presidente == u4.email"
             ).fetchall()
+        for txt in comisiones:
+            for t in txt:
+                print(t)
 
         return render_template('gestionarComisiones.html', comisiones=comisiones)
 
