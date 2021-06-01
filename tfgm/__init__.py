@@ -1646,7 +1646,7 @@ def create_app(test_config=None):
         
 
         try:
-            return send_file(UPLOAD_FOLDER+"/"+email[0][0]+"TRABAJO.pdf", attachment_filename='ohhey.pdf')
+            return send_file(app.config['UPLOAD_FOLDER']+"/"+email[0][0]+"TRABAJO.pdf", attachment_filename='trabajo.pdf')
         except Exception as e:
             return str(e)
 
