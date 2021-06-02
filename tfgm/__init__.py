@@ -206,150 +206,138 @@ def create_app(test_config=None):
         return render_template('presentarpeticion.html', profesores=profesores)
 
 
-    @app.route("/prepararPDF", methods=['POST'])
-    def prepararPDF():
-        if request.method == 'POST':
-            # check if the post request has the file part
-            if 'file' not in request.files:
-                flash('No file part')
-                return redirect(request.url)
-            file = request.files['file']
-            # if user does not select file, browser also
-            # submit an empty part without filename
-            if file.filename == '':
-                flash('No selected file')
-                return redirect(request.url)
-            if not file or not allowed_file(file.filename):
-                #return 'XXXXX Dar error tipo de fichero no permitido.'
-                flash('Tipo de archivo no permitido, use PDF.')
-                return redirect(request.url)
-            else:
-                id_file = str(current_user.email)+str(datetime.datetime.now())
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER_MEMORIAS'], id_file + 'PETICION.pdf'))
-                #db = database.get_db()
-                #db.execute(
-                #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
-                #"VALUES (?, ?, ?, ?, ?)",
-                #(filename, 'Creado', request.form['director1'], request.form['director2'], request.form['titulacion'] )
-                #)
-                #db.commit()
-                
+    @app.route("/grabarPeticion", methods=['POST'])
+    def grabarPeticionPDF():
 
-                #creamos el documento pdf
-                pdf=FPDF()
-                pdf.add_page()
-                pdf.set_font("Arial", size=12)
-
-                if request.form.get('modificacionAmpliacion'):
-                    check1="Si"
-                else:
-                    check1="No"
-
-                if request.form.get('director2Externo'):
-                    director2Ext="Si"
-                else:
-                    director2Ext="No"
-
-
-                if request.form.get('creditosPendientes'):
-                    creditos="Si"
-                else:
-                    creditos="No"
-
-                #introducimos los datos de la plantilla en la base de datos
-        
-                db = database.get_db()
-                db.execute(
-                        "INSERT INTO peticiones (ID, nombreTrabajo, nombreAlumno, DNI, titulacion, telefonoMovil, email, creditosPendientes, modificacionAmpliacion, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                        (id_file, request.form['nombreTrabajo'], request.form['nombreAlumno'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], current_user.email, creditos, check1, request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
-                    )
-
-                db.commit()
-
-
-                #para que aparezca el nombre del director 1 en el pdf lo buscamos en la base de datos
-                db = database.get_db()
-                nombre=db.execute(
-                    "SELECT name FROM user where email = ?", (request.form['director1'],),
-                    ).fetchall()
-
-        
-
-
-                pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
-                pdf.cell(200, 10, txt="Resguardo de presentación de petición de tema", ln=1, align="C")
-                pdf.cell(200, 10, txt="ID: "+id_file, ln=1, align="L")
-                pdf.cell(200, 10, txt="", ln=2, align="L")
-                pdf.cell(200, 10, txt="", ln=2, align="L")
-                pdf.cell(200, 10, txt="", ln=2, align="L")
-                pdf.cell(200, 10, txt="Nombre del trabajo: "+str(request.form['nombreTrabajo']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Nombre y apellidos: "+str(request.form['nombreAlumno']), ln=2, align="L")
-
-                pdf.cell(200, 10, txt="", ln=2, align="L")
-
-                pdf.cell(200, 10, txt="DNI: "+str(request.form['DNI']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Titulación: "+str(request.form['titulacion']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Teléfono móvil: "+str(request.form['tMovil']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Email: "+str(current_user.email), ln=2, align="L")
-                pdf.cell(200, 10, txt="", ln=2, align="L")
-
-                pdf.cell(200, 10, txt="Confirmo cumplimiento requisito créditos pendientes EPSC: "+creditos, ln=2, align="L")
-                pdf.cell(200, 10, txt="El alumno cuyos datos personales han quedado reflejados,", ln=2, align="L")
-                pdf.cell(200, 10, txt="Solicita,en virtud de lo dispuesto en la normativa de referencia, la aprobación del tema para ", ln=2, align="L")
-                pdf.cell(200, 10, txt="la realización del Proyecto Fin de Carrera que a continuación se describe, y para la cual se adjunta", ln=2, align="L") 
-                pdf.cell(200, 10, txt="documento memoria descriptiva del mismo.", ln=2, align="L")
-
-                pdf.cell(200, 10, txt="", ln=2, align="L")
-
-
-                pdf.cell(200, 10, txt="Modificación o ampliación: "+check1, ln=2, align="L")
-
-
-                pdf.cell(200, 10, txt="", ln=2, align="L")
-
-                # pdf.cell(200, 10, txt="Propuesta de tribunal: "+str(request.form['propuestaTribunal']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Nombre miembro tribunal: "+str(request.form['nombreMiembroTribunal']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Apellidos miembro tribunal: "+str(request.form['apellidosMiembroTribunal']), ln=2, align="L")
-                pdf.cell(200, 10, txt="DNI miembro de tribunal: "+str(request.form['DNIMiembroTribunal']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Email miembro de tribunal: "+str(request.form['emailMiembroTribunal']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Titulación miembro de tribunal: "+str(request.form['TitulacionMiembroTribunal']), ln=2, align="L")
-
-
-
-                pdf.cell(200, 10, txt="Director 1: "+nombre[0][0]+" - "+str(request.form['director1']), ln=2, align="L")
-
-
-
-                pdf.cell(200, 10, txt="Director 2: "+str(request.form['director2']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Director 2 Externo: "+director2Ext, ln=2, align="L")
-
-                pdf.cell(200, 10, txt="Nombre director externo: "+str(request.form['nombreDirectorExterno']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Apellidos director externo: "+str(request.form['apellidosDirectorExterno']), ln=2, align="L")
-                pdf.cell(200, 10, txt="DNI director externo: "+str(request.form['DNIDirectorExterno']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Email director externo: "+str(request.form['emailDirectorExterno']), ln=2, align="L")
-                pdf.cell(200, 10, txt="Titulación director externo: "+str(request.form['TitulacionDirectorExterno']), ln=2, align="L")
-
-
-                pdf.cell(200, 10, txt="", ln=2, align="L")
-                pdf.cell(200, 10, txt="Peticion creada en: "+str(date.today()), ln=2, align="L")
-
-                # nombrePDF=current_user.email+"ResguardoPeticion.pdf"
-                # pdf.output(nombrePDF, 'F')
-
-                response = make_response(pdf.output(dest='S').encode('latin-1'))
-                response.headers.set('Content-Disposition', 'attachment', filename="PeticionTema" + '.pdf')
-                response.headers.set('Content-Type', 'application/pdf')
-
-
-                return response #render_template('descargadocumento.html')
-                #return render_template('pantallaOK.html'), response
-
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if not file or not allowed_file(file.filename):
+            flash('Tipo de archivo no permitido, use PDF.')
+            return redirect(request.url)
         else:
-            return '''No es metodo POST, esto no debería pasar'''
+            id_file = str(current_user.email)+str(datetime.datetime.now())
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER_MEMORIAS'], id_file + 'PETICION.pdf'))
+            #db = database.get_db()
+            #db.execute(
+            #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
+            #"VALUES (?, ?, ?, ?, ?)",
+            #(filename, 'Creado', request.form['director1'], request.form['director2'], request.form['titulacion'] )
+            #)
+            #db.commit()
+            
+            if request.form.get('modificacionAmpliacion'):
+                check1="Si"
+            else:
+                check1="No"
+
+            if request.form.get('director2Externo'):
+                director2Ext="Si"
+            else:
+                director2Ext="No"
 
 
+            if request.form.get('creditosPendientes'):
+                creditos="Si"
+            else:
+                creditos="No"
+
+            #introducimos los datos de la plantilla en la base de datos
+    
+            db = database.get_db()
+            db.execute(
+                    "INSERT INTO peticiones (ID, nombreTrabajo, nombreAlumno, DNI, titulacion, telefonoMovil, email, creditosPendientes, modificacionAmpliacion, nombreMiembroTribunal, apellidosMiembroTribunal, DNIMiembroTribunal, emailMiembroTribunal, TitulacionMiembroTribunal, director1, director2, director2Ext, nombreDirectorExterno, apellidosDirectorExterno, DNIDirectorExterno, emailDirectorExterno, TitulacionDirectorExterno, estado, fecha)"
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (id_file, request.form['nombreTrabajo'], request.form['nombreAlumno'], request.form['DNI'], request.form['titulacion'], request.form['tMovil'], current_user.email, creditos, check1, request.form['nombreMiembroTribunal'], request.form['apellidosMiembroTribunal'], request.form['DNIMiembroTribunal'], request.form['emailMiembroTribunal'], request.form['TitulacionMiembroTribunal'], request.form['director1'], request.form['director2'], director2Ext, request.form['nombreDirectorExterno'], request.form['apellidosDirectorExterno'], request.form['DNIDirectorExterno'], request.form['emailDirectorExterno'], request.form['TitulacionDirectorExterno'], "Creada", str(datetime.datetime.now()))
+                )
+
+            db.commit()
+
+            return render_template(XXXXX)
+
+
+    @app.route("/prepararPDF", methods=['POST'])
+    def prepararPDF():   
+        #para que aparezca el nombre del director 1 en el pdf lo buscamos en la base de datos
+        db = database.get_db()
+
+        nombre=db.execute(
+            "SELECT * FROM peticiones where id = ?", (request.form['director1'],),
+            ).fetchall() #XXXXXX
+
+
+        nombre=db.execute(
+            "SELECT name FROM user where email = ?", (request.form['director1'],),
+            ).fetchall()
+
+        #creamos el documento pdf
+        pdf=FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+
+        pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
+        pdf.cell(200, 10, txt="Resguardo de presentación de petición de tema", ln=1, align="C")
+        pdf.cell(200, 10, txt="ID: "+id_file, ln=1, align="L")
+        pdf.cell(200, 10, txt="", ln=2, align="L")
+        pdf.cell(200, 10, txt="", ln=2, align="L")
+        pdf.cell(200, 10, txt="", ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre del trabajo: "+str(request.form['nombreTrabajo']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre y apellidos: "+str(request.form['nombreAlumno']), ln=2, align="L")
+
+        pdf.cell(200, 10, txt="", ln=2, align="L")
+
+        pdf.cell(200, 10, txt="DNI: "+str(request.form['DNI']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación: "+str(request.form['titulacion']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Teléfono móvil: "+str(request.form['tMovil']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Email: "+str(current_user.email), ln=2, align="L")
+        pdf.cell(200, 10, txt="", ln=2, align="L")
+
+        pdf.cell(200, 10, txt="Confirmo cumplimiento requisito créditos pendientes EPSC: "+creditos, ln=2, align="L")
+        pdf.cell(200, 10, txt="El alumno cuyos datos personales han quedado reflejados,", ln=2, align="L")
+        pdf.cell(200, 10, txt="Solicita,en virtud de lo dispuesto en la normativa de referencia, la aprobación del tema para ", ln=2, align="L")
+        pdf.cell(200, 10, txt="la realización del Proyecto Fin de Carrera que a continuación se describe, y para la cual se adjunta", ln=2, align="L") 
+        pdf.cell(200, 10, txt="documento memoria descriptiva del mismo.", ln=2, align="L")
+
+        pdf.cell(200, 10, txt="", ln=2, align="L")
+
+        pdf.cell(200, 10, txt="Modificación o ampliación: "+check1, ln=2, align="L")
+
+        pdf.cell(200, 10, txt="", ln=2, align="L")
+
+        # pdf.cell(200, 10, txt="Propuesta de tribunal: "+str(request.form['propuestaTribunal']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre miembro tribunal: "+str(request.form['nombreMiembroTribunal']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Apellidos miembro tribunal: "+str(request.form['apellidosMiembroTribunal']), ln=2, align="L")
+        pdf.cell(200, 10, txt="DNI miembro de tribunal: "+str(request.form['DNIMiembroTribunal']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Email miembro de tribunal: "+str(request.form['emailMiembroTribunal']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación miembro de tribunal: "+str(request.form['TitulacionMiembroTribunal']), ln=2, align="L")
+
+        pdf.cell(200, 10, txt="Director 1: "+nombre[0][0]+" - "+str(request.form['director1']), ln=2, align="L")
+
+        pdf.cell(200, 10, txt="Director 2: "+str(request.form['director2']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Director 2 Externo: "+director2Ext, ln=2, align="L")
+
+        pdf.cell(200, 10, txt="Nombre director externo: "+str(request.form['nombreDirectorExterno']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Apellidos director externo: "+str(request.form['apellidosDirectorExterno']), ln=2, align="L")
+        pdf.cell(200, 10, txt="DNI director externo: "+str(request.form['DNIDirectorExterno']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Email director externo: "+str(request.form['emailDirectorExterno']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación director externo: "+str(request.form['TitulacionDirectorExterno']), ln=2, align="L")
+
+
+        pdf.cell(200, 10, txt="", ln=2, align="L")
+        pdf.cell(200, 10, txt="Peticion creada en: "+str(date.today()), ln=2, align="L")
+
+        response = make_response(pdf.output(dest='S').encode('latin-1'))
+        response.headers.set('Content-Disposition', 'attachment', filename="PeticionTema" + '.pdf')
+        response.headers.set('Content-Type', 'application/pdf')
+        return response
 
 
 

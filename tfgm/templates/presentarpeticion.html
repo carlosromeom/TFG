@@ -178,7 +178,7 @@ input[type=submit]:hover {
     <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/></div>
     <h1> <center> Presentar petición de tema </center></h1>
 
-    <form action="{{ url_for('prepararPDF') }}" method="post" enctype="multipart/form-data">        
+    <form action="{{ url_for('grabarPeticion') }}" method="post" enctype="multipart/form-data">        
 
           <p>Nombre del trabajo: <input type="text" name="nombreTrabajo" size="40" required></p>
   				<p>Nombre y apellidos: <input type="text" name="nombreAlumno" size="40" required></p>
