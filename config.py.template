@@ -11,7 +11,10 @@ GOOGLE_DISCOVERY_URL = (
 SECRET_KEY = b'zY\x98\xddj\xbc\xfb\xb5\x1b\xc2~\xdeN\x83&['
 DATABASE_FILE = 'sqlite_db'
 
-UPLOAD_FOLDER = '/home/carlos/Escritorio/TFG'
+UPLOAD_FOLDER_PETICIONES = '/home/carlos/Escritorio/TFG/PETICIONES'
+UPLOAD_FOLDER_MEMORIAS = '/home/carlos/Escritorio/TFG/MEMORIAS'
+UPLOAD_FOLDER_TRABAJOS = '/home/carlos/Escritorio/TFG/TRABAJOS'
+UPLOAD_FOLDER_ACTAS = '/home/carlos/Escritorio/TFG/ACTAS'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 

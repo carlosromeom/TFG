@@ -226,7 +226,7 @@ def create_app(test_config=None):
             else:
                 id_file = str(current_user.email)+str(datetime.datetime.now())
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], id_file + 'PETICION.pdf'))
+                file.save(os.path.join(app.config['UPLOAD_FOLDER_MEMORIAS'], id_file + 'PETICION.pdf'))
                 #db = database.get_db()
                 #db.execute(
                 #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
@@ -421,7 +421,7 @@ def create_app(test_config=None):
         db.execute(
         "INSERT INTO TFGs (ID, nombre, estado, director1, director2, titulacion)"
         "VALUES (?, ?, ?, ?, ?, ?)",
-        (id, aux[0][1], 'Creado', aux[0][17], aux[0][19], aux[0][4])
+        (id, aux[0][1], 'Creado', aux[0][15], aux[0][16], aux[0][4])
         )
         db.commit()
 
@@ -474,7 +474,7 @@ def create_app(test_config=None):
                 return redirect(request.url)
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], current_user.email + 'TRABAJO.pdf'))
+                file.save(os.path.join(app.config['UPLOAD_FOLDER_TRABAJOS'], current_user.email + 'TRABAJO.pdf'))
 
                 #db = database.get_db()
                 #db.execute(
@@ -487,11 +487,11 @@ def create_app(test_config=None):
 
         return '''
         <!doctype html>
-        <title>Upload new File</title>
-        <h1>Upload new File</h1>
+        <title>Subir archivo</title>
+        <h1>Subir archivo</h1>
         <form method=post enctype=multipart/form-data>
         <input type=file name=file>
-        <input type=submit value=Upload>
+        <input type=submit value=Subir>
         </form>
         '''
 
@@ -531,7 +531,7 @@ def create_app(test_config=None):
     @app.route("/return-files3/<string:id>")
     def return_files3(id):
         try:
-            return send_file(app.config['UPLOAD_FOLDER'] + "/" + id + "PETICION.pdf", attachment_filename='peticionTema.pdf')
+            return send_file(app.config['UPLOAD_FOLDER_MEMORIAS'] + '/' + id + 'PETICION.pdf', attachment_filename='peticionTema.pdf')
         except Exception as e:
             return str(e)
 
@@ -553,7 +553,7 @@ def create_app(test_config=None):
             return render_template('noTrabajo.html')
         else:
             try:
-                return send_file(app.config['UPLOAD_FOLDER']+"/"+str(current_user.email)+"TRABAJO.pdf", attachment_filename='trabajo.pdf')
+                return send_file(app.config['UPLOAD_FOLDER_TRABAJOS']+"/"+str(current_user.email)+"TRABAJO.pdf", attachment_filename='trabajo.pdf')
             except Exception as e:
                 return str(e)
 
@@ -730,7 +730,7 @@ def create_app(test_config=None):
         #Ahora sacamos todas las peticiones de tema de la BD que correspondan a la comision
         db = database.get_db()
         peticiones=db.execute(
-            "SELECT * FROM peticiones where estado = 'Validada'or resolucion='SugerenciasAceptadas' or resolucion='sugerenciasDenegadas' and titulacion= ?", (comision[0][0],),
+            "SELECT * FROM peticiones where estado = 'Validada' or resolucion='SugerenciasAceptadas' or resolucion='sugerenciasDenegadas' and titulacion= ?", (comision[0][0],),
             ).fetchall()
     
         
@@ -829,7 +829,8 @@ def create_app(test_config=None):
     @app.route('/upload2', methods=['GET', 'POST'])
     def upload2():
 
-        #return (request.form.get('id')) ##FALLO#####
+        id = request.form.get('id')
+        print(id)
         db = database.get_db()
         db.execute("UPDATE TFGs SET estado=? WHERE ID= ?", ('Corregido', request.form.get('id'),),
         )
@@ -848,20 +849,23 @@ def create_app(test_config=None):
                 flash('No selected file')
                 return redirect(request.url)
             if file and allowed_file(file.filename):
+                id_file = str(id)
+                print(id)  ##########################ERROR################################
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(app.config['UPLOAD_FOLDER_ACTAS']+ '/' + id_file +'ACTA.pdf'))
 
 
+            
 
                 return render_template('pantallaOK.html')
 
         return '''
         <!doctype html>
-        <title>Upload new File</title>
-        <h1>Upload new File</h1>
+        <title>Subir Acta</title>
+        <h1>Subir acta</h1>
         <form method=post enctype=multipart/form-data>
         <input type=file name=file>
-        <input type=submit value=Upload>
+        <input type=submit value=Subir>
         </form>
         '''
 
@@ -1023,7 +1027,7 @@ def create_app(test_config=None):
 
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
-        db.execute("UPDATE TFGs SET tribunal=? WHERE ID= ?", (request.form.get('ID'), request.form.get('trabajo')),
+        db.execute("UPDATE TFGs SET tribunal=? WHERE ID= ?", (request.form.get('tribunal'), request.form.get('trabajo')),
 
 
             )
@@ -1646,7 +1650,7 @@ def create_app(test_config=None):
         
 
         try:
-            return send_file(app.config['UPLOAD_FOLDER']+"/"+email[0][0]+"TRABAJO.pdf", attachment_filename='trabajo.pdf')
+            return send_file(app.config['UPLOAD_FOLDER_TRABAJOS']+"/"+email[0][0]+"TRABAJO.pdf", attachment_filename='trabajo.pdf')
         except Exception as e:
             return str(e)
 
