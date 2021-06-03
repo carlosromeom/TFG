@@ -883,6 +883,19 @@ def create_app(test_config=None):
         '''
 
 
+    @app.route("/publicar/<id>")
+    @login_required
+    def publicar(id):
+        print(id)
+        db = database.get_db()
+        db.execute("UPDATE TFGs SET estado=? WHERE ID= ?", ('Corregido', request.form.get('id'),),
+        )
+
+
+        return render_template('pantallaOK.html')
+
+
+
 
 
 
