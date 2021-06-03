@@ -197,6 +197,7 @@ def create_app(test_config=None):
 
     #presentar peticion de tema
     @app.route('/peticion')
+    @login_required
     def presentarPeticion():
         #sacamos una lista con todos los usuarios profesores registrados
         db = database.get_db()
@@ -207,7 +208,8 @@ def create_app(test_config=None):
 
 
     @app.route("/grabarPeticion", methods=['POST'])
-    def grabarPeticionPDF():
+    @login_required
+    def grabarPeticion():
 
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -261,21 +263,23 @@ def create_app(test_config=None):
 
             db.commit()
 
-            return render_template(XXXXX)
+            return render_template('paginaEspera.html', id_file=id_file)
 
 
-    @app.route("/prepararPDF", methods=['POST'])
-    def prepararPDF():   
-        #para que aparezca el nombre del director 1 en el pdf lo buscamos en la base de datos
+    @app.route("/prepararPDF/<string:id>")
+    @login_required
+    def prepararPDF(id):  
+        #seleccionamos todos los datos de la peticion
         db = database.get_db()
+        peticion=db.execute(
+            "SELECT * FROM peticiones where id = ?", (id,),
+            ).fetchall()
 
+
+        #return(id)
+        #para que aparezca el nombre del director 1 en el pdf lo buscamos en la base de datos
         nombre=db.execute(
-            "SELECT * FROM peticiones where id = ?", (request.form['director1'],),
-            ).fetchall() #XXXXXX
-
-
-        nombre=db.execute(
-            "SELECT name FROM user where email = ?", (request.form['director1'],),
+            "SELECT name FROM user where email = ?", (peticion[0][15],),
             ).fetchall()
 
         #creamos el documento pdf
@@ -285,22 +289,22 @@ def create_app(test_config=None):
 
         pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
         pdf.cell(200, 10, txt="Resguardo de presentación de petición de tema", ln=1, align="C")
-        pdf.cell(200, 10, txt="ID: "+id_file, ln=1, align="L")
+        pdf.cell(200, 10, txt="ID: "+id, ln=1, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
-        pdf.cell(200, 10, txt="Nombre del trabajo: "+str(request.form['nombreTrabajo']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Nombre y apellidos: "+str(request.form['nombreAlumno']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre del trabajo: "+peticion[0][1], ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre y apellidos: "+peticion[0][2], ln=2, align="L")
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="DNI: "+str(request.form['DNI']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Titulación: "+str(request.form['titulacion']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Teléfono móvil: "+str(request.form['tMovil']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Email: "+str(current_user.email), ln=2, align="L")
+        pdf.cell(200, 10, txt="DNI: "+peticion[0][3], ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación: "+peticion[0][4], ln=2, align="L")
+        pdf.cell(200, 10, txt="Teléfono móvil: "+str(peticion[0][5]), ln=2, align="L")
+        pdf.cell(200, 10, txt="Email: "+peticion[0][6], ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Confirmo cumplimiento requisito créditos pendientes EPSC: "+creditos, ln=2, align="L")
+        pdf.cell(200, 10, txt="Confirmo cumplimiento requisito créditos pendientes EPSC: "+peticion[0][7], ln=2, align="L")
         pdf.cell(200, 10, txt="El alumno cuyos datos personales han quedado reflejados,", ln=2, align="L")
         pdf.cell(200, 10, txt="Solicita,en virtud de lo dispuesto en la normativa de referencia, la aprobación del tema para ", ln=2, align="L")
         pdf.cell(200, 10, txt="la realización del Proyecto Fin de Carrera que a continuación se describe, y para la cual se adjunta", ln=2, align="L") 
@@ -308,27 +312,27 @@ def create_app(test_config=None):
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Modificación o ampliación: "+check1, ln=2, align="L")
+        pdf.cell(200, 10, txt="Modificación o ampliación: "+peticion[0][8], ln=2, align="L")
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
         # pdf.cell(200, 10, txt="Propuesta de tribunal: "+str(request.form['propuestaTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Nombre miembro tribunal: "+str(request.form['nombreMiembroTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Apellidos miembro tribunal: "+str(request.form['apellidosMiembroTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="DNI miembro de tribunal: "+str(request.form['DNIMiembroTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Email miembro de tribunal: "+str(request.form['emailMiembroTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Titulación miembro de tribunal: "+str(request.form['TitulacionMiembroTribunal']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre miembro tribunal: "+peticion[0][10], ln=2, align="L")
+        pdf.cell(200, 10, txt="Apellidos miembro tribunal: "+peticion[0][11], ln=2, align="L")
+        pdf.cell(200, 10, txt="DNI miembro de tribunal: "+peticion[0][12], ln=2, align="L")
+        pdf.cell(200, 10, txt="Email miembro de tribunal: "+peticion[0][13], ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación miembro de tribunal: "+peticion[0][14], ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Director 1: "+nombre[0][0]+" - "+str(request.form['director1']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Director 1: "+nombre[0][0]+" - "+peticion[0][15], ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Director 2: "+str(request.form['director2']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Director 2 Externo: "+director2Ext, ln=2, align="L")
+        pdf.cell(200, 10, txt="Director 2: "+peticion[0][16], ln=2, align="L")
+        pdf.cell(200, 10, txt="Director 2 Externo: "+peticion[0][17], ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Nombre director externo: "+str(request.form['nombreDirectorExterno']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Apellidos director externo: "+str(request.form['apellidosDirectorExterno']), ln=2, align="L")
-        pdf.cell(200, 10, txt="DNI director externo: "+str(request.form['DNIDirectorExterno']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Email director externo: "+str(request.form['emailDirectorExterno']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Titulación director externo: "+str(request.form['TitulacionDirectorExterno']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre director externo: "+peticion[0][18], ln=2, align="L")
+        pdf.cell(200, 10, txt="Apellidos director externo: "+peticion[0][19], ln=2, align="L")
+        pdf.cell(200, 10, txt="DNI director externo: "+peticion[0][20], ln=2, align="L")
+        pdf.cell(200, 10, txt="Email director externo: "+peticion[0][21], ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación director externo: "+peticion[0][22], ln=2, align="L")
 
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
@@ -351,6 +355,7 @@ def create_app(test_config=None):
 
 
     @app.route('/subirMemoria', methods=['GET', 'POST'])
+    @login_required
     def subirMemoria():
         return render_template('aux.html')
 
@@ -362,6 +367,7 @@ def create_app(test_config=None):
 
     # Entregar TFG
     @app.route("/subirTFG")
+    @login_required
     def subirTFG():
         #Se comprueba que no halla subido ya un trabajo anteriormente
                 #primero se comprueba que el usuario halla subido un trabajo, para ello se ve si tiene alguna petición con el estado de Trabajo subido
@@ -391,6 +397,7 @@ def create_app(test_config=None):
         #return render_template('subirTFG.html')
 
     @app.route("/registrarTFG/<string:id>")
+    @login_required
     def registrarTFG(id):
         db = database.get_db()
         aux=db.execute(
@@ -447,6 +454,7 @@ def create_app(test_config=None):
             filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
     @app.route('/upload', methods=['GET', 'POST'])
+    @login_required
     def upload_file():
         
         if request.method == 'POST':
@@ -500,12 +508,14 @@ def create_app(test_config=None):
 
 
     @app.route("/descargarDocumentos")
+    @login_required
     def descargarDocumentos():
         #primero el usuario elige que tipo de documentos ver
         return render_template('elegirDocumentos.html')
 
 
     @app.route("/descargarPeticion")
+    @login_required
     def descargarPeticion():
         db = database.get_db()
         peticiones=db.execute(
@@ -517,6 +527,7 @@ def create_app(test_config=None):
 
 
     @app.route("/return-files3/<string:id>")
+    @login_required
     def return_files3(id):
         try:
             return send_file(app.config['UPLOAD_FOLDER_MEMORIAS'] + '/' + id + 'PETICION.pdf', attachment_filename='peticionTema.pdf')
@@ -529,6 +540,7 @@ def create_app(test_config=None):
 
 
     @app.route("/descargarTrabajo")
+    @login_required
     def descargarTrabajo():
         #primero se comprueba que el usuario halla subido un trabajo, para ello se ve si tiene alguna petición con el estado de Trabajo subido
         trabajos="aux"
@@ -549,6 +561,7 @@ def create_app(test_config=None):
 
 
     @app.route("/cancelarPeticion")
+    @login_required
     def cancelarPeticion():
         db = database.get_db()
         peticiones=db.execute(
@@ -559,6 +572,7 @@ def create_app(test_config=None):
 
 
     @app.route("/marcarCancelada/<string:id>")
+    @login_required
     def marcarCancelada(id):
         db = database.get_db()
         db.execute("UPDATE peticiones SET estado='Cancelada' WHERE ID= ?", (id,),
@@ -579,6 +593,7 @@ def create_app(test_config=None):
 
 
     @app.route("/consultarEvaluacionPeticion")
+    @login_required
     def consultarEvaluacionPeticion():
         db = database.get_db()
         aceptadas=db.execute(
@@ -640,6 +655,7 @@ def create_app(test_config=None):
 
 
     @app.route("/revisarSugerencias/<string:id>")
+    @login_required
     def revisarSugerencias(id):
         db = database.get_db()
         sugerencias=db.execute(
@@ -654,6 +670,7 @@ def create_app(test_config=None):
 
 
     @app.route("/guardarSugerencias", methods=['POST'])
+    @login_required
     def guardarSugerencias():
         if request.form.get('Aceptar')=="Aceptar":
             resolucion="SugerenciasAceptadas"
@@ -683,6 +700,7 @@ def create_app(test_config=None):
 
 
     @app.route("/ampliar/<string:id>")
+    @login_required
     def ampliar(id):
         db = database.get_db()
         sugerencias=db.execute(
@@ -705,6 +723,7 @@ def create_app(test_config=None):
 
     #Consultar peticiones de tema
     @app.route("/consultarPeticionesdeTema") #OJO MODIFICAR
+    @login_required
     def consultarPeticionesdeTema():
         #lo primero es buscar a que comision pertenece el usuario actual
         db = database.get_db()
@@ -726,6 +745,7 @@ def create_app(test_config=None):
 
 
     @app.route("/evaluarPeticion/<string:id>")
+    @login_required
     def evaluarPeticion(id):
         db = database.get_db()
         datos=db.execute(
@@ -737,6 +757,7 @@ def create_app(test_config=None):
 
 
     @app.route("/registrarEvaluacion", methods=['GET', 'POST'])
+    @login_required
     def registrarEvaluacion():
         #return("hola")
         if request.form.get('Aceptada')=="Aceptada":
@@ -773,6 +794,7 @@ def create_app(test_config=None):
 
     ####FUNCIONES PARA EL ACTOR PROFESOR MIEMBRO DE TRIBUNAL####
     @app.route("/consultarTrabajosPresentados")#MODIFICAR CUANDO SE TENGA EL USUARIO
+    @login_required
     def consultarTrabajosPresentados():
 
         #lo primero es sacar cuales son los tribunales del usuario actual
@@ -798,6 +820,7 @@ def create_app(test_config=None):
 
 
     @app.route("/intermedio/<id>")
+    @login_required
     def intermedio(id):
         return render_template('intermedio.html', id=id)
 
@@ -815,6 +838,7 @@ def create_app(test_config=None):
 
 
     @app.route('/upload2', methods=['GET', 'POST'])
+    @login_required
     def upload2():
 
         id = request.form.get('id')
@@ -874,6 +898,7 @@ def create_app(test_config=None):
 
     ###################################FUNCIONES PARA EL ACTOR MIEMBRO DE SECRETARIA######################################
     @app.route("/validarPeticiones")
+    @login_required
     def validarPeticiones():
 
         #Busco la equivalencia nombre y login
@@ -894,6 +919,7 @@ def create_app(test_config=None):
 
 
     @app.route("/validarPeticion/<string:id>")
+    @login_required
     def validarPeticion(id):
 
         #Busco la equivalencia nombre y login
@@ -915,6 +941,7 @@ def create_app(test_config=None):
 
 
     @app.route("/registrarValidacion", methods=['GET', 'POST'])
+    @login_required
     def registrarValidacion():
         #return("hola")
         if request.form.get('Validada'):
@@ -950,6 +977,7 @@ def create_app(test_config=None):
 
 
     @app.route("/validarTFG")
+    @login_required
     def validarTFG():
         #lo primero es sacar todos los trabajos sin validar de la BD
 
@@ -962,12 +990,14 @@ def create_app(test_config=None):
         return render_template('validarTrabajos.html', trabajos=trabajos)
 
     @app.route("/registrarValidacionTrabajo/<id>")
+    @login_required
     def registrarValidacionTrabajo(id):
         #return("hola")
         return render_template('registrarValidacionTrabajo.html', id=id)
 
 
     @app.route("/marcarValidado/<id>")
+    @login_required
     def marcarValidado(id):
         #return("hola marcarValidado")
 
@@ -1001,6 +1031,7 @@ def create_app(test_config=None):
 
 
     @app.route("/asignarTribunal", methods=['POST'])
+    @login_required
     def asignarTribunal():
         
         #return("hola")
@@ -1032,6 +1063,7 @@ def create_app(test_config=None):
 
 
     @app.route("/gestionarComisiones") #####FALLO################
+    @login_required
     def gestionarComisiones():
         db = database.get_db()
         comisiones=db.execute(
@@ -1126,6 +1158,7 @@ def create_app(test_config=None):
 
 
     @app.route("/crearComision")
+    @login_required
     def crearComision():
         db = database.get_db()
         profesores=db.execute(
@@ -1138,6 +1171,7 @@ def create_app(test_config=None):
 
 
     @app.route("/registrarNuevaComision", methods=['POST'])
+    @login_required
     def registrarNuevaComision():
         
         #return("hola registrarNuevaComision")
@@ -1173,16 +1207,19 @@ def create_app(test_config=None):
 
 
     @app.route("/modificarComision/<string:titulacion>")
+    @login_required
     def modificarComision(titulacion):
         return render_template('modificarComision.html', titulacion=titulacion)
 
 
     @app.route("/cambiarEstadoComision/<string:titulacion>")
+    @login_required
     def cambiarEstadoComision(titulacion):
         return render_template('cambiarEstadoComision.html', titulacion=titulacion)
 
 
     @app.route("/registrarNuevoEstadoComision", methods=['POST'])
+    @login_required
     def registrarNuevoEstadoComision():
         
         #return("hola registrarNuevaComision")
@@ -1216,6 +1253,7 @@ def create_app(test_config=None):
 
 
     @app.route("/modificarProfesoresComision", methods=['POST'])
+    @login_required
     def modificarProfesoresComision():
         
         titulacion=request.form.get('titulacion')
@@ -1248,6 +1286,7 @@ def create_app(test_config=None):
         
 
     @app.route("/registrarCambioProfesoresComision", methods=['POST'])
+    @login_required
     def registrarCambioProfesoresComision():
         #return(request.form.get('miembros'))
 
@@ -1284,6 +1323,7 @@ def create_app(test_config=None):
 
 
     @app.route("/listarTFGTitulacion")
+    @login_required
     def listarTFGTitulacion():
         return render_template('seleccionarTitulacion.html')
 
@@ -1293,6 +1333,7 @@ def create_app(test_config=None):
 
 
     @app.route('/filtrarTitulacion', methods=['GET', 'POST'])
+    @login_required
     def filtrarTitulacion():
         #return(request.form['titulacion'])
 
@@ -1311,6 +1352,7 @@ def create_app(test_config=None):
 
 
     @app.route("/listarTFGProfesor")
+    @login_required
     def listarTFGProfesor():
     #sacamos la lista de profesores
         db = database.get_db()
@@ -1326,6 +1368,7 @@ def create_app(test_config=None):
 
 
     @app.route('/filtrarProfesor', methods=['GET', 'POST'])
+    @login_required
     def filtrarProfesor():
         #return(request.form['titulacion'])
         #return(request.form['nombre'])
@@ -1349,6 +1392,7 @@ def create_app(test_config=None):
 
 
     @app.route("/crearTribunal")
+    @login_required
     def crearTribunal():
         #Sacamos el id para el nuevo tribunal
 
@@ -1374,6 +1418,7 @@ def create_app(test_config=None):
 
 
     @app.route("/registrarNuevoTribunal", methods=['POST'])
+    @login_required
     def registrarNuevoTribunal():
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
@@ -1390,6 +1435,7 @@ def create_app(test_config=None):
 
 
     @app.route("/modificarTribunal")
+    @login_required
     def modificarTribunal():
 
         #Busco la equivalencia nombre y login
@@ -1405,6 +1451,7 @@ def create_app(test_config=None):
 
 
     @app.route("/modificarTribunal2/<int:ID>")
+    @login_required
     def modificarTribunal2(ID):
         db = database.get_db()
         datos=db.execute(
@@ -1420,6 +1467,7 @@ def create_app(test_config=None):
 
 
     @app.route("/registrarModificacionTribunal", methods=['POST'])
+    @login_required
     def registrarModificacionTribunal():
         if request.form.get('Activo'):
             nuevoEstado="Activo"
@@ -1451,6 +1499,7 @@ def create_app(test_config=None):
 
 
     @app.route("/publicarConvocatorias")
+    @login_required
     def publicarConvocatorias():
         db = database.get_db()
         trabajos=db.execute(
@@ -1464,6 +1513,7 @@ def create_app(test_config=None):
         
 
     @app.route("/datosExtra/<string:id>")
+    @login_required
     def datosExtra(id):
         return render_template('crearConvocatoria.html', id=id)
 
@@ -1471,6 +1521,7 @@ def create_app(test_config=None):
 
 
     @app.route("/registrarNuevaConvocatoria", methods=['POST'])
+    @login_required
     def registrarNuevaConvocatoria():
         #id=request.form['id']
         #return(id)
