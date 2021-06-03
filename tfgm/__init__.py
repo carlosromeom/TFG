@@ -207,7 +207,7 @@ def create_app(test_config=None):
 
 
     @app.route("/grabarPeticion", methods=['POST'])
-    def grabarPeticionPDF():
+    def grabarPeticion():
 
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -261,21 +261,22 @@ def create_app(test_config=None):
 
             db.commit()
 
-            return render_template(XXXXX)
+            return render_template('paginaEspera.html', id_file=id_file)
 
 
-    @app.route("/prepararPDF", methods=['POST'])
-    def prepararPDF():   
-        #para que aparezca el nombre del director 1 en el pdf lo buscamos en la base de datos
+    @app.route("/prepararPDF/<string:id>")
+    def prepararPDF(id):  
+        #seleccionamos todos los datos de la peticion
         db = database.get_db()
+        peticion=db.execute(
+            "SELECT * FROM peticiones where id = ?", (id,),
+            ).fetchall()
 
+
+        #return(id)
+        #para que aparezca el nombre del director 1 en el pdf lo buscamos en la base de datos
         nombre=db.execute(
-            "SELECT * FROM peticiones where id = ?", (request.form['director1'],),
-            ).fetchall() #XXXXXX
-
-
-        nombre=db.execute(
-            "SELECT name FROM user where email = ?", (request.form['director1'],),
+            "SELECT name FROM user where email = ?", (peticion[0][15],),
             ).fetchall()
 
         #creamos el documento pdf
@@ -285,22 +286,22 @@ def create_app(test_config=None):
 
         pdf.image("https://www.uco.es/eps/images/img/logotipo-EPSC.png", x=135, y=-10, w= 80, h=80 )
         pdf.cell(200, 10, txt="Resguardo de presentación de petición de tema", ln=1, align="C")
-        pdf.cell(200, 10, txt="ID: "+id_file, ln=1, align="L")
+        pdf.cell(200, 10, txt="ID: "+id, ln=1, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
-        pdf.cell(200, 10, txt="Nombre del trabajo: "+str(request.form['nombreTrabajo']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Nombre y apellidos: "+str(request.form['nombreAlumno']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre del trabajo: "+peticion[0][1], ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre y apellidos: "+peticion[0][2], ln=2, align="L")
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="DNI: "+str(request.form['DNI']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Titulación: "+str(request.form['titulacion']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Teléfono móvil: "+str(request.form['tMovil']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Email: "+str(current_user.email), ln=2, align="L")
+        pdf.cell(200, 10, txt="DNI: "+peticion[0][3], ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación: "+peticion[0][4], ln=2, align="L")
+        pdf.cell(200, 10, txt="Teléfono móvil: "+str(peticion[0][5]), ln=2, align="L")
+        pdf.cell(200, 10, txt="Email: "+peticion[0][6], ln=2, align="L")
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Confirmo cumplimiento requisito créditos pendientes EPSC: "+creditos, ln=2, align="L")
+        pdf.cell(200, 10, txt="Confirmo cumplimiento requisito créditos pendientes EPSC: "+peticion[0][7], ln=2, align="L")
         pdf.cell(200, 10, txt="El alumno cuyos datos personales han quedado reflejados,", ln=2, align="L")
         pdf.cell(200, 10, txt="Solicita,en virtud de lo dispuesto en la normativa de referencia, la aprobación del tema para ", ln=2, align="L")
         pdf.cell(200, 10, txt="la realización del Proyecto Fin de Carrera que a continuación se describe, y para la cual se adjunta", ln=2, align="L") 
@@ -308,27 +309,27 @@ def create_app(test_config=None):
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Modificación o ampliación: "+check1, ln=2, align="L")
+        pdf.cell(200, 10, txt="Modificación o ampliación: "+peticion[0][8], ln=2, align="L")
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
         # pdf.cell(200, 10, txt="Propuesta de tribunal: "+str(request.form['propuestaTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Nombre miembro tribunal: "+str(request.form['nombreMiembroTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Apellidos miembro tribunal: "+str(request.form['apellidosMiembroTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="DNI miembro de tribunal: "+str(request.form['DNIMiembroTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Email miembro de tribunal: "+str(request.form['emailMiembroTribunal']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Titulación miembro de tribunal: "+str(request.form['TitulacionMiembroTribunal']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre miembro tribunal: "+peticion[0][10], ln=2, align="L")
+        pdf.cell(200, 10, txt="Apellidos miembro tribunal: "+peticion[0][11], ln=2, align="L")
+        pdf.cell(200, 10, txt="DNI miembro de tribunal: "+peticion[0][12], ln=2, align="L")
+        pdf.cell(200, 10, txt="Email miembro de tribunal: "+peticion[0][13], ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación miembro de tribunal: "+peticion[0][14], ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Director 1: "+nombre[0][0]+" - "+str(request.form['director1']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Director 1: "+nombre[0][0]+" - "+peticion[0][15], ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Director 2: "+str(request.form['director2']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Director 2 Externo: "+director2Ext, ln=2, align="L")
+        pdf.cell(200, 10, txt="Director 2: "+peticion[0][16], ln=2, align="L")
+        pdf.cell(200, 10, txt="Director 2 Externo: "+peticion[0][17], ln=2, align="L")
 
-        pdf.cell(200, 10, txt="Nombre director externo: "+str(request.form['nombreDirectorExterno']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Apellidos director externo: "+str(request.form['apellidosDirectorExterno']), ln=2, align="L")
-        pdf.cell(200, 10, txt="DNI director externo: "+str(request.form['DNIDirectorExterno']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Email director externo: "+str(request.form['emailDirectorExterno']), ln=2, align="L")
-        pdf.cell(200, 10, txt="Titulación director externo: "+str(request.form['TitulacionDirectorExterno']), ln=2, align="L")
+        pdf.cell(200, 10, txt="Nombre director externo: "+peticion[0][18], ln=2, align="L")
+        pdf.cell(200, 10, txt="Apellidos director externo: "+peticion[0][19], ln=2, align="L")
+        pdf.cell(200, 10, txt="DNI director externo: "+peticion[0][20], ln=2, align="L")
+        pdf.cell(200, 10, txt="Email director externo: "+peticion[0][21], ln=2, align="L")
+        pdf.cell(200, 10, txt="Titulación director externo: "+peticion[0][22], ln=2, align="L")
 
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
