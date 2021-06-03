@@ -263,7 +263,7 @@ def create_app(test_config=None):
 
             db.commit()
 
-            return render_template('paginaEspera.html', id_file=id_file)
+            return render_template('descargadocumento.html', id_file=id_file)
 
 
     @app.route("/prepararPDF/<string:id>")
@@ -276,7 +276,8 @@ def create_app(test_config=None):
             ).fetchall()
 
 
-        #return(id)
+        print(peticion[0][1])
+        print(peticion[0][15])
         #para que aparezca el nombre del director 1 en el pdf lo buscamos en la base de datos
         nombre=db.execute(
             "SELECT name FROM user where email = ?", (peticion[0][15],),
@@ -1352,7 +1353,6 @@ def create_app(test_config=None):
 
 
     @app.route("/listarTFGProfesor")
-    @login_required
     def listarTFGProfesor():
     #sacamos la lista de profesores
         db = database.get_db()
