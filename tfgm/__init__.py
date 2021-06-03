@@ -888,8 +888,10 @@ def create_app(test_config=None):
     def publicar(id):
         print(id)
         db = database.get_db()
-        db.execute("UPDATE TFGs SET estado=? WHERE ID= ?", ('Corregido', request.form.get('id'),),
+        db.execute("UPDATE TFGs SET estado=? WHERE ID= ?", ('Corregido', id,),
         )
+
+        db.commit()
 
 
         return render_template('pantallaOK.html')
