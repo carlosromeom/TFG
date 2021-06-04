@@ -8,7 +8,7 @@ from os import listdir
 from os.path import isfile, join
 import datetime
 
-# Flask modules
+# Modulos de Flask
 from flask import make_response
 from flask import flash 
 from flask import send_file
@@ -23,14 +23,13 @@ from flask_login import (
 )
 from werkzeug.utils import secure_filename
 
-# Third-party modules
+# Modulos de terceras partes
 from fpdf import FPDF
-#import numpy as np
 
 from oauthlib.oauth2 import WebApplicationClient
 import requests
 
-# Internal imports
+# Importaciones internas
 from . import user
 
 
@@ -44,7 +43,7 @@ def error500(e):
 
 
 def create_app(test_config=None):
-    # create and configure the app
+    # crear y configurar la app
     app = Flask(__name__, instance_relative_config=True)
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(400, error500)
@@ -138,9 +137,7 @@ def create_app(test_config=None):
         # Parse the tokens!
         client.parse_request_body_response(json.dumps(token_response.json()))
 
-        # Now that you have tokens (yay) let's find and hit the URL
-        # from Google that gives you the user's profile information,
-        # including their Google profile image and email
+        # Informacion del perfil de google
         userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
         uri, headers, body = client.add_token(userinfo_endpoint)
         userinfo_response = requests.get(uri, headers=headers, data=body)
@@ -228,13 +225,7 @@ def create_app(test_config=None):
             id_file = str(current_user.email)+str(datetime.datetime.now())
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER_MEMORIAS'], id_file + 'PETICION.pdf'))
-            #db = database.get_db()
-            #db.execute(
-            #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
-            #"VALUES (?, ?, ?, ?, ?)",
-            #(filename, 'Creado', request.form['director1'], request.form['director2'], request.form['titulacion'] )
-            #)
-            #db.commit()
+
             
             if request.form.get('modificacionAmpliacion'):
                 check1="Si"
@@ -266,6 +257,7 @@ def create_app(test_config=None):
             return render_template('descargadocumento.html', id_file=id_file)
 
 
+    # A partir de los datos de la peticion se crea el resguardo en pdf
     @app.route("/prepararPDF/<string:id>")
     @login_required
     def prepararPDF(id):  
@@ -276,8 +268,6 @@ def create_app(test_config=None):
             ).fetchall()
 
 
-        print(peticion[0][1])
-        print(peticion[0][15])
         #para que aparezca el nombre del director 1 en el pdf lo buscamos en la base de datos
         nombre=db.execute(
             "SELECT name FROM user where email = ?", (peticion[0][15],),
@@ -317,7 +307,6 @@ def create_app(test_config=None):
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
 
-        # pdf.cell(200, 10, txt="Propuesta de tribunal: "+str(request.form['propuestaTribunal']), ln=2, align="L")
         pdf.cell(200, 10, txt="Nombre miembro tribunal: "+peticion[0][10], ln=2, align="L")
         pdf.cell(200, 10, txt="Apellidos miembro tribunal: "+peticion[0][11], ln=2, align="L")
         pdf.cell(200, 10, txt="DNI miembro de tribunal: "+peticion[0][12], ln=2, align="L")
@@ -366,12 +355,11 @@ def create_app(test_config=None):
 
 
 
-    # Entregar TFG
+    # Entregar TFG/M
     @app.route("/subirTFG")
     @login_required
     def subirTFG():
-        #Se comprueba que no halla subido ya un trabajo anteriormente
-                #primero se comprueba que el usuario halla subido un trabajo, para ello se ve si tiene alguna petición con el estado de Trabajo subido
+        #primero se comprueba que el usuario halla subido un trabajo, para ello se ve si tiene alguna petición con el estado de Trabajo subido
         db = database.get_db()
         trabajos=db.execute(
             "SELECT * FROM peticiones WHERE email = ? and estado = 'TrabajoSubido'", (str(current_user.email),),
@@ -382,7 +370,7 @@ def create_app(test_config=None):
             return render_template('YaSubido.html')
 
 
-        #lo primero es sacar todas las peticiones de tema de la BD
+        #Sacamos todas sus peticiones de tema de la BD
 
 
         db = database.get_db()
@@ -390,13 +378,11 @@ def create_app(test_config=None):
             "SELECT * FROM peticiones where estado = 'Revisada' and resolucion= 'Aceptada' and email = ?", (str(current_user.email),),
             ).fetchall()
     
-        #return ("hola")
         return render_template('consultarPeticionPresentarTrabajo.html', peticiones=peticiones)
 
 
 
-        #return render_template('subirTFG.html')
-
+    # Registrar en la base de datos la entrega del Trabajo (puede ser TFG o TFM)
     @app.route("/registrarTFG/<string:id>")
     @login_required
     def registrarTFG(id):
@@ -404,12 +390,6 @@ def create_app(test_config=None):
         aux=db.execute(
             "SELECT * FROM peticiones where ID = ?", (id,),
             ).fetchall()
-        #print("AUX PRUEBA: " , aux[0][0])
-
-
-        #hasta aqui va bien
-
-
 
 
 
@@ -435,21 +415,7 @@ def create_app(test_config=None):
 
 
 
-    """
-    @app.route('/registrarTFG', methods=['GET', 'POST'])
-    def registrarTFG():
-        db = database.get_db()
-        db.execute(
-        "INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
-        "VALUES (?, ?, ?, ?, ?)",
-        (request.form['nombre'], 'Creado', request.form['director1'], request.form['director2'], request.form['titulacion'] )
-        )
-        db.commit()
-        return render_template('aux.html')
-
-    """
-
-
+    #Solo se permite pdf
     def allowed_file(filename):
         return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -473,13 +439,7 @@ def create_app(test_config=None):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER_TRABAJOS'], current_user.email + 'TRABAJO.pdf'))
 
-                #db = database.get_db()
-                #db.execute(
-                #"INSERT INTO TFGs (trabajo, estado, director1, director2, titulacion)"
-                #"VALUES (?, ?, ?, ?, ?)",
-                #(filename, 'Creado', request.form['director1'], request.form['director2'], request.form['titulacion'] )
-                #)
-                #db.commit()
+
                 return render_template('pantallaOK.html')
 
         return '''
@@ -507,7 +467,7 @@ def create_app(test_config=None):
 
 
 
-
+    #Descargar documentos registrados en el sistema
     @app.route("/descargarDocumentos")
     @login_required
     def descargarDocumentos():
@@ -515,6 +475,7 @@ def create_app(test_config=None):
         return render_template('elegirDocumentos.html')
 
 
+    # Descargar la peticion de tema seleccionada
     @app.route("/descargarPeticion")
     @login_required
     def descargarPeticion():
@@ -539,7 +500,7 @@ def create_app(test_config=None):
 
 
 
-
+    #Descargar el trabajo subido
     @app.route("/descargarTrabajo")
     @login_required
     def descargarTrabajo():
@@ -560,7 +521,7 @@ def create_app(test_config=None):
 
 
 
-
+    #Cancelar una peticion de tema, funcionalidad oculta al usuario, se deja por si en el futuro es necesaria
     @app.route("/cancelarPeticion")
     @login_required
     def cancelarPeticion():
@@ -592,7 +553,7 @@ def create_app(test_config=None):
 
 
 
-
+    #Consultar el estado de las diferentes peticiones de tema que tiene un Estudiante 
     @app.route("/consultarEvaluacionPeticion")
     @login_required
     def consultarEvaluacionPeticion():
@@ -624,37 +585,7 @@ def create_app(test_config=None):
         return render_template('consultarEvaluacionPeticion.html', aceptadas=aceptadas, denegadas=denegadas, ampliar=ampliar, sugerencias=sugerencias)#, resto=resto)
 
 
-
-    """
-        if checkFileExistance("/home/carlos/Escritorio/TFG/peticiondetema"):
-            if (peticiones== "Aceptada"):
-                return render_template('peticionAceptada.html')
-            if (peticiones== "Denegada"):
-                return render_template('peticionDenegada.html')
-            if (peticiones== "Ampliar Memoria"):
-                return render_template('peticionAmpliar.html')
-            if (peticiones== "Aceptada con sugerencias"):
-                db = database.get_db()
-                sugerencias=db.execute(
-                    "SELECT sugerencias FROM peticiones where DNI = METER DNI" # a la espera de sacarlo del login de la uco
-                ).fetchall()
-
-                db.commit()
-                return render_template('peticionSugerencias.html', sugerencias=sugerencias)
-            else:
-                return render_template('NoEvaluada.html')
-        else:
-            return render_template('errorNoEncontrado.html')
-
-
-
-    """
-
-
-
-
-
-
+    # Revisar las sugerencias hechas por la comision
     @app.route("/revisarSugerencias/<string:id>")
     @login_required
     def revisarSugerencias(id):
@@ -669,7 +600,7 @@ def create_app(test_config=None):
 
 
 
-
+    #Guardar la decision que tome el Estudiante sobre las sugerencias
     @app.route("/guardarSugerencias", methods=['POST'])
     @login_required
     def guardarSugerencias():
@@ -691,15 +622,7 @@ def create_app(test_config=None):
         return render_template('pantallaOK.html')
 
 
-
-
-
-
-
-
-
-
-
+    #Ampliar peticion de tema
     @app.route("/ampliar/<string:id>")
     @login_required
     def ampliar(id):
@@ -723,17 +646,14 @@ def create_app(test_config=None):
     ####FUNCIONES PARA EL ACTOR PROFESOR MIEMBRO DE COMISION####
 
     #Consultar peticiones de tema
-    @app.route("/consultarPeticionesdeTema") #OJO MODIFICAR
+    @app.route("/consultarPeticionesdeTema") 
     @login_required
-    def consultarPeticionesdeTema():
+    def consultarPeticionesdeTema():#MODIFICAR CUANDO SE TENGA EL USUARIO
         #lo primero es buscar a que comision pertenece el usuario actual
         db = database.get_db()
         comision=db.execute(
             "SELECT * FROM comisiones where profesor1 = ? or profesor2= ? or profesor3=? or presidente=?", ("aalbujer", "aalbujer", "aalbujer", "aalbujer",), #(current_user.email, current_user.email, current_user.email, current_user.email,),
             ).fetchall()
-
-
-        #return(comision[0][0])
 
         #Ahora sacamos todas las peticiones de tema de la BD que correspondan a la comision
         db = database.get_db()
@@ -745,6 +665,7 @@ def create_app(test_config=None):
         return render_template('consultarPeticionesdeTema.html', peticiones=peticiones)
 
 
+    #Evaluar una peticion de tema
     @app.route("/evaluarPeticion/<string:id>")
     @login_required
     def evaluarPeticion(id):
@@ -756,7 +677,7 @@ def create_app(test_config=None):
         return render_template('evaluar.html', id=id, datos=datos)
 
 
-
+    #Registrar en el sistema el resultado de la evaluacion
     @app.route("/registrarEvaluacion", methods=['GET', 'POST'])
     @login_required
     def registrarEvaluacion():
@@ -770,15 +691,7 @@ def create_app(test_config=None):
         if request.form.get('Denegada')=="Denegada":
             resolucion="Denegada"
         
-
-        
-
-        
         sugerencias= (str(request.form.get('sugerencias')))
-
-
-      
-        #return(request.form['id']) #no lo saca
 
         #ahora se registra la peticion de tema como evaluada en la BD
         db = database.get_db()
@@ -793,6 +706,9 @@ def create_app(test_config=None):
 
 
 
+
+
+
     ####FUNCIONES PARA EL ACTOR PROFESOR MIEMBRO DE TRIBUNAL####
     @app.route("/consultarTrabajosPresentados")#MODIFICAR CUANDO SE TENGA EL USUARIO
     @login_required
@@ -804,10 +720,6 @@ def create_app(test_config=None):
             "SELECT * FROM tribunal where email_presidente = ? or email_vocal = ? or email_secretario = ?", ("aalbujer", "aalbujer", "aalbujer",),#(current_user.email, current_user.email, current_user.email,),
             ).fetchall()        
 
-        
-       # return(tribunales[0][1])
-
-
 
         #Sacamos todos los trabajos sin corregir de la BD
 
@@ -816,10 +728,10 @@ def create_app(test_config=None):
             "SELECT * FROM TFGs where estado = 'Validado' and tribunal = ?", (tribunales[0][0],),
             ).fetchall()
     
-        #return ("hola")
         return render_template('consultarTrabajosPresentados.html', trabajos=trabajos)
 
 
+    #Funcion que permite mostrar las opciones para descargar el trabajo o hacerlo disponible para consulta publica.
     @app.route("/intermedio/<id>")
     @login_required
     def intermedio(id):
@@ -838,6 +750,7 @@ def create_app(test_config=None):
 
 
 
+    #Funcion que permite subir actas, su desarrollo se ha abandonado puesto que este sistema no puede subir actas pero se deja para futuras versiones si fuera necesario
     @app.route('/upload2', methods=['GET', 'POST'])
     @login_required
     def upload2():
@@ -883,6 +796,7 @@ def create_app(test_config=None):
         '''
 
 
+    #Publicar y hacer disponible el trabajo para consulta publica
     @app.route("/publicar/<id>")
     @login_required
     def publicar(id):
@@ -913,6 +827,7 @@ def create_app(test_config=None):
 
 
     ###################################FUNCIONES PARA EL ACTOR MIEMBRO DE SECRETARIA######################################
+    #Validar las peticiones de tema recibidas
     @app.route("/validarPeticiones")
     @login_required
     def validarPeticiones():
@@ -923,17 +838,10 @@ def create_app(test_config=None):
             "SELECT * FROM peticiones, user as u1 WHERE peticiones.director1 == u1.email AND peticiones.estado= 'Creada'"
             ).fetchall()
 
-        #lo primero es sacar todas las peticiones sin validar de la BD
-
-        #db = database.get_db()
-        #peticiones=db.execute(
-         #   "SELECT * FROM peticiones where estado = 'Creada'"
-          #  ).fetchall()
-    
-        #return ("hola")
         return render_template('validarPeticionesdeTema.html', peticiones=peticiones)
 
 
+    #Seleccionando los datos de la peticion y el resultado de la validacion
     @app.route("/validarPeticion/<string:id>")
     @login_required
     def validarPeticion(id):
@@ -943,19 +851,13 @@ def create_app(test_config=None):
         datos=db.execute(
             "SELECT * FROM peticiones, user as u1 WHERE peticiones.director1 == u1.email AND peticiones.estado= 'Creada' and peticiones.ID = ?", (id,),
             ).fetchall()
-
-
-        #db = database.get_db()
-        #datos=db.execute(
-         #   "SELECT * FROM peticiones where ID = ?", (id,),
-          #  ).fetchall()
         
         
         return render_template('validar.html', id=id, datos=datos)
 
 
 
-
+    #Registrando en la BD el resultado de la validacion
     @app.route("/registrarValidacion", methods=['GET', 'POST'])
     @login_required
     def registrarValidacion():
@@ -966,13 +868,7 @@ def create_app(test_config=None):
             validacion="NoValidada"
 
         id=(str(request.form.get('id')))
-
-
-        #return(id)
-        #sugerencias= (str(request.form.get('sugerencias')))
-
-
-    
+  
 
 
         #ahora se registra la peticion de tema como validada o no en la BD
@@ -991,7 +887,7 @@ def create_app(test_config=None):
 
 
 
-
+    #Se validan los trabajos registrados
     @app.route("/validarTFG")
     @login_required
     def validarTFG():
@@ -1002,21 +898,18 @@ def create_app(test_config=None):
             "SELECT * FROM TFGs where estado = 'Creado'"
             ).fetchall()
     
-        #return ("hola")
         return render_template('validarTrabajos.html', trabajos=trabajos)
 
+    #Se muestra mas informacion sobre el trabajo y se selecciona el resultado de la validacion
     @app.route("/registrarValidacionTrabajo/<id>")
     @login_required
     def registrarValidacionTrabajo(id):
-        #return("hola")
         return render_template('registrarValidacionTrabajo.html', id=id)
 
-
+    #Se guarda en la BD el resultado de la validacion
     @app.route("/marcarValidado/<id>")
     @login_required
     def marcarValidado(id):
-        #return("hola marcarValidado")
-
         #ahora lo metemos en la BD como Validado
         db = database.get_db()
         db.execute("UPDATE TFGs SET estado='Validado' WHERE ID= ?", (id,),
@@ -1040,26 +933,13 @@ def create_app(test_config=None):
             "SELECT * FROM tribunal where estado = 'Activo' and titulacion = ?", (titulacion[0][0],),
             ).fetchall()
 
-
-
-
         return render_template('asignarTribunal.html', id=id, tribunales=tribunales, titulacion=titulacion[0][0])
 
 
+    #Se le asigna un tribunal de los ya existentes al trabajo validado
     @app.route("/asignarTribunal", methods=['POST'])
     @login_required
     def asignarTribunal():
-        
-        #return("hola")
-
-        #return render_template('descargadocumento.html')
-
-
-
-    #####FALLO NO RECIBE EL ID#######
-
-        #return (request.form.get('trabajo'))
-
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
         db.execute("UPDATE TFGs SET tribunal=? WHERE ID= ?", (request.form.get('tribunal'), request.form.get('trabajo')),
@@ -1073,12 +953,8 @@ def create_app(test_config=None):
 
 
 
-
-
-
-
-
-    @app.route("/gestionarComisiones") #####FALLO################
+    #Se llevan a cabo modificaciones en las comisiones existentes o se crean nuevas.
+    @app.route("/gestionarComisiones") 
     @login_required
     def gestionarComisiones():
         db = database.get_db()
@@ -1088,91 +964,9 @@ def create_app(test_config=None):
 
         return render_template('gestionarComisiones.html', comisiones=comisiones)
 
-    '''
-        #lo primero es sacar todas las comisiones ya registradas en la BD
-        db = database.get_db()
-        comisiones=db.execute(
-            "SELECT * FROM comisiones"
-            ).fetchall()
-
-        #cuento las comisiones
-        c=0
-        for row in comisiones:
-            c=c+1
-        #fin del loop
-        #return(c)
-
-        matriz = []
-        for h in range(9):
-            matriz.append([])
-            for g in range(c):
-                matriz[h].append(None)
-
-        return(matriz[0][0])
-        
-        i = 0
-
-        for row in comisiones:
-            j = 0
-            #equivalencia entre id y nombre real
-            matriz[i][j]=comisiones[i][0] #titulacion de la comision
-            j=j+1
-            
-            matriz[i][j]=comisiones[i][1]
-            j=j+1
 
 
-            db = database.get_db()
-            nombre=db.execute(
-                "SELECT name FROM user WHERE email= ?", (comisiones[i][2],),
-                ).fetchall()
-            matriz[i][j]=comisiones[i][2]
-            j=j+1
-
-            matriz[i][j]=nombre[0][0]
-            j=j+1
-
-
-            db = database.get_db()
-            nombre2=db.execute(
-                "SELECT name FROM user WHERE email= ?", (comisiones[i][3],),
-                ).fetchall()
-            matriz[i][j]=comisiones[i][3]
-            j=j+1
-
-            matriz[i][j]=nombre2[0][0]
-            j=j+1
-
-            db = database.get_db()
-            nombre3=db.execute(
-                "SELECT name FROM user WHERE email= ?", (comisiones[i][4],),
-                ).fetchall()
-            matriz[i][j]=comisiones[i][4]
-            j=j+1
-
-            matriz[i][j]=nombre3[0][0]
-            j=j+1
-
-            db = database.get_db()
-            nombre4=db.execute(
-                "SELECT name FROM user WHERE email= ?", (comisiones[i][5],),
-                ).fetchall()
-            matriz[i][j]=comisiones[i][5]
-            j=j+1
-
-            matriz[i][j]=nombre4[0][0]
-            
-
-
-            i=i+1
-            #fin del loop
-
-    
-        #return ("hola")
-        return render_template('gestionarComisiones.html', matriz=matriz)
-    '''
-
-
+    #Crear una nueva comision
     @app.route("/crearComision")
     @login_required
     def crearComision():
@@ -1181,19 +975,13 @@ def create_app(test_config=None):
             "SELECT * FROM user WHERE rol= 'Profesor'"
             ).fetchall()
 
-        #return ("hola crearComision")
         return render_template('crearComision.html', profesores=profesores)
 
 
-
+    #Registrar en la BD la nueva comision
     @app.route("/registrarNuevaComision", methods=['POST'])
     @login_required
     def registrarNuevaComision():
-        
-        #return("hola registrarNuevaComision")
-
-        #return render_template('descargadocumento.html')
-
         #comprobamos que la comisión no esté repetida
         db = database.get_db()
         comisiones=db.execute(
@@ -1203,9 +991,6 @@ def create_app(test_config=None):
 
         if comisiones!=None:
             return render_template('ComisionRepetida.html')
-
-
-
 
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
@@ -1221,35 +1006,26 @@ def create_app(test_config=None):
 
 
 
-
+    #Mostrar opciones para modificar una comision seleccionada
     @app.route("/modificarComision/<string:titulacion>")
     @login_required
     def modificarComision(titulacion):
         return render_template('modificarComision.html', titulacion=titulacion)
 
-
+    #Camibar el estado de una comision seleccionada
     @app.route("/cambiarEstadoComision/<string:titulacion>")
     @login_required
     def cambiarEstadoComision(titulacion):
         return render_template('cambiarEstadoComision.html', titulacion=titulacion)
 
-
+    #Registrar el nuevo estado de la comision
     @app.route("/registrarNuevoEstadoComision", methods=['POST'])
     @login_required
     def registrarNuevoEstadoComision():
-        
-        #return("hola registrarNuevaComision")
-
-        #return render_template('descargadocumento.html')
-
-
         if request.form.get('Activa'):
             nuevoEstado="Activa"
         else :
             nuevoEstado="Inactiva"
-
-
-        #return (request.form.get('ID'))
 
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
@@ -1267,13 +1043,12 @@ def create_app(test_config=None):
 
 
 
-
+    #Modificar los profesores que estan en la comision
     @app.route("/modificarProfesoresComision", methods=['POST'])
     @login_required
     def modificarProfesoresComision():
         
         titulacion=request.form.get('titulacion')
-        #return(ID)
         #sacamos los miembros de la comision
         db = database.get_db()
         profesor1=db.execute("SELECT profesor1 FROM comisiones WHERE titulacion= ?", (titulacion,),
@@ -1293,20 +1068,16 @@ def create_app(test_config=None):
 
             ).fetchone()[0]
 
-        #return(miembros)
         return render_template('modificarProfesoresComision.html', titulacion=titulacion, profesor1=profesor1, profesor2=profesor2, profesor3=profesor3, presidente=presidente)
 
 
 
 
         
-
+    #Se registra el cambio de los componentes en la BD
     @app.route("/registrarCambioProfesoresComision", methods=['POST'])
     @login_required
     def registrarCambioProfesoresComision():
-        #return(request.form.get('miembros'))
-
-
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
         db.execute("UPDATE comisiones SET profesor1=?, profesor2=?, profesor3=?, presidente=? WHERE titulacion= ?", (request.form.get('profesor1'), request.form.get('profesor2'), request.form.get('profesor3'), request.form.get('presidente'), request.form.get('titulacion')),
@@ -1321,23 +1092,7 @@ def create_app(test_config=None):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    #Listar los trabajos entregados segun su titulacion
     @app.route("/listarTFGTitulacion")
     @login_required
     def listarTFGTitulacion():
@@ -1351,9 +1106,6 @@ def create_app(test_config=None):
     @app.route('/filtrarTitulacion', methods=['GET', 'POST'])
     @login_required
     def filtrarTitulacion():
-        #return(request.form['titulacion'])
-
-
         #ahora guardamos todos los trabajos que sean de la titulacion elegida
         db = database.get_db()
         trabajos=db.execute(
@@ -1366,7 +1118,7 @@ def create_app(test_config=None):
 
 
 
-
+    #Filtrar los trabajos registrados por su director 
     @app.route("/listarTFGProfesor")
     def listarTFGProfesor():
     #sacamos la lista de profesores
@@ -1381,42 +1133,30 @@ def create_app(test_config=None):
         return render_template('seleccionarProfesor.html', profesores=profesores)
 
 
-
+    #Mostrar el resultado del filtro
     @app.route('/filtrarProfesor', methods=['GET', 'POST'])
     @login_required
     def filtrarProfesor():
-        #return(request.form['titulacion'])
-        #return(request.form['nombre'])
-        #return(request.form.get('nombre'))
-
-        #cadena="%"+request.form['nombre']+"%"
-
-
         #ahora guardamos todos los trabajos que sean del director elegido
         db = database.get_db()
         trabajos=db.execute(
             "SELECT * FROM TFGs WHERE director1 LIKE ?", (request.form['nombre'],),
             ).fetchall()
-    
-        #return ("hola")
+
         return render_template('listarTFG.html', trabajos=trabajos)
 
 
 
-
-
-
+    #Crear un nuevo tribunal
     @app.route("/crearTribunal")
     @login_required
     def crearTribunal():
         #Sacamos el id para el nuevo tribunal
-
         #cuento los tribunales
         db = database.get_db()
         tribunales=db.execute(
             "SELECT COUNT(*) FROM tribunal"
             ).fetchall()
-        #print(trabajos[0][0])
 
 
         db = database.get_db()
@@ -1424,14 +1164,13 @@ def create_app(test_config=None):
             "SELECT * FROM user WHERE rol= 'Profesor'"
             ).fetchall()
 
-        #return ("hola crearComision")
         return render_template('crearTribunal.html', profesores=profesores, id=tribunales[0][0]+1)
 
 
 
 
 
-
+    #Se registra el nuevo tribunal en la base de datos
     @app.route("/registrarNuevoTribunal", methods=['POST'])
     @login_required
     def registrarNuevoTribunal():
@@ -1448,7 +1187,7 @@ def create_app(test_config=None):
 
 
 
-
+    #Modifcar un tribunal exixtentes, aqui se selecciona el tribunal a modifcar
     @app.route("/modificarTribunal")
     @login_required
     def modificarTribunal():
@@ -1458,9 +1197,6 @@ def create_app(test_config=None):
         tribunales=db.execute(
             "SELECT * FROM tribunal, user as u1, user as u2, user as u3 WHERE tribunal.email_presidente == u1.email AND tribunal.email_secretario == u2.email AND tribunal.email_vocal == u3.email"
             ).fetchall()
-
-    
-        #return ("hola")
         return render_template('mostrarTribunales.html', tribunales=tribunales)
 
 
@@ -1480,7 +1216,7 @@ def create_app(test_config=None):
         return render_template('modificarTribunal.html', ID=ID, datos=datos, profesores=profesores)
 
 
-
+    #Se registra en la BD la modificacion del tribunal
     @app.route("/registrarModificacionTribunal", methods=['POST'])
     @login_required
     def registrarModificacionTribunal():
@@ -1512,7 +1248,7 @@ def create_app(test_config=None):
 
 
 
-
+    #Publicar convocatorias para la lectura publica de los trabajos que hayan pasado por el tribunal correspondiente.
     @app.route("/publicarConvocatorias")
     @login_required
     def publicarConvocatorias():
@@ -1523,38 +1259,18 @@ def create_app(test_config=None):
     
         return render_template('seleccionarTrabajoLectura.html', trabajos=trabajos)
 
-        #return ("hola crearComision")
-        #return render_template('crearConvocatoria.html')
         
-
+    #Se rellenan datos extra para la convocatoria de lectura
     @app.route("/datosExtra/<string:id>")
     @login_required
     def datosExtra(id):
         return render_template('crearConvocatoria.html', id=id)
 
 
-
-
+    #Se registra la convocatoria de lectura
     @app.route("/registrarNuevaConvocatoria", methods=['POST'])
     @login_required
     def registrarNuevaConvocatoria():
-        #id=request.form['id']
-        #return(id)
-        #db = database.get_db()
-        #titulacion=db.execute(
-        #   "SELECT titulacion FROM peticiones WHERE ID LIKE ?", (id,),
-        #  ).fetchall()
-        #db.commit()
-
-        
-        #return(titulacion[0][0])
-        
-        #return("hola registrarNuevaComision")
-
-        #return render_template('descargadocumento.html')
-
-
-        # return(aux[0][4])
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
         db.execute(
@@ -1580,11 +1296,12 @@ def create_app(test_config=None):
     def usuarioNoRegistrado():
         return render_template('menuprincipalUsuarioNoRegistrado.html')
 
+    #Filtrar los trabajos
     @app.route("/filtrado")
     def filtrado():
         return render_template('quiereFiltrar.html')
 
-
+    #Consultar los trabajos
     @app.route("/consultarTFG")
     def consultarTFG():
 
@@ -1594,28 +1311,20 @@ def create_app(test_config=None):
             "SELECT * FROM TFGs WHERE estado = 'Corregido'"
             ).fetchall()
     
-        #return ("hola")
         return render_template('listarTFG.html', trabajos=trabajos)
 
 
 
 
-
+    #Consultar los tribunales registrados segun su titulacion, aqui se elige la titulacion
     @app.route("/consultarTribunalesTitulacion")
     def consultarTribunalesTitulacion():
         return render_template('filtrarTribunalTitulacion.html')
 
 
+    #Se muestra el resultado del filtro
     @app.route('/filtrarTitulacion2', methods=['GET', 'POST'])
     def filtrarTitulacion2():
-        #return(request.form['titulacion'])
-
-
-        #ahora guardamos todos los tribunales que sean de la titulacion elegida
-        #db = database.get_db()
-        #tribunales=db.execute(
-         #   "SELECT * FROM tribunal WHERE titulacion= ?", (request.form['titulacion'],),
-          #  ).fetchall()
 
         #Busco la equivalencia nombre y login
         db = database.get_db()
@@ -1623,12 +1332,10 @@ def create_app(test_config=None):
             "SELECT * FROM tribunal, user as u1, user as u2, user as u3 WHERE tribunal.email_presidente == u1.email AND tribunal.email_secretario == u2.email AND tribunal.email_vocal == u3.email AND tribunal.titulacion= ?", (request.form['titulacion'],),
             ).fetchall()
 
-    
-        #return ("hola")
         return render_template('listarTribunales.html', tribunales=tribunales)
 
 
-
+    #Consultar los tribunales en los que participa un profesor
     @app.route("/consultarTribunalesProfesor")
     def consultarTribunalesProfesor():
         #sacamos la lista de profesores
@@ -1641,35 +1348,22 @@ def create_app(test_config=None):
         return render_template('filtrarTribunalProfesor.html', profesores=profesores)
 
 
-
+    #Mostrar resultado del filtro de los tribunales en los que participa un profesor
     @app.route('/filtrarProfesor2', methods=['GET', 'POST'])
     def filtrarProfesor2():
-        #return(request.form['titulacion'])
-
-
-        #ahora guardamos todos los tribunales en los que se encuentre el profesor
-        #db = database.get_db()
-        #tribunales=db.execute(
-         #   "SELECT * FROM tribunal WHERE email_vocal= ? or email_secretario=? or email_presidente=? ", (request.form['nombre'], request.form['nombre'],request.form['nombre'],),
-          #  ).fetchall()
-
-
         #Busco la equivalencia nombre y login
         db = database.get_db()
         tribunales=db.execute(
             "SELECT * FROM tribunal, user as u1, user as u2, user as u3 WHERE tribunal.email_presidente == u1.email AND tribunal.email_secretario == u2.email AND tribunal.email_vocal == u3.email AND (tribunal.email_secretario= ? or tribunal.email_vocal = ? or tribunal.email_presidente = ?)", (request.form['nombre'], request.form['nombre'],request.form['nombre'],),
             ).fetchall()
 
-    
-        #return ("hola")
         return render_template('listarTribunales.html', tribunales=tribunales)
 
 
 
-
+    #Consultar las convocatorias para la lectura publica de los trabajos
     @app.route('/consultarConvocatoriasLectura', methods=['GET', 'POST'])
     def consultarConvocatoriasLectura():
-        #return(request.form['titulacion'])
 
         fechaHoy=datetime.datetime.now()
         db = database.get_db()
@@ -1677,7 +1371,6 @@ def create_app(test_config=None):
             "SELECT * FROM lectura WHERE date(fecha) >= ? ", (fechaHoy.strftime("%x"),),
             ).fetchall()
     
-        #return ("hola")
         return render_template('listarConvocatorias.html', convocatorias=convocatorias)
 
 
@@ -1691,8 +1384,9 @@ def create_app(test_config=None):
 
 
 
-    ##################FUNCIONES AUXILIARES##############################3
+    ##################FUNCIONES AUXILIARES##############################
 
+    #Funcion auxiliar para descargar el trabajo seleccionado y empleada por varias funciones del programa
     @app.route("/descargarTrabajo2/<string:id>")
     def descargarTrabajo2(id):
         
