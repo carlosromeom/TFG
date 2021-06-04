@@ -26,13 +26,10 @@
 </style>
 </head>  
 
-
-
 <body> 
 
 	  <div align="left"><img src="https://www.uco.es/investigacion/proyectos/SEBASENet/images/Logo_UCO.png" style="width: 5%"/img>
             <h1> <center> Validar peticiones de tema</center></h1>
-
             <h1> <center> Lista de peticiones de tema </center></h1>
 
 
@@ -49,8 +46,6 @@
     </thead>
 
                   {% for row in peticiones %}
-               
-
                   <tr>
                         
                         <td class="row-data"><a href="/validarPeticion/{{row[0]}}">{{row[0]}}</a></td>
@@ -59,11 +54,7 @@
                         <td class="row-data">{{row[3]}}</td>
                         <td class="row-data">{{row[28]}}</td>
                         <td class="row-data">{{row[23]}}</td>
-                        <td class="row-data">{{row[24]}}</td>
-
-
-
-                        
+                        <td class="row-data">{{row[24]}}</td>                        
                   </tr>
           
                   {% endfor %}
@@ -76,6 +67,3 @@
 
 
 <a class="button2" href="/">Atrás</a>
-
-
-
