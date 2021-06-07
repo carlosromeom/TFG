@@ -604,15 +604,8 @@ def create_app(test_config=None):
     @app.route("/guardarSugerencias", methods=['POST'])
     @login_required
     def guardarSugerencias():
-        if request.form.get('Aceptar')=="Aceptar":
-            resolucion="SugerenciasAceptadas"
-        if request.form.get('Denegar')=="Denegar":
-            resolucion="sugerenciasDenegadas"
-
-
-
         db = database.get_db()
-        db.execute("UPDATE peticiones SET resolucion=? WHERE ID= ?", (resolucion,request.form['id'],),
+        db.execute("UPDATE peticiones SET resolucion=? WHERE ID= ?", (request.form.get('Aceptar'),request.form['id'],),
 
 
             )
@@ -680,22 +673,12 @@ def create_app(test_config=None):
     #Registrar en el sistema el resultado de la evaluacion
     @app.route("/registrarEvaluacion", methods=['GET', 'POST'])
     @login_required
-    def registrarEvaluacion():
-        #return("hola")
-        if request.form.get('Aceptada')=="Aceptada":
-            resolucion="Aceptada"
-        if request.form.get('AceptadaSugerencias')=="AceptadaSugerencias":
-            resolucion="AceptadaSugerencias"
-        if request.form.get('AmpliarMemoria')=="AmpliarMemoria":
-            resolucion="AmpliarMemoria"
-        if request.form.get('Denegada')=="Denegada":
-            resolucion="Denegada"
-        
+    def registrarEvaluacion():       
         sugerencias= (str(request.form.get('sugerencias')))
 
         #ahora se registra la peticion de tema como evaluada en la BD
         db = database.get_db()
-        db.execute("UPDATE peticiones SET estado='Revisada', resolucion=?, sugerencias=? WHERE ID= ?", (resolucion, sugerencias, request.form['id'],),
+        db.execute("UPDATE peticiones SET estado='Revisada', resolucion=?, sugerencias=? WHERE ID= ?", (request.form.get('Aceptada'), sugerencias, request.form['id'],),
 
 
             )
@@ -861,19 +844,13 @@ def create_app(test_config=None):
     @app.route("/registrarValidacion", methods=['GET', 'POST'])
     @login_required
     def registrarValidacion():
-        #return("hola")
-        if request.form.get('Validada'):
-            validacion="Validada"
-        else :
-            validacion="NoValidada"
-
         id=(str(request.form.get('id')))
   
 
 
         #ahora se registra la peticion de tema como validada o no en la BD
         db = database.get_db()
-        db.execute("UPDATE peticiones SET estado=? WHERE ID= ?", (validacion, id,),
+        db.execute("UPDATE peticiones SET estado=? WHERE ID= ?", (request.form.get('Validada'), id,),
 
 
             )
@@ -1022,14 +999,10 @@ def create_app(test_config=None):
     @app.route("/registrarNuevoEstadoComision", methods=['POST'])
     @login_required
     def registrarNuevoEstadoComision():
-        if request.form.get('Activa'):
-            nuevoEstado="Activa"
-        else :
-            nuevoEstado="Inactiva"
 
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
-        db.execute("UPDATE comisiones SET estado=? WHERE titulacion= ?", (nuevoEstado, request.form.get('titulacion')),
+        db.execute("UPDATE comisiones SET estado=? WHERE titulacion= ?", (request.form.get('Activa'), request.form.get('titulacion')),
 
 
             )
@@ -1220,12 +1193,6 @@ def create_app(test_config=None):
     @app.route("/registrarModificacionTribunal", methods=['POST'])
     @login_required
     def registrarModificacionTribunal():
-        if request.form.get('Activo'):
-            nuevoEstado="Activo"
-        else :
-            nuevoEstado="Inactivo"
-
-
         #introducimos los datos de la plantilla en la base de datos
         db = database.get_db()
         db.execute("DELETE from tribunal WHERE ID= ?", (request.form.get('ID'),),
@@ -1239,7 +1206,7 @@ def create_app(test_config=None):
         db.execute(
                 "INSERT INTO tribunal (id, estado, email_presidente, email_secretario, email_vocal, titulacion)"
                 "VALUES (?, ?, ?, ?, ?, ?)",
-                (request.form['ID'], nuevoEstado, request.form['presidente'], request.form['secretario'], request.form['vocal'], request.form['titulacion'])
+                (request.form['ID'], request.form.get('Activo'), request.form['presidente'], request.form['secretario'], request.form['vocal'], request.form['titulacion'])
             )
         db.commit()
 
