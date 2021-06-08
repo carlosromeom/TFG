@@ -1108,7 +1108,6 @@ def create_app(test_config=None):
 
     #Mostrar el resultado del filtro
     @app.route('/filtrarProfesor', methods=['GET', 'POST'])
-    @login_required
     def filtrarProfesor():
         #ahora guardamos todos los trabajos que sean del director elegido
         db = database.get_db()
