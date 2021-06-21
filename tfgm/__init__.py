@@ -326,7 +326,7 @@ def create_app(test_config=None):
 
 
         pdf.cell(200, 10, txt="", ln=2, align="L")
-        pdf.cell(200, 10, txt="Peticion creada en: "+str(date.today()), ln=2, align="L")
+        pdf.cell(200, 10, txt="Petición creada en: "+str(date.today()), ln=2, align="L")
 
         response = make_response(pdf.output(dest='S').encode('latin-1'))
         response.headers.set('Content-Disposition', 'attachment', filename="PeticionTema" + '.pdf')
@@ -1020,6 +1020,10 @@ def create_app(test_config=None):
     @app.route("/modificarProfesoresComision", methods=['POST'])
     @login_required
     def modificarProfesoresComision():
+        db = database.get_db()
+        profesores=db.execute(
+            "SELECT * FROM user WHERE rol= 'Profesor'"
+            ).fetchall()
         
         titulacion=request.form.get('titulacion')
         #sacamos los miembros de la comision
@@ -1041,7 +1045,11 @@ def create_app(test_config=None):
 
             ).fetchone()[0]
 
-        return render_template('modificarProfesoresComision.html', titulacion=titulacion, profesor1=profesor1, profesor2=profesor2, profesor3=profesor3, presidente=presidente)
+
+
+
+
+        return render_template('modificarProfesoresComision.html', titulacion=titulacion, profesor1=profesor1, profesor2=profesor2, profesor3=profesor3, presidente=presidente, profesores=profesores)
 
 
 

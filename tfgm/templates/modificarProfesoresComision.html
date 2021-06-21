@@ -49,27 +49,46 @@ input[type=submit]:hover {
                   <form action="{{ url_for('registrarCambioProfesoresComision') }}" method="post">
                         
 
+          <label for="profesor1">Profesor 1:</label>
+          <input list="nombres" name="profesor1" id="profesor1" value="{{profesor1}}">
+          <datalist id="nombres">
+          {% for row in profesores %}
+            <option value={{row[2]}}>{{row[1]}}</option> 
+          {% endfor %}
+          </datalist>
 
-                        <input type="text" id="profesor1" name="profesor1" value='{{profesor1}}'>
-                        <label for="profesor1">Profesor 1</label><br>
 
-                        <input type="text" id="profesor2" name="profesor2" value='{{profesor2}}'>
-                        <label for="profesor2">Profesor 2</label><br>
+          <label for="profesor2">Profesor 2:</label>
+          <input list="nombres" name="profesor2" id="profesor2" value="{{profesor2}}">
+          <datalist id="nombres">
+            {% for row in profesores %}
+            <option value={{row[2]}}>{{row[1]}}</option> 
+            {% endfor %}
+          </datalist>
 
-                        <input type="text" id="profesor3" name="profesor3" value='{{profesor3}}'>
-                        <label for="profesor3">Profesor 3</label><br>
 
-                        <input type="text" id="presidente" name="presidente" value='{{presidente}}'>
-                        <label for="miembros">Presidente</label><br>
+          
+          <label for="profesor3">Profesor 3:</label>
+          <input list="nombres" name="profesor3" id="profesor3" value="{{profesor3}}">
+          <datalist id="nombres">
+            {% for row in profesores %}
+            <option value={{row[2]}}>{{row[1]}}</option> 
+            {% endfor %}
+          </datalist>
 
-                       
 
-                        <input type="hidden" name="titulacion" value={{titulacion}}>
-
-                        <p>
-                        <input type="submit" value="Enviar">
-                        <input type="reset" value="Borrar">
-                        </p>
+          <label for="presidente">Presidente:</label>
+          <input list="nombres" name="presidente" id="presidente" value="{{presidente}}">
+          <datalist id="nombres">
+            {% for row in profesores %}
+            <option value={{row[2]}}>{{row[1]}}</option> 
+            {% endfor %}
+          </datalist>
+          
+          <p>
+            <input type="submit" value="Enviar">
+            <input type="reset" value="Borrar">
+          </p>
 
 
                   </form>
